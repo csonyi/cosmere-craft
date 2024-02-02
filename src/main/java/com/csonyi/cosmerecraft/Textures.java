@@ -1,6 +1,6 @@
 package com.csonyi.cosmerecraft;
 
-import com.csonyi.cosmerecraft.allomancy.AllomanticMetal;
+import com.csonyi.cosmerecraft.capability.allomancy.AllomanticMetal;
 import java.util.EnumMap;
 import java.util.Map;
 

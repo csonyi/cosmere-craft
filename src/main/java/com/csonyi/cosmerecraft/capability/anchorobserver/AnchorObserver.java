@@ -2,72 +2,56 @@ package com.csonyi.cosmerecraft.capability.anchorobserver;
 
 import com.csonyi.cosmerecraft.Config;
 import java.util.HashSet;
-import java.util.Optional;
 import java.util.Set;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import net.minecraft.core.BlockPos;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.NbtUtils;
+import net.minecraft.world.entity.player.Player;
+import net.neoforged.neoforge.attachment.AttachmentType;
 
-public class AnchorObserver implements IAnchorObserver {
+public class AnchorObserver {
 
-  protected Set<BlockPos> knownAnchors;
+  public static Supplier<AttachmentType<HashSet<BlockPos>>> KNOWN_ANCHORS =
+      () -> AttachmentType.builder(() -> new HashSet<BlockPos>()).build();
 
-  private static boolean isAnchorInRange(BlockPos anchor, BlockPos playerPos) {
-    return anchor.distSqr(playerPos) <= Config.Server.maxSteelPushDistance;
+  private final Player player;
+
+  public AnchorObserver(Player player) {
+    this.player = player;
   }
 
-  @Override
-  public Set<BlockPos> getAnchorsInRange(BlockPos playerPos) {
-    return Optional.ofNullable(knownAnchors).stream()
-        .flatMap(Set::stream)
-        .filter(anchor -> isAnchorInRange(anchor, playerPos))
+  private boolean isAnchorInRange(BlockPos anchor) {
+    return anchor.distSqr(player.blockPosition()) <= Config.Server.maxSteelPushDistance;
+  }
+
+  public Set<BlockPos> getAnchorsInRange() {
+    return getKnownAnchors().stream()
+        .filter(this::isAnchorInRange)
         .collect(Collectors.toSet());
   }
 
-  @Override
-  public boolean hasAnchorInRange(BlockPos playerPos) {
-    return Optional.ofNullable(knownAnchors).stream()
-        .flatMap(Set::stream)
-        .anyMatch(anchor -> isAnchorInRange(anchor, playerPos));
+  public boolean hasAnchorInRange() {
+    return getKnownAnchors().stream()
+        .anyMatch(this::isAnchorInRange);
   }
 
-  @Override
   public void learnAnchor(BlockPos anchor) {
-    if (knownAnchors == null) {
-      knownAnchors = new HashSet<>();
-    }
-    knownAnchors.add(anchor);
+    var newAnchors = getKnownAnchors();
+    newAnchors.add(anchor);
+    setKnownAnchors(newAnchors);
   }
 
-  @Override
   public void forgetAnchor(BlockPos anchor) {
-    if (knownAnchors != null) {
-      knownAnchors.remove(anchor);
-    }
+    var newAnchors = getKnownAnchors();
+    newAnchors.remove(anchor);
+    setKnownAnchors(newAnchors);
   }
 
-  @Override
-  public void copyFrom(IAnchorObserver other) {
-    deserializeNBT(other.serializeNBT());
+  private Set<BlockPos> getKnownAnchors() {
+    return player.getData(KNOWN_ANCHORS);
   }
 
-  @Override
-  public ListTag serializeNBT() {
-    var tag = new ListTag();
-    Optional.ofNullable(knownAnchors).stream()
-        .flatMap(Set::stream)
-        .map(NbtUtils::writeBlockPos)
-        .forEach(tag::add);
-    return tag;
-  }
-
-  @Override
-  public void deserializeNBT(ListTag listTag) {
-    knownAnchors = listTag.stream()
-        .map(tag -> (CompoundTag) tag)
-        .map(NbtUtils::readBlockPos)
-        .collect(Collectors.toSet());
+  private void setKnownAnchors(Set<BlockPos> newAnchors) {
+    player.setData(KNOWN_ANCHORS, new HashSet<>(newAnchors));
   }
 }

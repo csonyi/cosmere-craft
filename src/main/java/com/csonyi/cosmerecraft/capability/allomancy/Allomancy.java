@@ -1,14 +1,13 @@
-package com.csonyi.cosmerecraft.allomancy;
+package com.csonyi.cosmerecraft.capability.allomancy;
 
 import static com.csonyi.cosmerecraft.CosmereCraftBlocks.ANCHOR_TAG;
 
 import com.csonyi.cosmerecraft.Config;
-import com.csonyi.cosmerecraft.capability.anchorobserver.AnchorObserverProvider;
+import com.csonyi.cosmerecraft.capability.anchorobserver.AnchorObserver;
 import com.mojang.logging.LogUtils;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
@@ -36,13 +35,9 @@ public class Allomancy {
 
   public static void scanForAnchors(Player player) {
     try (var level = player.level()) {
-      var anchors = getAnchorsInRange(player.blockPosition(), level);
-      AnchorObserverProvider.ifPlayerHasCapability(player, anchorObserver -> {
-        anchors.forEach(anchor -> {
-          Optional.ofNullable(anchor)
-              .ifPresent(anchorObserver::learnAnchor);
-        });
-      });
+      var anchors = getAnchorsTaggedBlocksInRange(player.blockPosition(), level);
+      var anchorObserver = new AnchorObserver(player);
+      anchors.forEach(anchorObserver::learnAnchor);
     } catch (IOException e) {
       LOGGER.error("IOException while retrieving level in scanForAnchor: {}", e.getMessage());
     }
@@ -55,7 +50,7 @@ public class Allomancy {
     return (float) (0.3 * (1 - distance / maxDistanceSquared));
   }
 
-  private static List<BlockPos> getAnchorsInRange(BlockPos playerPos, Level level) {
+  private static List<BlockPos> getAnchorsTaggedBlocksInRange(BlockPos playerPos, Level level) {
     var range = Config.Server.maxSteelPushDistance;
     var startX = playerPos.getX() - range;
     var startY = playerPos.getY() - range;

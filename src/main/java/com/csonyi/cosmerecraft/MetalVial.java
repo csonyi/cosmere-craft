@@ -1,7 +1,7 @@
 package com.csonyi.cosmerecraft;
 
-import com.csonyi.cosmerecraft.allomancy.AllomanticMetal;
-import com.csonyi.cosmerecraft.capability.metalreserves.MetalReserveProvider;
+import com.csonyi.cosmerecraft.capability.allomancy.AllomanticMetal;
+import java.util.EnumSet;
 import java.util.stream.Stream;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
@@ -45,14 +45,10 @@ public class MetalVial extends Item {
 
     if (!level.isClientSide()) {
       if (livingEntity instanceof Player player) {
-        player.getCapability(MetalReserveProvider.METAL_RESERVES_CAPABILITY)
-            .ifPresent(metalReserve -> {
-              if (metalReserve.canReceiveMetal()) {
-                metalReserve.receiveMetal(metal1);
-                metalReserve.receiveMetal(metal2);
-                metalReserve.receiveMetal(metal3);
-              }
-            });
+        if (AllomanticMetal.canReceive(player)) {
+          getMetals()
+              .forEach(metal -> metal.receive(player, 16));
+        }
       }
     }
 
@@ -100,5 +96,19 @@ public class MetalVial extends Item {
     return Stream.of(metal1, metal2, metal3)
         .mapToInt(metal -> metal == null ? 0 : 1)
         .sum();
+  }
+
+  private EnumSet<AllomanticMetal> getMetals() {
+    var metals = EnumSet.noneOf(AllomanticMetal.class);
+    if (metal1 != null) {
+      metals.add(metal1);
+    }
+    if (metal2 != null) {
+      metals.add(metal2);
+    }
+    if (metal3 != null) {
+      metals.add(metal3);
+    }
+    return metals;
   }
 }

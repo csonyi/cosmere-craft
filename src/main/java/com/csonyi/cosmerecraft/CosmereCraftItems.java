@@ -1,6 +1,6 @@
 package com.csonyi.cosmerecraft;
 
-import com.csonyi.cosmerecraft.allomancy.AllomanticMetal;
+import com.csonyi.cosmerecraft.capability.allomancy.AllomanticMetal;
 import java.util.stream.Stream;
 import net.minecraft.core.Holder;
 import net.minecraft.world.item.CreativeModeTab;
