@@ -1,8 +1,13 @@
 package com.csonyi.cosmerecraft;
 
+import com.csonyi.cosmerecraft.capability.allomancy.Allomancy;
 import com.csonyi.cosmerecraft.capability.allomancy.AllomanticMetal;
-import java.util.EnumSet;
+import com.csonyi.cosmerecraft.util.TickUtils;
+import java.util.Objects;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
@@ -18,6 +23,13 @@ import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
 public class MetalVial extends Item {
+
+  private static final int[] MULTI_PORTION_AMOUNTS = {
+      0,
+      TickUtils.minutesToTicks(1) + TickUtils.secondsToTicks(30),
+      TickUtils.minutesToTicks(3),
+      TickUtils.minutesToTicks(8)
+  };
 
   private static final int DRINK_DURATION = 10;
 
@@ -44,19 +56,26 @@ public class MetalVial extends Item {
     super.finishUsingItem(itemStack, level, livingEntity);
 
     if (!level.isClientSide()) {
-      if (livingEntity instanceof Player player) {
-        if (AllomanticMetal.canReceive(player)) {
-          getMetals()
-              .forEach(metal -> metal.receive(player, 16));
+      if (livingEntity instanceof ServerPlayer player) {
+        var allomancy = Allomancy.of(player);
+        var metalAmounts = metals()
+            .collect(Collectors.toMap(
+                Function.identity(),
+                metal -> MULTI_PORTION_AMOUNTS[getPortionCount(metal)]));
+        var collectiveMetalAmount = metalAmounts.values().stream()
+            .mapToInt(Integer::intValue)
+            .sum();
+        if (allomancy.canIngestMetal(collectiveMetalAmount)) {
+          metalAmounts
+              .forEach(allomancy::ingestMetal);
         }
       }
     }
 
     if (!itemStack.isEmpty()) {
       if (livingEntity instanceof Player player) {
-        var emptyBottleItemStack = new ItemStack(Items.GLASS_BOTTLE);
         if (!player.getInventory().add(itemStack)) {
-          player.drop(emptyBottleItemStack, false);
+          player.drop(new ItemStack(Items.GLASS_BOTTLE), false);
         }
       }
       return itemStack;
@@ -66,7 +85,7 @@ public class MetalVial extends Item {
 
   @Override
   public int getUseDuration(@NotNull ItemStack itemStack) {
-    return DRINK_DURATION * getPortions();
+    return DRINK_DURATION * getPortionCount();
   }
 
   @Override
@@ -92,23 +111,18 @@ public class MetalVial extends Item {
     return ItemUtils.startUsingInstantly(level, player, interactionHand);
   }
 
-  private int getPortions() {
+  private Stream<AllomanticMetal> metals() {
     return Stream.of(metal1, metal2, metal3)
-        .mapToInt(metal -> metal == null ? 0 : 1)
-        .sum();
+        .filter(Objects::nonNull);
   }
 
-  private EnumSet<AllomanticMetal> getMetals() {
-    var metals = EnumSet.noneOf(AllomanticMetal.class);
-    if (metal1 != null) {
-      metals.add(metal1);
-    }
-    if (metal2 != null) {
-      metals.add(metal2);
-    }
-    if (metal3 != null) {
-      metals.add(metal3);
-    }
-    return metals;
+  private int getPortionCount(AllomanticMetal metal) {
+    return (int) metals()
+        .filter(metal::equals)
+        .count();
+  }
+
+  private int getPortionCount() {
+    return (int) metals().count();
   }
 }

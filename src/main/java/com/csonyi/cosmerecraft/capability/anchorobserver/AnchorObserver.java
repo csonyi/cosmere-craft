@@ -1,57 +1,50 @@
 package com.csonyi.cosmerecraft.capability.anchorobserver;
 
+import static com.csonyi.cosmerecraft.CosmereCraftBlocks.ANCHOR_TAG;
+import static com.csonyi.cosmerecraft.Registry.attachmentTypes;
+
 import com.csonyi.cosmerecraft.Config;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.entity.player.Player;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.attachment.AttachmentType;
 
 public class AnchorObserver {
 
-  public static Supplier<AttachmentType<HashSet<BlockPos>>> KNOWN_ANCHORS =
-      () -> AttachmentType.builder(() -> new HashSet<BlockPos>()).build();
+  public static Supplier<AttachmentType<HashSet<BlockPos>>> KNOWN_ANCHORS = attachmentTypes().register(
+      "known_anchors",
+      () -> AttachmentType.builder(() -> new HashSet<BlockPos>()).build());
 
-  private final Player player;
+  private final ServerPlayer player;
+  private final Level level;
 
-  public AnchorObserver(Player player) {
+  public AnchorObserver(ServerPlayer player) {
     this.player = player;
+    this.level = player.level();
   }
 
-  private boolean isAnchorInRange(BlockPos anchor) {
-    return anchor.distSqr(player.blockPosition()) <= Config.Server.maxSteelPushDistance;
-  }
-
-  public Set<BlockPos> getAnchorsInRange() {
-    return getKnownAnchors().stream()
-        .filter(this::isAnchorInRange)
+  public void scan() {
+    var rangeAABB = player.getBoundingBox()
+        .inflate(Config.Server.maxSteelPushDistance);
+    var newAnchors = BlockPos.betweenClosedStream(rangeAABB)
+        .filter(pos -> level.getBlockState(pos).getTags().anyMatch(ANCHOR_TAG::equals))
         .collect(Collectors.toSet());
+    setAnchors(newAnchors);
   }
 
-  public boolean hasAnchorInRange() {
-    return getKnownAnchors().stream()
-        .anyMatch(this::isAnchorInRange);
+  public boolean isAnchorInRange() {
+    return !getAnchors().isEmpty();
   }
 
-  public void learnAnchor(BlockPos anchor) {
-    var newAnchors = getKnownAnchors();
-    newAnchors.add(anchor);
-    setKnownAnchors(newAnchors);
-  }
-
-  public void forgetAnchor(BlockPos anchor) {
-    var newAnchors = getKnownAnchors();
-    newAnchors.remove(anchor);
-    setKnownAnchors(newAnchors);
-  }
-
-  private Set<BlockPos> getKnownAnchors() {
+  public Set<BlockPos> getAnchors() {
     return player.getData(KNOWN_ANCHORS);
   }
 
-  private void setKnownAnchors(Set<BlockPos> newAnchors) {
+  private void setAnchors(Set<BlockPos> newAnchors) {
     player.setData(KNOWN_ANCHORS, new HashSet<>(newAnchors));
   }
 }

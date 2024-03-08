@@ -1,75 +1,72 @@
 package com.csonyi.cosmerecraft.capability.allomancy;
 
-import static com.csonyi.cosmerecraft.CosmereCraftBlocks.ANCHOR_TAG;
+import static com.csonyi.cosmerecraft.capability.allomancy.AllomanticMetal.STEEL;
 
-import com.csonyi.cosmerecraft.Config;
 import com.csonyi.cosmerecraft.capability.anchorobserver.AnchorObserver;
-import com.mojang.logging.LogUtils;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import net.minecraft.core.BlockPos;
+import com.csonyi.cosmerecraft.util.TickUtils;
+import java.util.Set;
+import java.util.stream.Collectors;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.levelgen.Heightmap;
-import net.minecraft.world.phys.Vec3;
-import org.slf4j.Logger;
 
 public class Allomancy {
 
-  private static final Logger LOGGER = LogUtils.getLogger();
+  private static final int EFFECT_DURATION = TickUtils.secondsToTicks(4);
 
-  public static void applySteelPush(Player player) {
-    try (var level = player.level()) {
-      var playerPos = player.blockPosition();
-      var groundYLevel = level.getHeightmapPos(Heightmap.Types.WORLD_SURFACE, playerPos);
-      var pushForce = calculatePushForce(playerPos, groundYLevel);
-      var sprintBoost = player.isSprinting() ? 0.5f : 0;
-      var xImpulse = player.getDeltaMovement().x() * sprintBoost;
-      var yImpulse = player.getDeltaMovement().y() * sprintBoost;
-      player.moveRelative(pushForce, new Vec3(xImpulse, 1, yImpulse));
-    } catch (IOException e) {
-      LOGGER.error("IOException while retrieving level in applySteelPush: {}", e.getMessage());
+  private final ServerPlayer player;
+  private final ExternalPhysicalMovement externalPhysicalMovement;
+  private final MetalStateManager metalStateManager;
+  private final AnchorObserver anchorObserver;
+  private final TickUtils tickUtils;
+
+  public Allomancy(Player player) {
+    this.player = (ServerPlayer) player;
+    this.metalStateManager = new MetalStateManager(this.player);
+    this.externalPhysicalMovement = new ExternalPhysicalMovement(this.player);
+    this.anchorObserver = new AnchorObserver(this.player);
+    this.tickUtils = TickUtils.forLevel(this.player.level());
+  }
+
+  public static Allomancy of(Player player) {
+    return new Allomancy(player);
+  }
+
+  public boolean canIngestMetal(int amount) {
+    return metalStateManager.canIngest(amount);
+  }
+
+  public void ingestMetal(AllomanticMetal metal, int amount) {
+    metalStateManager.ingest(metal, amount);
+  }
+
+  private void applyActiveMetalEffects() {
+    AllomanticMetal.stream()
+        .filter(AllomanticMetal::hasEffect)
+        .filter(metalStateManager::isActive)
+        .map(this::metalEffects)
+        .flatMap(Set::stream)
+        .forEach(player::addEffect);
+  }
+
+  private Set<MobEffectInstance> metalEffects(AllomanticMetal metal) {
+    return metal.getEffects()
+        .map(effect -> new MobEffectInstance(
+            effect,
+            EFFECT_DURATION,
+            metalStateManager.getBurnStrength(metal),
+            true, true))
+        .collect(Collectors.toSet());
+  }
+
+  public void tick() {
+    if (tickUtils.everyNthSecond(8)) {
+      anchorObserver.scan();
     }
-  }
-
-  public static void scanForAnchors(Player player) {
-    try (var level = player.level()) {
-      var anchors = getAnchorsTaggedBlocksInRange(player.blockPosition(), level);
-      var anchorObserver = new AnchorObserver(player);
-      anchors.forEach(anchorObserver::learnAnchor);
-    } catch (IOException e) {
-      LOGGER.error("IOException while retrieving level in scanForAnchor: {}", e.getMessage());
+    if (metalStateManager.isActive(STEEL) && anchorObserver.isAnchorInRange()) {
+      externalPhysicalMovement.applySteelPush();
     }
+    applyActiveMetalEffects();
+    metalStateManager.drainActive();
   }
-
-  private static float calculatePushForce(BlockPos playerPos, BlockPos anchorPos) {
-    var distanceSquared = playerPos.distSqr(anchorPos);
-    var maxDistanceSquared = Math.pow(Config.Server.maxSteelPushDistance, 2);
-    var distance = Math.min(distanceSquared, maxDistanceSquared);
-    return (float) (0.3 * (1 - distance / maxDistanceSquared));
-  }
-
-  private static List<BlockPos> getAnchorsTaggedBlocksInRange(BlockPos playerPos, Level level) {
-    var range = Config.Server.maxSteelPushDistance;
-    var startX = playerPos.getX() - range;
-    var startY = playerPos.getY() - range;
-    var startZ = playerPos.getZ() - range;
-    var endX = playerPos.getX() + range;
-    var endY = playerPos.getY() + range;
-    var endZ = playerPos.getZ() + range;
-    var anchors = new ArrayList<BlockPos>();
-    for (int x = startX; x < endX; x++) {
-      for (int y = startY; y < endY; y++) {
-        for (int z = startZ; z < endZ; z++) {
-          var pos = new BlockPos(x, y, z);
-          if (level.getBlockState(pos).getTags().anyMatch(ANCHOR_TAG::equals)) {
-            anchors.add(pos);
-          }
-        }
-      }
-    }
-    return anchors;
-  }
-
 }
