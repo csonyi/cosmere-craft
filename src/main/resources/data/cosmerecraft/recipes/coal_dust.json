@@ -1,8 +1,0 @@
-{
-  "type": "minecraft:stonecutting",
-  "ingredient": {
-    "item": "minecraft:coal"
-  },
-  "result": "cosmerecraft:coal_dust",
-  "count": 1
-}

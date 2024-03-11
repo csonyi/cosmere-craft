@@ -1,5 +1,9 @@
 package com.csonyi.cosmerecraft.capability.allomancy;
 
+import static com.csonyi.cosmerecraft.registry.CosmereCraftAttachments.metalAvailable;
+import static com.csonyi.cosmerecraft.registry.CosmereCraftAttachments.metalBurnStrength;
+import static com.csonyi.cosmerecraft.registry.CosmereCraftAttachments.metalReserve;
+
 import com.csonyi.cosmerecraft.Config;
 import net.minecraft.world.entity.player.Player;
 
@@ -28,27 +32,27 @@ public class MetalStateManager {
   }
 
   public int getReserve(AllomanticMetal metal) {
-    return player.getData(metal.RESERVE);
+    return player.getData(metalReserve(metal));
   }
 
   public void setReserve(AllomanticMetal metal, int amount) {
-    player.setData(metal.RESERVE, amount);
+    player.setData(metalReserve(metal), amount);
   }
 
   public int getBurnStrength(AllomanticMetal metal) {
-    return player.getData(metal.BURN_STRENGTH);
+    return player.getData(metalBurnStrength(metal));
   }
 
   public void setBurnStrength(AllomanticMetal metal, int amount) {
-    player.setData(metal.BURN_STRENGTH, amount);
+    player.setData(metalBurnStrength(metal), amount);
   }
 
   public boolean isAvailable(AllomanticMetal metal) {
-    return metal.isGodMetal() || player.getData(metal.AVAILABLE);
+    return metal.isGodMetal() || player.getData(metalAvailable(metal));
   }
 
   public void setAvailable(AllomanticMetal metal, boolean available) {
-    player.setData(metal.AVAILABLE, available);
+    player.setData(metalAvailable(metal), available);
   }
 
   public boolean isActive(AllomanticMetal metal) {

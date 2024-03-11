@@ -1,0 +1,16 @@
+{
+  "structures": [
+    {
+      "structure": "cosmerecraft:well_of_ascension/well_of_ascension",
+      "weight": 1
+    }
+  ],
+  "placement": {
+    "type": "minecraft:concentric_rings",
+    "preferred_biomes": [],
+    "count": 128,
+    "distance": 32,
+    "salt": 0,
+    "spread": 3
+  }
+}

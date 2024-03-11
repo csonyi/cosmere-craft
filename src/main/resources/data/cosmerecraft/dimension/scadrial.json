@@ -1,0 +1,11 @@
+{
+  "type": "overworld",
+  "generator": {
+    "type": "noise",
+    "settings": "minecraft:overworld",
+    "biome_source": {
+      "type": "fixed",
+      "biome": "cosmerecraft:scadrial_plains"
+    }
+  }
+}

@@ -28,7 +28,7 @@ public class Config {
     public static int collectiveAllomanticCapacity;
     public static int metalPortionBurnTicks;
     public static int maxSteelPushDistance;
-    static ModConfigSpec SPEC = BUILDER.build();
+    public static ModConfigSpec SPEC = BUILDER.build();
 
     @SubscribeEvent
     public static void onLoad(final ModConfigEvent event) {

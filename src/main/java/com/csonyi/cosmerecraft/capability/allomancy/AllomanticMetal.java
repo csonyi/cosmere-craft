@@ -1,6 +1,5 @@
 package com.csonyi.cosmerecraft.capability.allomancy;
 
-import static com.csonyi.cosmerecraft.Registry.attachmentTypes;
 import static com.csonyi.cosmerecraft.capability.allomancy.AllomanticMetal.Direction.PULLING;
 import static com.csonyi.cosmerecraft.capability.allomancy.AllomanticMetal.Direction.PUSHING;
 import static com.csonyi.cosmerecraft.capability.allomancy.AllomanticMetal.Side.EXTERNAL;
@@ -11,17 +10,14 @@ import static com.csonyi.cosmerecraft.capability.allomancy.AllomanticMetal.Type.
 import static com.csonyi.cosmerecraft.capability.allomancy.AllomanticMetal.Type.TEMPORAL;
 
 import com.csonyi.cosmerecraft.CosmereCraft;
-import com.mojang.serialization.Codec;
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.Set;
-import java.util.function.Supplier;
 import java.util.stream.Stream;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffects;
-import net.neoforged.neoforge.attachment.AttachmentType;
 
 public enum AllomanticMetal {
 
@@ -59,25 +55,6 @@ public enum AllomanticMetal {
 
   public final int maxBurnStrength;
   public final Set<MobEffect> effects;
-
-  public final Supplier<AttachmentType<Integer>> RESERVE = attachmentTypes().register(
-      "%s_reserve".formatted(name().toLowerCase()),
-      () -> AttachmentType.builder(() -> 0)
-          .serialize(Codec.INT)
-          .build());
-
-  public final Supplier<AttachmentType<Integer>> BURN_STRENGTH = attachmentTypes().register(
-      "%s_burn_strength".formatted(name().toLowerCase()),
-      () -> AttachmentType.builder(() -> 0)
-          .serialize(Codec.INT)
-          .build());
-
-  public final Supplier<AttachmentType<Boolean>> AVAILABLE = attachmentTypes().register(
-      "%s_available".formatted(name().toLowerCase()),
-      () -> AttachmentType.builder(() -> false)
-          .serialize(Codec.BOOL)
-          .copyOnDeath()
-          .build());
 
   AllomanticMetal(Type type, Direction direction, Side side, MobEffect... effects) {
     this.type = type;
@@ -148,6 +125,10 @@ public enum AllomanticMetal {
           buffer.readInt(),
           buffer.readInt(),
           buffer.readBoolean());
+    }
+
+    public static State defaultState(AllomanticMetal metal) {
+      return new State(metal, 0, 0, false);
     }
 
     public Optional<Integer> getReserve() {

@@ -1,9 +1,8 @@
 package com.csonyi.cosmerecraft.fluid;
 
-import static com.csonyi.cosmerecraft.CosmereCraftFluids.INVESTITURE_FLUID_FLOWING;
-import static com.csonyi.cosmerecraft.CosmereCraftFluids.INVESTITURE_FLUID_SOURCE;
-import static com.csonyi.cosmerecraft.CosmereCraftFluids.INVESTITURE_FLUID_TYPE;
-
+import com.csonyi.cosmerecraft.registry.CosmereCraftBlocks;
+import com.csonyi.cosmerecraft.registry.CosmereCraftFluids;
+import com.csonyi.cosmerecraft.registry.CosmereCraftItems;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.FluidState;
@@ -12,10 +11,16 @@ import net.neoforged.neoforge.fluids.BaseFlowingFluid;
 public abstract class InvestitureFluid extends BaseFlowingFluid {
 
   public InvestitureFluid() {
-    super(new Properties(
-        INVESTITURE_FLUID_TYPE::value,
-        INVESTITURE_FLUID_SOURCE::value,
-        INVESTITURE_FLUID_FLOWING::value));
+    super(createProperties());
+  }
+
+  private static Properties createProperties() {
+    return new Properties(
+        CosmereCraftFluids.INVESTITURE_FLUID_TYPE::value,
+        CosmereCraftFluids.INVESTITURE::value,
+        CosmereCraftFluids.FLOWING_INVESTITURE::value)
+        .bucket(CosmereCraftItems.INVESTITURE_BUCKET::value)
+        .block(CosmereCraftBlocks.INVESTITURE_LIQUID::value);
   }
 
   public static class Source extends InvestitureFluid {
