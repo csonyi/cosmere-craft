@@ -80,7 +80,7 @@ public class Allomancy {
     // if (tickUtils().everyNthSecond(4)) {
     //   anchorObserver().scan();
     // }
-    if (metalStateManager().isActive(STEEL) && anchorObserver().isAnchorInRange()) {
+    if (metalStateManager().isActive(STEEL) && anchorObserver().hasAnchorInRange()) {
       externalPhysicalMovement().applySteelPush();
     }
     applyActiveMetalEffects();

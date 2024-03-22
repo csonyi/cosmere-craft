@@ -44,7 +44,10 @@ public class AnchorObserver {
     }
   }
 
-  public boolean isAnchorInRange() {
+  public boolean hasAnchorInRange() {
+    if (!Config.Server.allomancyNeedsMetalNearby) {
+      return true;
+    }
     return !getAnchors().isEmpty();
   }
 

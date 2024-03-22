@@ -5,6 +5,10 @@ import static com.csonyi.cosmerecraft.CosmereCraft.createResourceLocation;
 import com.csonyi.cosmerecraft.CosmereCraft;
 import com.csonyi.cosmerecraft.block.AshLayerBlock;
 import com.csonyi.cosmerecraft.block.InvestitureLiquidBlock;
+import com.csonyi.cosmerecraft.capability.allomancy.AllomanticMetal;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import net.minecraft.core.Holder;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
@@ -34,6 +38,26 @@ public class CosmereCraftBlocks {
       "ash_block",
       BlockBehaviour.Properties.ofFullCopy(Blocks.SNOW_BLOCK)
           .mapColor(DyeColor.LIGHT_GRAY));
+
+  public static final Map<AllomanticMetal, Holder<Block>> METAL_ORES = AllomanticMetal.stream()
+      .filter(metal -> !metal.isGodMetal())
+      .filter(metal -> !metal.hasVanillaImplementation)
+      .filter(metal -> !metal.isAlloy)
+      .collect(Collectors.toMap(
+          Function.identity(),
+          metal -> BLOCKS.registerSimpleBlock(
+              "%s_ore".formatted(metal.lowerCaseName()),
+              BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_ORE))));
+
+  public static final Map<AllomanticMetal, Holder<Block>> DEEPSLATE_METAL_ORES = AllomanticMetal.stream()
+      .filter(metal -> !metal.isGodMetal())
+      .filter(metal -> !metal.hasVanillaImplementation)
+      .filter(metal -> !metal.isAlloy)
+      .collect(Collectors.toMap(
+          Function.identity(),
+          metal -> BLOCKS.registerSimpleBlock(
+              "deepslate_%s_ore".formatted(metal.lowerCaseName()),
+              BlockBehaviour.Properties.ofFullCopy(Blocks.DEEPSLATE_IRON_ORE))));
 
   public static final DeferredBlock<LiquidBlock> INVESTITURE_LIQUID = BLOCKS.register(
       "investiture_liquid",

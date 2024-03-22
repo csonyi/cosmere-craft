@@ -2,7 +2,11 @@ package com.csonyi.cosmerecraft.registry;
 
 import static com.csonyi.cosmerecraft.CosmereCraft.MOD_ID;
 
-import com.csonyi.cosmerecraft.datagen.AshData;
+import com.csonyi.cosmerecraft.datagen.CosmereCraftBlockStateProvider;
+import com.csonyi.cosmerecraft.datagen.CosmereCraftBlockTagsProvider;
+import com.csonyi.cosmerecraft.datagen.CosmereCraftItemModelProvider;
+import com.csonyi.cosmerecraft.datagen.CosmereCraftItemTagsProvider;
+import com.csonyi.cosmerecraft.datagen.CosmereCraftRecipeProvider;
 import com.csonyi.cosmerecraft.networking.MetalStateUpdateHandler;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.Mod;
@@ -29,16 +33,36 @@ public class RegistryEventHandlers {
 
   @SubscribeEvent
   public static void registerKeyBindings(final RegisterKeyMappingsEvent event) {
-    // event.register(SCAN_FOR_ANCHORS.get());
+    event.register(CosmereCraftKeyMappings.OPEN_ALLOMANCY_GUI.get());
   }
 
   @SubscribeEvent
   public static void registerDataGenerators(final GatherDataEvent event) {
     var generator = event.getGenerator();
-    var packOutput = generator.getPackOutput();
     var existingFileHelper = event.getExistingFileHelper();
+    var packOutput = generator.getPackOutput();
+    var lookupProvider = event.getLookupProvider();
     generator.addProvider(
         event.includeClient(),
-        new AshData(packOutput, existingFileHelper));
+        new CosmereCraftItemModelProvider(packOutput, existingFileHelper));
+    generator.addProvider(
+        event.includeClient(),
+        new CosmereCraftBlockStateProvider(packOutput, existingFileHelper));
+
+    generator.addProvider(
+        event.includeServer(),
+        new CosmereCraftBlockTagsProvider(
+            packOutput,
+            lookupProvider,
+            existingFileHelper));
+    generator.addProvider(
+        event.includeServer(),
+        new CosmereCraftItemTagsProvider(
+            packOutput,
+            lookupProvider,
+            existingFileHelper));
+    generator.addProvider(
+        event.includeServer(),
+        new CosmereCraftRecipeProvider(packOutput));
   }
 }

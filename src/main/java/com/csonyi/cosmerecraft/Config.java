@@ -1,5 +1,9 @@
 package com.csonyi.cosmerecraft;
 
+import com.google.common.base.Predicates;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.config.ModConfigEvent;
@@ -24,10 +28,15 @@ public class Config {
     private static final ModConfigSpec.IntValue MAX_STEEL_PUSH_DISTANCE = BUILDER
         .comment("Maximum distance a steel push can affect things (in blocks)")
         .defineInRange("steelPushMaxDistance", 30, 0, Integer.MAX_VALUE);
+
+    private static final ModConfigSpec.ConfigValue<List<? extends String>> ADDITIONAL_METAL_NAMES = BUILDER
+        .comment("Additional metal names to be used as anchors")
+        .defineList("additionalMetalNames", List.of(), Predicates.alwaysTrue());
     public static boolean allomancyNeedsMetalNearby;
     public static int collectiveAllomanticCapacity;
     public static int metalPortionBurnTicks;
     public static int maxSteelPushDistance;
+    public static Set<String> additionalMetalNames;
     public static ModConfigSpec SPEC = BUILDER.build();
 
     @SubscribeEvent
@@ -36,6 +45,7 @@ public class Config {
       collectiveAllomanticCapacity = COLLECTIVE_ALLOMANTIC_CAPACITY.get();
       metalPortionBurnTicks = METAL_PORTION_BURN_TICKS.get();
       maxSteelPushDistance = MAX_STEEL_PUSH_DISTANCE.get();
+      additionalMetalNames = new HashSet<>(ADDITIONAL_METAL_NAMES.get());
     }
   }
 }

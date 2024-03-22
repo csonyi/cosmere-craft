@@ -10,23 +10,29 @@ import static com.csonyi.cosmerecraft.capability.allomancy.AllomanticMetal.Type.
 import static com.csonyi.cosmerecraft.capability.allomancy.AllomanticMetal.Type.TEMPORAL;
 
 import com.csonyi.cosmerecraft.CosmereCraft;
+import com.csonyi.cosmerecraft.registry.CosmereCraftItems;
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import net.minecraft.core.Holder;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Items;
 
 public enum AllomanticMetal {
 
-  STEEL(PHYSICAL, PUSHING, EXTERNAL),
-  IRON(PHYSICAL, PULLING, EXTERNAL),
+  STEEL(PHYSICAL, PUSHING, EXTERNAL, false, true),
+  IRON(PHYSICAL, PULLING, EXTERNAL, true, false),
   ZINC(MENTAL, PULLING, EXTERNAL),
-  BRASS(MENTAL, PUSHING, EXTERNAL),
+  BRASS(MENTAL, PUSHING, EXTERNAL, false, true),
 
   PEWTER(PHYSICAL, PUSHING, INTERNAL,
+      false, true,
       MobEffects.MOVEMENT_SPEED,
       MobEffects.DIG_SPEED,
       MobEffects.DAMAGE_BOOST,
@@ -34,18 +40,18 @@ public enum AllomanticMetal {
       MobEffects.DAMAGE_RESISTANCE),
   TIN(PHYSICAL, PULLING, INTERNAL,
       MobEffects.NIGHT_VISION),
-  COPPER(MENTAL, PULLING, INTERNAL),
-  BRONZE(MENTAL, PUSHING, INTERNAL),
+  COPPER(MENTAL, PULLING, INTERNAL, true, false),
+  BRONZE(MENTAL, PUSHING, INTERNAL, false, true),
 
-  DURALUMIN(ENHANCEMENT, PUSHING, INTERNAL),
+  DURALUMIN(ENHANCEMENT, PUSHING, INTERNAL, false, true),
   ALUMINUM(ENHANCEMENT, PULLING, INTERNAL),
-  GOLD(TEMPORAL, PULLING, INTERNAL),
-  ELECTRUM(TEMPORAL, PUSHING, INTERNAL),
+  GOLD(TEMPORAL, PULLING, INTERNAL, true, false),
+  ELECTRUM(TEMPORAL, PUSHING, INTERNAL, false, true),
 
-  NICROSIL(ENHANCEMENT, PUSHING, EXTERNAL),
+  NICROSIL(ENHANCEMENT, PUSHING, EXTERNAL, false, true),
   CHROMIUM(ENHANCEMENT, PULLING, EXTERNAL),
   CADMIUM(TEMPORAL, PULLING, EXTERNAL),
-  BENDALLOY(TEMPORAL, PUSHING, EXTERNAL),
+  BENDALLOY(TEMPORAL, PUSHING, EXTERNAL, false, true),
 
   ATIUM, LERASIUM;
 
@@ -54,18 +60,26 @@ public enum AllomanticMetal {
   public final Side side;
 
   public final int maxBurnStrength;
+  public final boolean hasVanillaImplementation;
+  public final boolean isAlloy;
   public final Set<MobEffect> effects;
 
-  AllomanticMetal(Type type, Direction direction, Side side, MobEffect... effects) {
+  AllomanticMetal(Type type, Direction direction, Side side, boolean hasVanillaImplementation, boolean isAlloy, MobEffect... effects) {
     this.type = type;
     this.direction = direction;
     this.side = side;
     this.maxBurnStrength = 4; // TODO: move to config
+    this.hasVanillaImplementation = hasVanillaImplementation;
+    this.isAlloy = isAlloy;
     this.effects = Set.of(effects);
   }
 
+  AllomanticMetal(Type type, Direction direction, Side side, MobEffect... effects) {
+    this(type, direction, side, false, false, effects);
+  }
+
   AllomanticMetal() {
-    this(Type.GOD, Direction.GOD, Side.GOD);
+    this(Type.GOD, Direction.GOD, Side.GOD, false, false);
   }
 
   public boolean isGodMetal() {
@@ -80,21 +94,64 @@ public enum AllomanticMetal {
     return !effects.isEmpty();
   }
 
-  private String lowerCaseName() {
+  public String lowerCaseName() {
     return name().toLowerCase();
   }
 
   public ResourceLocation textureLocation() {
-    return CosmereCraft.createResourceLocation("icon/metal/%s_icon".formatted(lowerCaseName()));
+    return CosmereCraft.createResourceLocation("textures/icon/metal/%s_icon.png".formatted(lowerCaseName()));
   }
 
   public String getTranslationKey() {
     return "cosmerecraft.metals.%s".formatted(lowerCaseName());
   }
 
+  public Holder<Item> getIngotItemHolder() {
+    return switch (this) {
+      case IRON -> Holder.direct(Items.IRON_INGOT);
+      case GOLD -> Holder.direct(Items.GOLD_INGOT);
+      case COPPER -> Holder.direct(Items.COPPER_INGOT);
+      default -> CosmereCraftItems.METAL_INGOTS.get(this);
+    };
+  }
+
+  public Holder<Item> getRawMetalItemHolder() {
+    return switch (this) {
+      case IRON -> Holder.direct(Items.RAW_IRON);
+      case GOLD -> Holder.direct(Items.RAW_GOLD);
+      case COPPER -> Holder.direct(Items.RAW_COPPER);
+      default -> CosmereCraftItems.RAW_METALS.get(this);
+    };
+  }
+
+  public Holder<Item> getOreBlockItemHolder() {
+    return switch (this) {
+      case IRON -> Holder.direct(Items.IRON_ORE);
+      case GOLD -> Holder.direct(Items.GOLD_ORE);
+      case COPPER -> Holder.direct(Items.COPPER_ORE);
+      default -> CosmereCraftItems.METAL_ORE_BLOCK_ITEMS.get(this);
+    };
+  }
+
+  public Holder<Item> getDeepslateOreBlockItemHolder() {
+    return switch (this) {
+      case IRON -> Holder.direct(Items.DEEPSLATE_IRON_ORE);
+      case GOLD -> Holder.direct(Items.DEEPSLATE_GOLD_ORE);
+      case COPPER -> Holder.direct(Items.DEEPSLATE_COPPER_ORE);
+      default -> CosmereCraftItems.DEEPSLATE_METAL_ORE_BLOCK_ITEMS.get(this);
+    };
+  }
+
   public static Stream<AllomanticMetal> stream() {
     return Arrays.stream(values());
   }
+
+  public static Set<String> names() {
+    return stream()
+        .map(AllomanticMetal::lowerCaseName)
+        .collect(Collectors.toSet());
+  }
+
 
   public enum Type {
     PHYSICAL, MENTAL,
