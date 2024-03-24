@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:smelting",
+  "category": "misc",
+  "cookingtime": 200,
+  "experience": 0.7,
+  "ingredient": [
+    {
+      "item": "cosmerecraft:tin_powder"
+    },
+    {
+      "item": "cosmerecraft:raw_tin"
+    },
+    {
+      "item": "cosmerecraft:tin_ore"
+    },
+    {
+      "item": "cosmerecraft:deepslate_tin_ore"
+    }
+  ],
+  "result": "cosmerecraft:tin_ingot"
+}

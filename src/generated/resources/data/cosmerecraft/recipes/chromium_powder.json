@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "cosmerecraft:chromium_powder"
+    },
+    {
+      "item": "cosmerecraft:mortar_and_pestle"
+    }
+  ],
+  "result": {
+    "item": "cosmerecraft:chromium_powder"
+  }
+}

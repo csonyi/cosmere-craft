@@ -6,6 +6,7 @@ import com.csonyi.cosmerecraft.datagen.CosmereCraftBlockStateProvider;
 import com.csonyi.cosmerecraft.datagen.CosmereCraftBlockTagsProvider;
 import com.csonyi.cosmerecraft.datagen.CosmereCraftItemModelProvider;
 import com.csonyi.cosmerecraft.datagen.CosmereCraftItemTagsProvider;
+import com.csonyi.cosmerecraft.datagen.CosmereCraftLootTableProvider;
 import com.csonyi.cosmerecraft.datagen.CosmereCraftRecipeProvider;
 import com.csonyi.cosmerecraft.networking.MetalStateUpdateHandler;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -64,5 +65,8 @@ public class RegistryEventHandlers {
     generator.addProvider(
         event.includeServer(),
         new CosmereCraftRecipeProvider(packOutput));
+    generator.addProvider(
+        event.includeServer(),
+        new CosmereCraftLootTableProvider(packOutput));
   }
 }

@@ -30,6 +30,7 @@ public class CosmereCraftItemTagsProvider extends ItemTagsProvider {
 
   @Override
   protected void addTags(HolderLookup.Provider lookupProvider) {
+    // TODO: add new items
     CosmereCraftItems.METAL_POWDERS.values().stream()
         .map(Holder::value)
         .forEach(this::tagAsMetalPowder);

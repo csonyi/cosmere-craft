@@ -10,19 +10,16 @@ import static com.csonyi.cosmerecraft.capability.allomancy.AllomanticMetal.Type.
 import static com.csonyi.cosmerecraft.capability.allomancy.AllomanticMetal.Type.TEMPORAL;
 
 import com.csonyi.cosmerecraft.CosmereCraft;
-import com.csonyi.cosmerecraft.registry.CosmereCraftItems;
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import net.minecraft.core.Holder;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.Items;
 
 public enum AllomanticMetal {
 
@@ -60,16 +57,16 @@ public enum AllomanticMetal {
   public final Side side;
 
   public final int maxBurnStrength;
-  public final boolean hasVanillaImplementation;
+  public final boolean isVanilla;
   public final boolean isAlloy;
   public final Set<MobEffect> effects;
 
-  AllomanticMetal(Type type, Direction direction, Side side, boolean hasVanillaImplementation, boolean isAlloy, MobEffect... effects) {
+  AllomanticMetal(Type type, Direction direction, Side side, boolean isVanilla, boolean isAlloy, MobEffect... effects) {
     this.type = type;
     this.direction = direction;
     this.side = side;
     this.maxBurnStrength = 4; // TODO: move to config
-    this.hasVanillaImplementation = hasVanillaImplementation;
+    this.isVanilla = isVanilla;
     this.isAlloy = isAlloy;
     this.effects = Set.of(effects);
   }
@@ -84,6 +81,14 @@ public enum AllomanticMetal {
 
   public boolean isGodMetal() {
     return Type.GOD.equals(type);
+  }
+
+  public boolean isVanilla() {
+    return isVanilla;
+  }
+
+  public boolean isAlloy() {
+    return isAlloy;
   }
 
   public Stream<MobEffect> getEffects() {
@@ -106,44 +111,12 @@ public enum AllomanticMetal {
     return "cosmerecraft.metals.%s".formatted(lowerCaseName());
   }
 
-  public Holder<Item> getIngotItemHolder() {
-    return switch (this) {
-      case IRON -> Holder.direct(Items.IRON_INGOT);
-      case GOLD -> Holder.direct(Items.GOLD_INGOT);
-      case COPPER -> Holder.direct(Items.COPPER_INGOT);
-      default -> CosmereCraftItems.METAL_INGOTS.get(this);
-    };
-  }
-
-  public Holder<Item> getRawMetalItemHolder() {
-    return switch (this) {
-      case IRON -> Holder.direct(Items.RAW_IRON);
-      case GOLD -> Holder.direct(Items.RAW_GOLD);
-      case COPPER -> Holder.direct(Items.RAW_COPPER);
-      default -> CosmereCraftItems.RAW_METALS.get(this);
-    };
-  }
-
-  public Holder<Item> getOreBlockItemHolder() {
-    return switch (this) {
-      case IRON -> Holder.direct(Items.IRON_ORE);
-      case GOLD -> Holder.direct(Items.GOLD_ORE);
-      case COPPER -> Holder.direct(Items.COPPER_ORE);
-      default -> CosmereCraftItems.METAL_ORE_BLOCK_ITEMS.get(this);
-    };
-  }
-
-  public Holder<Item> getDeepslateOreBlockItemHolder() {
-    return switch (this) {
-      case IRON -> Holder.direct(Items.DEEPSLATE_IRON_ORE);
-      case GOLD -> Holder.direct(Items.DEEPSLATE_GOLD_ORE);
-      case COPPER -> Holder.direct(Items.DEEPSLATE_COPPER_ORE);
-      default -> CosmereCraftItems.DEEPSLATE_METAL_ORE_BLOCK_ITEMS.get(this);
-    };
-  }
-
   public static Stream<AllomanticMetal> stream() {
     return Arrays.stream(values());
+  }
+
+  public static Stream<AllomanticMetal> stream(Predicate<AllomanticMetal> filter) {
+    return stream().filter(filter);
   }
 
   public static Set<String> names() {
@@ -151,7 +124,6 @@ public enum AllomanticMetal {
         .map(AllomanticMetal::lowerCaseName)
         .collect(Collectors.toSet());
   }
-
 
   public enum Type {
     PHYSICAL, MENTAL,

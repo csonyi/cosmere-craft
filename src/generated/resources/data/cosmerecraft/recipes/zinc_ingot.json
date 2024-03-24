@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:smelting",
+  "category": "misc",
+  "cookingtime": 200,
+  "experience": 0.7,
+  "ingredient": [
+    {
+      "item": "cosmerecraft:zinc_powder"
+    },
+    {
+      "item": "cosmerecraft:raw_zinc"
+    },
+    {
+      "item": "cosmerecraft:zinc_ore"
+    },
+    {
+      "item": "cosmerecraft:deepslate_zinc_ore"
+    }
+  ],
+  "result": "cosmerecraft:zinc_ingot"
+}

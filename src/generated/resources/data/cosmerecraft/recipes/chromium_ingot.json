@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:smelting",
+  "category": "misc",
+  "cookingtime": 200,
+  "experience": 0.7,
+  "ingredient": [
+    {
+      "item": "cosmerecraft:chromium_powder"
+    },
+    {
+      "item": "cosmerecraft:raw_chromium"
+    },
+    {
+      "item": "cosmerecraft:chromium_ore"
+    },
+    {
+      "item": "cosmerecraft:deepslate_chromium_ore"
+    }
+  ],
+  "result": "cosmerecraft:chromium_ingot"
+}

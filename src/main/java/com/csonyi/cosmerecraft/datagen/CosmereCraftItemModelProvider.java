@@ -1,10 +1,20 @@
 package com.csonyi.cosmerecraft.datagen;
 
+import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.ASH_PILE;
+import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.COAL_POWDER;
 import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.INVESTITURE_BUCKET;
+import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.LEAD_INGOT;
+import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.LEAD_POWDER;
+import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.LEAD_VIAL;
 import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.LERASIUM_NUGGET;
 import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.MORTAR_AND_PESTLE;
+import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.RAW_LEAD;
 
 import com.csonyi.cosmerecraft.CosmereCraft;
+import com.csonyi.cosmerecraft.registry.CosmereCraftItems;
+import java.util.Collection;
+import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Stream;
 import net.minecraft.core.Holder;
 import net.minecraft.data.PackOutput;
@@ -20,9 +30,25 @@ public class CosmereCraftItemModelProvider extends ItemModelProvider {
   @Override
   protected void registerModels() {
     Stream.of(
-            INVESTITURE_BUCKET,
-            LERASIUM_NUGGET,
-            MORTAR_AND_PESTLE)
+            // Holder collections
+            Stream.of(
+                    CosmereCraftItems.METAL_POWDERS,
+                    CosmereCraftItems.METAL_INGOTS,
+                    CosmereCraftItems.METAL_VIALS,
+                    CosmereCraftItems.RAW_METALS)
+                .map(Map::values)
+                .flatMap(Collection::stream),
+            Stream.of(
+                ASH_PILE,
+                INVESTITURE_BUCKET,
+                LERASIUM_NUGGET,
+                MORTAR_AND_PESTLE,
+                COAL_POWDER,
+                LEAD_POWDER,
+                LEAD_INGOT,
+                LEAD_VIAL,
+                RAW_LEAD))
+        .flatMap(Function.identity())
         .map(Holder::value)
         .forEach(this::basicItem);
   }

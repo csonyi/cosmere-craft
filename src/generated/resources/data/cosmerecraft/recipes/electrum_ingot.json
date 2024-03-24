@@ -1,0 +1,10 @@
+{
+  "type": "minecraft:smelting",
+  "category": "misc",
+  "cookingtime": 200,
+  "experience": 0.7,
+  "ingredient": {
+    "item": "cosmerecraft:electrum_powder"
+  },
+  "result": "cosmerecraft:electrum_ingot"
+}

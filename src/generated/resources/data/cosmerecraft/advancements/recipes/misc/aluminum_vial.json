@@ -1,0 +1,41 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_lerasium": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "cosmerecraft:lerasium_nugget"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "cosmerecraft:aluminum_vial"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    },
+    "inside_of_investiture": {
+      "conditions": {
+        "block": "cosmerecraft:investiture_liquid"
+      },
+      "trigger": "minecraft:enter_block"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_lerasium",
+      "inside_of_investiture"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "cosmerecraft:aluminum_vial"
+    ]
+  }
+}

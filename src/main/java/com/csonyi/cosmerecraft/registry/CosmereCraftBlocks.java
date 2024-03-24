@@ -1,6 +1,7 @@
 package com.csonyi.cosmerecraft.registry;
 
 import static com.csonyi.cosmerecraft.CosmereCraft.createResourceLocation;
+import static java.util.function.Predicate.not;
 
 import com.csonyi.cosmerecraft.CosmereCraft;
 import com.csonyi.cosmerecraft.block.AshLayerBlock;
@@ -40,24 +41,42 @@ public class CosmereCraftBlocks {
           .mapColor(DyeColor.LIGHT_GRAY));
 
   public static final Map<AllomanticMetal, Holder<Block>> METAL_ORES = AllomanticMetal.stream()
-      .filter(metal -> !metal.isGodMetal())
-      .filter(metal -> !metal.hasVanillaImplementation)
-      .filter(metal -> !metal.isAlloy)
+      .filter(not(AllomanticMetal::isGodMetal))
+      .filter(not(AllomanticMetal::isVanilla))
+      .filter(not(AllomanticMetal::isAlloy))
       .collect(Collectors.toMap(
           Function.identity(),
           metal -> BLOCKS.registerSimpleBlock(
               "%s_ore".formatted(metal.lowerCaseName()),
               BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_ORE))));
+  public static final Holder<Block> LEAD_ORE = BLOCKS.registerSimpleBlock(
+      "lead_ore",
+      BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_ORE));
 
   public static final Map<AllomanticMetal, Holder<Block>> DEEPSLATE_METAL_ORES = AllomanticMetal.stream()
-      .filter(metal -> !metal.isGodMetal())
-      .filter(metal -> !metal.hasVanillaImplementation)
-      .filter(metal -> !metal.isAlloy)
+      .filter(not(AllomanticMetal::isGodMetal))
+      .filter(not(AllomanticMetal::isVanilla))
+      .filter(not(AllomanticMetal::isAlloy))
       .collect(Collectors.toMap(
           Function.identity(),
           metal -> BLOCKS.registerSimpleBlock(
               "deepslate_%s_ore".formatted(metal.lowerCaseName()),
               BlockBehaviour.Properties.ofFullCopy(Blocks.DEEPSLATE_IRON_ORE))));
+  public static final Holder<Block> DEEPSLATE_LEAD_ORE = BLOCKS.registerSimpleBlock(
+      "deepslate_lead_ore",
+      BlockBehaviour.Properties.ofFullCopy(Blocks.DEEPSLATE_IRON_ORE));
+
+  public static final Map<AllomanticMetal, Holder<Block>> METAL_BLOCKS = AllomanticMetal.stream()
+      .filter(not(AllomanticMetal::isGodMetal))
+      .filter(not(AllomanticMetal::isVanilla))
+      .collect(Collectors.toMap(
+          Function.identity(),
+          metal -> BLOCKS.registerSimpleBlock(
+              "%s_block".formatted(metal.lowerCaseName()),
+              BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_BLOCK))));
+  public static final Holder<Block> LEAD_BLOCK = BLOCKS.registerSimpleBlock(
+      "lead_block",
+      BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_BLOCK));
 
   public static final DeferredBlock<LiquidBlock> INVESTITURE_LIQUID = BLOCKS.register(
       "investiture_liquid",

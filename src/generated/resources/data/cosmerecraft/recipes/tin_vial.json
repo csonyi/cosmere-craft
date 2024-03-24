@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "minecraft:potion"
+    },
+    {
+      "item": "cosmerecraft:tin_powder"
+    }
+  ],
+  "result": {
+    "item": "cosmerecraft:tin_vial"
+  }
+}

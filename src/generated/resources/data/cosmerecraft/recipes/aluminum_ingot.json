@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:smelting",
+  "category": "misc",
+  "cookingtime": 200,
+  "experience": 0.7,
+  "ingredient": [
+    {
+      "item": "cosmerecraft:aluminum_powder"
+    },
+    {
+      "item": "cosmerecraft:raw_aluminum"
+    },
+    {
+      "item": "cosmerecraft:aluminum_ore"
+    },
+    {
+      "item": "cosmerecraft:deepslate_aluminum_ore"
+    }
+  ],
+  "result": "cosmerecraft:aluminum_ingot"
+}

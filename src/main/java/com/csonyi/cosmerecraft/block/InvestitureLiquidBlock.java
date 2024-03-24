@@ -18,6 +18,7 @@ public class InvestitureLiquidBlock extends LiquidBlock {
     super(
         CosmereCraftFluids.INVESTITURE,
         BlockBehaviour.Properties.of()
+            .noLootTable()
             .liquid()
             .mapColor(MapColor.TERRACOTTA_YELLOW)
             .lightLevel(state -> 15)

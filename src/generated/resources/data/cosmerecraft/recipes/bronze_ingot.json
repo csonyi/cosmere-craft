@@ -1,0 +1,10 @@
+{
+  "type": "minecraft:smelting",
+  "category": "misc",
+  "cookingtime": 200,
+  "experience": 0.7,
+  "ingredient": {
+    "item": "cosmerecraft:bronze_powder"
+  },
+  "result": "cosmerecraft:bronze_ingot"
+}

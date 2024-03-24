@@ -26,3 +26,4 @@ run-data
 repo
 
 .sdkmanrc
+/src/generated/resources/.cache/

@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "cosmerecraft:ash_block"
+    }
+  ],
+  "result": {
+    "count": 4,
+    "item": "cosmerecraft:ash_pile"
+  }
+}

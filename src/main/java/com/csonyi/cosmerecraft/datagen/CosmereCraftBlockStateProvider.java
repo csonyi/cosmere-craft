@@ -2,20 +2,15 @@ package com.csonyi.cosmerecraft.datagen;
 
 import com.csonyi.cosmerecraft.CosmereCraft;
 import com.csonyi.cosmerecraft.block.AshLayerBlock;
-import com.csonyi.cosmerecraft.capability.allomancy.AllomanticMetal;
 import com.csonyi.cosmerecraft.registry.CosmereCraftBlocks;
-import com.csonyi.cosmerecraft.registry.CosmereCraftItems;
-import java.util.Collection;
-import java.util.Map;
-import java.util.stream.Stream;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.client.model.generators.BlockModelBuilder;
 import net.neoforged.neoforge.client.model.generators.BlockStateProvider;
 import net.neoforged.neoforge.client.model.generators.ModelBuilder;
-import net.neoforged.neoforge.client.model.generators.ModelFile;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 
 public class CosmereCraftBlockStateProvider extends BlockStateProvider {
@@ -34,25 +29,23 @@ public class CosmereCraftBlockStateProvider extends BlockStateProvider {
 
   private void generateAllomanticMetalStuff() {
     CosmereCraftBlocks.METAL_ORES.forEach(
-        (metal, block) -> getVariantBuilder(block.value()).partialState()
-            .modelForState()
-            .modelFile(metalOreModel(metal))
-            .addModel());
+        (metal, block) -> {
+          var name = "%s_ore".formatted(metal.lowerCaseName());
+          generateCubeAllStuff(block, name);
+        });
+    generateCubeAllStuff(CosmereCraftBlocks.LEAD_ORE, "lead_ore");
     CosmereCraftBlocks.DEEPSLATE_METAL_ORES.forEach(
-        (metal, block) -> getVariantBuilder(block.value()).partialState()
-            .modelForState()
-            .modelFile(deepslateMetalOreModel(metal))
-            .addModel());
-
-    Stream.of(
-            CosmereCraftItems.METAL_POWDERS,
-            CosmereCraftItems.METAL_INGOTS,
-            CosmereCraftItems.METAL_VIALS,
-            CosmereCraftItems.RAW_METALS)
-        .map(Map::values)
-        .flatMap(Collection::stream)
-        .map(Holder::value)
-        .forEach(itemModels()::basicItem);
+        (metal, block) -> {
+          var name = "deepslate_%s_ore".formatted(metal.lowerCaseName());
+          generateCubeAllStuff(block, name);
+        });
+    generateCubeAllStuff(CosmereCraftBlocks.DEEPSLATE_LEAD_ORE, "deepslate_lead_ore");
+    CosmereCraftBlocks.METAL_BLOCKS.forEach(
+        (metal, block) -> {
+          var name = "%s_block".formatted(metal.lowerCaseName());
+          generateCubeAllStuff(block, name);
+        });
+    generateCubeAllStuff(CosmereCraftBlocks.LEAD_BLOCK, "lead_block");
   }
 
   private void generateAshStuff() {
@@ -64,15 +57,14 @@ public class CosmereCraftBlockStateProvider extends BlockStateProvider {
         .modelForState()
         .modelFile(cubeAllModel("ash_block", ASH_BLOCK_LOCATION))
         .addModel();
-    itemModels().withExistingParent("ash_block", modLoc("block/ash_block"));
+    itemModels().cubeAll("ash_block", ASH_BLOCK_LOCATION);
 
+    // TODO: add ashy grass behaviour
     // getVariantBuilder(Blocks.GRASS_BLOCK).partialState()
     //     .with(AshyDirtBlock.ASHY, true)
     //     .modelForState()
     //     .modelFile(ashyGrassModel())
     //     .addModel();
-
-    itemModels().basicItem(CosmereCraftItems.ASH_PILE.value());
   }
 
 
@@ -94,7 +86,7 @@ public class CosmereCraftBlockStateProvider extends BlockStateProvider {
           .to(16, 2, 16)
           .allFaces((direction, faceBuilder) -> buildFaces(layer, direction, faceBuilder))
           .end();
-      case 8 -> cubeAllModel("ash", ASH_BLOCK_LOCATION);
+      case 8 -> cubeAllModel("ash");
       default -> models().getBuilder("ash_height" + layer * 2)
           .texture("particle", ASH_BLOCK_LOCATION)
           .texture("texture", ASH_BLOCK_LOCATION)
@@ -125,21 +117,27 @@ public class CosmereCraftBlockStateProvider extends BlockStateProvider {
     }
   }
 
+  private void generateCubeAllStuff(Holder<Block> blockHolder, String name) {
+    getVariantBuilder(blockHolder.value()).partialState()
+        .modelForState()
+        .modelFile(cubeAllModel(name))
+        .addModel();
+    cubeAllBlockItemModel(name);
+  }
+
+  private BlockModelBuilder cubeAllModel(String name) {
+    return cubeAllModel(name, modLoc("block/" + name));
+  }
+
   private BlockModelBuilder cubeAllModel(String name, ResourceLocation texture) {
     return models().cubeAll(name, texture);
   }
 
-  private ModelFile metalOreModel(AllomanticMetal metal) {
-    var name = "%s_ore".formatted(metal.lowerCaseName());
-    return cubeAllModel(name, modLoc("block/" + name));
+  private void cubeAllBlockItemModel(String name) {
+    cubeAllModel(name, modLoc("block/" + name));
   }
 
-  private ModelFile deepslateMetalOreModel(AllomanticMetal metal) {
-    var name = "deepslate_%s_ore".formatted(metal.lowerCaseName());
-    return cubeAllModel(name, modLoc("block/" + name));
-  }
-
-  private BlockModelBuilder ashyGrassModel() {
-    return cubeAllModel("ashy_grass", modLoc("block/grass_block_ash"));
-  }
+  // private BlockModelBuilder ashyGrassModel() {
+  //   return cubeAllModel("ashy_grass", modLoc("block/grass_block_ash"));
+  // }
 }

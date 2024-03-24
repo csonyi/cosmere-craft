@@ -28,6 +28,7 @@ public class CosmereCraftBlockTagsProvider extends BlockTagsProvider {
 
   @Override
   protected void addTags(HolderLookup.Provider lookupProvider) {
+    // TODO: Add new blocks
     generateForMatchingBlockKeys();
     addForBlocksWithMetalInRecipe();
   }
