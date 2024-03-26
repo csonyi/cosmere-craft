@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:smelting",
+  "category": "misc",
+  "cookingtime": 200,
+  "experience": 0.7,
+  "ingredient": [
+    {
+      "item": "cosmerecraft:silver_powder"
+    },
+    {
+      "item": "cosmerecraft:raw_silver"
+    },
+    {
+      "item": "cosmerecraft:silver_block"
+    },
+    {
+      "item": "cosmerecraft:deepslate_silver_ore"
+    }
+  ],
+  "result": "cosmerecraft:silver_ingot"
+}

@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    [
+      {
+        "item": "cosmerecraft:aluminum_ingot"
+      },
+      {
+        "item": "cosmerecraft:raw_aluminum"
+      }
+    ],
+    {
+      "item": "cosmerecraft:mortar_and_pestle"
+    }
+  ],
+  "result": {
+    "item": "cosmerecraft:aluminum_powder"
+  }
+}

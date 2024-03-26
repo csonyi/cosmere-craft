@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    [
+      {
+        "item": "cosmerecraft:aluminum_ore"
+      },
+      {
+        "item": "cosmerecraft:deepslate_aluminum_ore"
+      }
+    ],
+    {
+      "item": "cosmerecraft:mortar_and_pestle"
+    }
+  ],
+  "result": {
+    "count": 2,
+    "item": "cosmerecraft:aluminum_powder"
+  }
+}

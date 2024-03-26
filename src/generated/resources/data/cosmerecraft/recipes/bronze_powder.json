@@ -3,13 +3,20 @@
   "category": "misc",
   "ingredients": [
     {
-      "item": "cosmerecraft:bronze_powder"
+      "item": "cosmerecraft:copper_powder"
     },
     {
-      "item": "cosmerecraft:mortar_and_pestle"
+      "item": "cosmerecraft:copper_powder"
+    },
+    {
+      "item": "cosmerecraft:copper_powder"
+    },
+    {
+      "item": "cosmerecraft:tin_powder"
     }
   ],
   "result": {
+    "count": 4,
     "item": "cosmerecraft:bronze_powder"
   }
 }

@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    [
+      {
+        "item": "cosmerecraft:bismuth_ingot"
+      },
+      {
+        "item": "cosmerecraft:raw_bismuth"
+      }
+    ],
+    {
+      "item": "cosmerecraft:mortar_and_pestle"
+    }
+  ],
+  "result": {
+    "item": "cosmerecraft:bismuth_powder"
+  }
+}

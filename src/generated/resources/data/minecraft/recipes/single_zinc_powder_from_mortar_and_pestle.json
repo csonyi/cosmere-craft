@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    [
+      {
+        "item": "cosmerecraft:zinc_ingot"
+      },
+      {
+        "item": "cosmerecraft:raw_zinc"
+      }
+    ],
+    {
+      "item": "cosmerecraft:mortar_and_pestle"
+    }
+  ],
+  "result": {
+    "item": "cosmerecraft:zinc_powder"
+  }
+}

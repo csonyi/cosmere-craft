@@ -50,7 +50,9 @@ public class CosmereCraftItems {
           Function.identity(),
           metal -> ITEMS.registerSimpleItem("%s_powder".formatted(metal.lowerCaseName()))));
   public static final Holder<Item> LEAD_POWDER = ITEMS.registerSimpleItem("lead_powder");
-
+  public static final Holder<Item> NICKEL_POWDER = ITEMS.registerSimpleItem("nickel_powder");
+  public static final Holder<Item> SILVER_POWDER = ITEMS.registerSimpleItem("silver_powder");
+  public static final Holder<Item> BISMUTH_POWDER = ITEMS.registerSimpleItem("bismuth_powder");
   public static final Map<AllomanticMetal, Holder<Item>> METAL_INGOTS = AllomanticMetal.stream()
       .filter(not(AllomanticMetal::isGodMetal))
       .filter(not(AllomanticMetal::isVanilla))
@@ -58,11 +60,14 @@ public class CosmereCraftItems {
           Function.identity(),
           metal -> ITEMS.registerSimpleItem("%s_ingot".formatted(metal.lowerCaseName()))));
   public static final Holder<Item> LEAD_INGOT = ITEMS.registerSimpleItem("lead_ingot");
+  public static final Holder<Item> NICKEL_INGOT = ITEMS.registerSimpleItem("nickel_ingot");
+  public static final Holder<Item> SILVER_INGOT = ITEMS.registerSimpleItem("silver_ingot");
+  public static final Holder<Item> BISMUTH_INGOT = ITEMS.registerSimpleItem("bismuth_ingot");
   public static final Map<AllomanticMetal, Holder<Item>> METAL_VIALS = AllomanticMetal.stream()
+      .filter(not(AllomanticMetal::isGodMetal))
       .collect(Collectors.toMap(
           Function.identity(),
           metal -> ITEMS.register("%s_vial".formatted(metal.lowerCaseName()), () -> new MetalVial(metal))));
-  public static final Holder<Item> LEAD_VIAL = ITEMS.registerSimpleItem("lead_vial");
   public static final Map<AllomanticMetal, Holder<Item>> RAW_METALS = AllomanticMetal.stream()
       .filter(not(AllomanticMetal::isGodMetal))
       .filter(not(AllomanticMetal::isVanilla))
@@ -71,26 +76,47 @@ public class CosmereCraftItems {
           Function.identity(),
           metal -> ITEMS.registerSimpleItem("raw_%s".formatted(metal.lowerCaseName()))));
   public static final Holder<Item> RAW_LEAD = ITEMS.registerSimpleItem("raw_lead");
-
+  public static final Holder<Item> RAW_NICKEL = ITEMS.registerSimpleItem("raw_nickel");
+  public static final Holder<Item> RAW_SILVER = ITEMS.registerSimpleItem("raw_silver");
+  public static final Holder<Item> RAW_BISMUTH = ITEMS.registerSimpleItem("raw_bismuth");
   public static final Map<AllomanticMetal, Holder<Item>> METAL_ORE_BLOCK_ITEMS =
       CosmereCraftBlocks.METAL_ORES.entrySet().stream()
           .collect(Collectors.toMap(
               Map.Entry::getKey,
               entry -> ITEMS.registerSimpleBlockItem(entry.getValue())));
   public static final Holder<Item> LEAD_ORE_BLOCK_ITEM = ITEMS.registerSimpleBlockItem(CosmereCraftBlocks.LEAD_ORE);
+  public static final Holder<Item> NICKEL_ORE_BLOCK_ITEM = ITEMS.registerSimpleBlockItem(CosmereCraftBlocks.NICKEL_ORE);
+  public static final Holder<Item> SILVER_ORE_BLOCK_ITEM = ITEMS.registerSimpleBlockItem(CosmereCraftBlocks.SILVER_ORE);
+  public static final Holder<Item> BISMUTH_ORE_BLOCK_ITEM = ITEMS.registerSimpleBlockItem(CosmereCraftBlocks.BISMUTH_ORE);
   public static final Map<AllomanticMetal, Holder<Item>> DEEPSLATE_METAL_ORE_BLOCK_ITEMS =
       CosmereCraftBlocks.DEEPSLATE_METAL_ORES.entrySet().stream()
           .collect(Collectors.toMap(
               Map.Entry::getKey,
               entry -> ITEMS.registerSimpleBlockItem(entry.getValue())));
   public static final Holder<Item> DEEPSLATE_LEAD_ORE_BLOCK_ITEM = ITEMS.registerSimpleBlockItem(CosmereCraftBlocks.DEEPSLATE_LEAD_ORE);
-
+  public static final Holder<Item> DEEPSLATE_NICKEL_ORE_BLOCK_ITEM = ITEMS.registerSimpleBlockItem(CosmereCraftBlocks.DEEPSLATE_NICKEL_ORE);
+  public static final Holder<Item> DEEPSLATE_SILVER_ORE_BLOCK_ITEM = ITEMS.registerSimpleBlockItem(CosmereCraftBlocks.DEEPSLATE_SILVER_ORE);
+  public static final Holder<Item> DEEPSLATE_BISMUTH_ORE_BLOCK_ITEM = ITEMS.registerSimpleBlockItem(
+      CosmereCraftBlocks.DEEPSLATE_BISMUTH_ORE);
   public static final Map<AllomanticMetal, Holder<Item>> METAL_BLOCK_ITEMS =
       CosmereCraftBlocks.METAL_BLOCKS.entrySet().stream()
           .collect(Collectors.toMap(
               Map.Entry::getKey,
               entry -> ITEMS.registerSimpleBlockItem(entry.getValue())));
   public static final Holder<Item> LEAD_BLOCK_ITEM = ITEMS.registerSimpleBlockItem(CosmereCraftBlocks.LEAD_BLOCK);
+  public static final Holder<Item> NICKEL_BLOCK_ITEM = ITEMS.registerSimpleBlockItem(CosmereCraftBlocks.NICKEL_BLOCK);
+  public static final Holder<Item> SILVER_BLOCK_ITEM = ITEMS.registerSimpleBlockItem(CosmereCraftBlocks.SILVER_BLOCK);
+  public static final Holder<Item> BISMUTH_BLOCK_ITEM = ITEMS.registerSimpleBlockItem(CosmereCraftBlocks.BISMUTH_BLOCK);
+
+  public static final Map<AllomanticMetal, Holder<Item>> RAW_METAL_BLOCK_ITEMS =
+      CosmereCraftBlocks.RAW_METAL_BLOCKS.entrySet().stream()
+          .collect(Collectors.toMap(
+              Map.Entry::getKey,
+              entry -> ITEMS.registerSimpleBlockItem(entry.getValue())));
+  public static final Holder<Item> RAW_LEAD_BLOCK_ITEM = ITEMS.registerSimpleBlockItem(CosmereCraftBlocks.RAW_LEAD_BLOCK);
+  public static final Holder<Item> RAW_NICKEL_BLOCK_ITEM = ITEMS.registerSimpleBlockItem(CosmereCraftBlocks.RAW_NICKEL_BLOCK);
+  public static final Holder<Item> RAW_SILVER_BLOCK_ITEM = ITEMS.registerSimpleBlockItem(CosmereCraftBlocks.RAW_SILVER_BLOCK);
+  public static final Holder<Item> RAW_BISMUTH_BLOCK_ITEM = ITEMS.registerSimpleBlockItem(CosmereCraftBlocks.RAW_BISMUTH_BLOCK);
 
 
   public static void generateDisplayItems(CreativeModeTab.ItemDisplayParameters parameters, CreativeModeTab.Output output) {
@@ -103,7 +129,8 @@ public class CosmereCraftItems {
                     RAW_METALS,
                     METAL_ORE_BLOCK_ITEMS,
                     DEEPSLATE_METAL_ORE_BLOCK_ITEMS,
-                    METAL_BLOCK_ITEMS)
+                    METAL_BLOCK_ITEMS,
+                    RAW_METAL_BLOCK_ITEMS)
                 .map(Map::values)
                 .flatMap(Collection::stream),
             // Other item holders
@@ -116,12 +143,33 @@ public class CosmereCraftItems {
                 MORTAR_AND_PESTLE,
                 COAL_POWDER,
                 LEAD_POWDER,
+                NICKEL_POWDER,
+                SILVER_POWDER,
+                BISMUTH_POWDER,
                 LEAD_INGOT,
-                LEAD_VIAL,
+                NICKEL_INGOT,
+                SILVER_INGOT,
+                BISMUTH_INGOT,
                 RAW_LEAD,
+                RAW_NICKEL,
+                RAW_SILVER,
+                RAW_BISMUTH,
                 LEAD_ORE_BLOCK_ITEM,
+                NICKEL_ORE_BLOCK_ITEM,
+                SILVER_ORE_BLOCK_ITEM,
+                BISMUTH_ORE_BLOCK_ITEM,
                 DEEPSLATE_LEAD_ORE_BLOCK_ITEM,
-                LEAD_BLOCK_ITEM))
+                DEEPSLATE_NICKEL_ORE_BLOCK_ITEM,
+                DEEPSLATE_SILVER_ORE_BLOCK_ITEM,
+                DEEPSLATE_BISMUTH_ORE_BLOCK_ITEM,
+                LEAD_BLOCK_ITEM,
+                NICKEL_BLOCK_ITEM,
+                SILVER_BLOCK_ITEM,
+                BISMUTH_BLOCK_ITEM,
+                RAW_LEAD_BLOCK_ITEM,
+                RAW_NICKEL_BLOCK_ITEM,
+                RAW_SILVER_BLOCK_ITEM,
+                RAW_BISMUTH_BLOCK_ITEM))
         .flatMap(Function.identity())
         .map(Holder::value)
         .map(Item::getDefaultInstance)

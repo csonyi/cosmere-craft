@@ -3,9 +3,13 @@ package com.csonyi.cosmerecraft.datagen;
 import com.csonyi.cosmerecraft.CosmereCraft;
 import com.csonyi.cosmerecraft.capability.allomancy.AllomanticMetal;
 import com.csonyi.cosmerecraft.registry.CosmereCraftBlocks;
+import java.util.Collection;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.Function;
 import java.util.stream.Stream;
+import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.PackOutput;
@@ -28,9 +32,40 @@ public class CosmereCraftBlockTagsProvider extends BlockTagsProvider {
 
   @Override
   protected void addTags(HolderLookup.Provider lookupProvider) {
-    // TODO: Add new blocks
     generateForMatchingBlockKeys();
     addForBlocksWithMetalInRecipe();
+    addForModdedBlocks();
+  }
+
+  private void addForModdedBlocks() {
+    Stream.of(
+            Stream.of(
+                    CosmereCraftBlocks.METAL_ORES,
+                    CosmereCraftBlocks.DEEPSLATE_METAL_ORES,
+                    CosmereCraftBlocks.METAL_BLOCKS,
+                    CosmereCraftBlocks.RAW_METAL_BLOCKS)
+                .map(Map::values)
+                .flatMap(Collection::stream),
+            Stream.of(
+                CosmereCraftBlocks.LEAD_ORE,
+                CosmereCraftBlocks.NICKEL_ORE,
+                CosmereCraftBlocks.SILVER_ORE,
+                CosmereCraftBlocks.BISMUTH_ORE,
+                CosmereCraftBlocks.DEEPSLATE_LEAD_ORE,
+                CosmereCraftBlocks.DEEPSLATE_NICKEL_ORE,
+                CosmereCraftBlocks.DEEPSLATE_SILVER_ORE,
+                CosmereCraftBlocks.DEEPSLATE_BISMUTH_ORE,
+                CosmereCraftBlocks.LEAD_BLOCK,
+                CosmereCraftBlocks.NICKEL_BLOCK,
+                CosmereCraftBlocks.SILVER_BLOCK,
+                CosmereCraftBlocks.BISMUTH_BLOCK,
+                CosmereCraftBlocks.RAW_LEAD_BLOCK,
+                CosmereCraftBlocks.RAW_NICKEL_BLOCK,
+                CosmereCraftBlocks.RAW_SILVER_BLOCK,
+                CosmereCraftBlocks.RAW_BISMUTH_BLOCK))
+        .flatMap(Function.identity())
+        .map(Holder::value)
+        .forEach(this::tagAsAnchor);
   }
 
   private void addForBlocksWithMetalInRecipe() {

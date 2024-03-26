@@ -3,13 +3,14 @@
   "category": "misc",
   "ingredients": [
     {
-      "item": "cosmerecraft:brass_powder"
+      "item": "cosmerecraft:copper_powder"
     },
     {
-      "item": "cosmerecraft:mortar_and_pestle"
+      "item": "cosmerecraft:zinc_powder"
     }
   ],
   "result": {
+    "count": 2,
     "item": "cosmerecraft:brass_powder"
   }
 }

@@ -3,10 +3,13 @@
   "category": "misc",
   "ingredients": [
     {
-      "item": "cosmerecraft:steel_powder"
+      "item": "cosmerecraft:iron_powder"
     },
     {
-      "item": "cosmerecraft:mortar_and_pestle"
+      "item": "cosmerecraft:coal_powder"
+    },
+    {
+      "item": "cosmerecraft:coal_powder"
     }
   ],
   "result": {

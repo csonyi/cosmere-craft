@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:smelting",
+  "category": "misc",
+  "cookingtime": 200,
+  "experience": 0.7,
+  "ingredient": [
+    {
+      "item": "cosmerecraft:nickel_powder"
+    },
+    {
+      "item": "cosmerecraft:raw_nickel"
+    },
+    {
+      "item": "cosmerecraft:nickel_block"
+    },
+    {
+      "item": "cosmerecraft:deepslate_nickel_ore"
+    }
+  ],
+  "result": "cosmerecraft:nickel_ingot"
+}

@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:smelting",
+  "category": "misc",
+  "cookingtime": 200,
+  "experience": 0.7,
+  "ingredient": [
+    {
+      "item": "cosmerecraft:bismuth_powder"
+    },
+    {
+      "item": "cosmerecraft:raw_bismuth"
+    },
+    {
+      "item": "cosmerecraft:bismuth_block"
+    },
+    {
+      "item": "cosmerecraft:deepslate_bismuth_ore"
+    }
+  ],
+  "result": "cosmerecraft:bismuth_ingot"
+}

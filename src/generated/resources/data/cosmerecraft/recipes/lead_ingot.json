@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:smelting",
+  "category": "misc",
+  "cookingtime": 200,
+  "experience": 0.7,
+  "ingredient": [
+    {
+      "item": "cosmerecraft:lead_powder"
+    },
+    {
+      "item": "cosmerecraft:raw_lead"
+    },
+    {
+      "item": "cosmerecraft:lead_block"
+    },
+    {
+      "item": "cosmerecraft:deepslate_lead_ore"
+    }
+  ],
+  "result": "cosmerecraft:lead_ingot"
+}

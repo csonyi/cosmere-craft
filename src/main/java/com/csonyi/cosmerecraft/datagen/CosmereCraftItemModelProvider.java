@@ -5,7 +5,6 @@ import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.COAL_POWDER;
 import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.INVESTITURE_BUCKET;
 import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.LEAD_INGOT;
 import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.LEAD_POWDER;
-import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.LEAD_VIAL;
 import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.LERASIUM_NUGGET;
 import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.MORTAR_AND_PESTLE;
 import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.RAW_LEAD;
@@ -46,7 +45,6 @@ public class CosmereCraftItemModelProvider extends ItemModelProvider {
                 COAL_POWDER,
                 LEAD_POWDER,
                 LEAD_INGOT,
-                LEAD_VIAL,
                 RAW_LEAD))
         .flatMap(Function.identity())
         .map(Holder::value)

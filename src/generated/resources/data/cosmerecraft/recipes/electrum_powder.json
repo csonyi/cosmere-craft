@@ -3,13 +3,14 @@
   "category": "misc",
   "ingredients": [
     {
-      "item": "cosmerecraft:electrum_powder"
+      "item": "cosmerecraft:gold_powder"
     },
     {
-      "item": "cosmerecraft:mortar_and_pestle"
+      "item": "cosmerecraft:silver_powder"
     }
   ],
   "result": {
+    "count": 2,
     "item": "cosmerecraft:electrum_powder"
   }
 }

@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    [
+      {
+        "item": "cosmerecraft:nickel_block"
+      },
+      {
+        "item": "cosmerecraft:deepslate_nickel_ore"
+      }
+    ],
+    {
+      "item": "cosmerecraft:mortar_and_pestle"
+    }
+  ],
+  "result": {
+    "count": 2,
+    "item": "cosmerecraft:nickel_powder"
+  }
+}

@@ -23,32 +23,50 @@ public class CosmereCraftBlockStateProvider extends BlockStateProvider {
 
   @Override
   protected void registerStatesAndModels() {
-    generateAllomanticMetalStuff();
-    generateAshStuff();
+    generateMetalStatesAndModels();
+    generateAshStatesAndModels();
   }
 
-  private void generateAllomanticMetalStuff() {
+  private void generateMetalStatesAndModels() {
     CosmereCraftBlocks.METAL_ORES.forEach(
         (metal, block) -> {
           var name = "%s_ore".formatted(metal.lowerCaseName());
           generateCubeAllStuff(block, name);
         });
     generateCubeAllStuff(CosmereCraftBlocks.LEAD_ORE, "lead_ore");
+    generateCubeAllStuff(CosmereCraftBlocks.NICKEL_ORE, "nickel_ore");
+    generateCubeAllStuff(CosmereCraftBlocks.SILVER_ORE, "silver_ore");
+    generateCubeAllStuff(CosmereCraftBlocks.BISMUTH_ORE, "bismuth_ore");
     CosmereCraftBlocks.DEEPSLATE_METAL_ORES.forEach(
         (metal, block) -> {
           var name = "deepslate_%s_ore".formatted(metal.lowerCaseName());
           generateCubeAllStuff(block, name);
         });
     generateCubeAllStuff(CosmereCraftBlocks.DEEPSLATE_LEAD_ORE, "deepslate_lead_ore");
+    generateCubeAllStuff(CosmereCraftBlocks.DEEPSLATE_NICKEL_ORE, "deepslate_nickel_ore");
+    generateCubeAllStuff(CosmereCraftBlocks.DEEPSLATE_SILVER_ORE, "deepslate_silver_ore");
+    generateCubeAllStuff(CosmereCraftBlocks.DEEPSLATE_BISMUTH_ORE, "deepslate_bismuth_ore");
     CosmereCraftBlocks.METAL_BLOCKS.forEach(
         (metal, block) -> {
           var name = "%s_block".formatted(metal.lowerCaseName());
           generateCubeAllStuff(block, name);
         });
     generateCubeAllStuff(CosmereCraftBlocks.LEAD_BLOCK, "lead_block");
+    generateCubeAllStuff(CosmereCraftBlocks.NICKEL_BLOCK, "nickel_block");
+    generateCubeAllStuff(CosmereCraftBlocks.SILVER_BLOCK, "silver_block");
+    generateCubeAllStuff(CosmereCraftBlocks.BISMUTH_BLOCK, "bismuth_block");
+    CosmereCraftBlocks.RAW_METAL_BLOCKS.forEach(
+        (metal, block) -> {
+          var name = "raw_%s_block".formatted(metal.lowerCaseName());
+          generateCubeAllStuff(block, name);
+        });
+    generateCubeAllStuff(CosmereCraftBlocks.RAW_LEAD_BLOCK, "raw_lead_block");
+    generateCubeAllStuff(CosmereCraftBlocks.RAW_NICKEL_BLOCK, "raw_nickel_block");
+    generateCubeAllStuff(CosmereCraftBlocks.RAW_SILVER_BLOCK, "raw_silver_block");
+    generateCubeAllStuff(CosmereCraftBlocks.RAW_BISMUTH_BLOCK, "raw_bismuth_block");
   }
 
-  private void generateAshStuff() {
+  private void generateAshStatesAndModels() {
     AshLayerBlock.LAYERS.getPossibleValues()
         .forEach(this::buildLayerData);
     itemModels().withExistingParent("ash", modLoc("block/ash_height2"));

@@ -52,6 +52,15 @@ public class CosmereCraftBlocks {
   public static final Holder<Block> LEAD_ORE = BLOCKS.registerSimpleBlock(
       "lead_ore",
       BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_ORE));
+  public static final Holder<Block> NICKEL_ORE = BLOCKS.registerSimpleBlock(
+      "nickel_ore",
+      BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_ORE));
+  public static final Holder<Block> SILVER_ORE = BLOCKS.registerSimpleBlock(
+      "silver_ore",
+      BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_ORE));
+  public static final Holder<Block> BISMUTH_ORE = BLOCKS.registerSimpleBlock(
+      "bismuth_ore",
+      BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_ORE));
 
   public static final Map<AllomanticMetal, Holder<Block>> DEEPSLATE_METAL_ORES = AllomanticMetal.stream()
       .filter(not(AllomanticMetal::isGodMetal))
@@ -65,6 +74,15 @@ public class CosmereCraftBlocks {
   public static final Holder<Block> DEEPSLATE_LEAD_ORE = BLOCKS.registerSimpleBlock(
       "deepslate_lead_ore",
       BlockBehaviour.Properties.ofFullCopy(Blocks.DEEPSLATE_IRON_ORE));
+  public static final Holder<Block> DEEPSLATE_NICKEL_ORE = BLOCKS.registerSimpleBlock(
+      "deepslate_nickel_ore",
+      BlockBehaviour.Properties.ofFullCopy(Blocks.DEEPSLATE_IRON_ORE));
+  public static final Holder<Block> DEEPSLATE_SILVER_ORE = BLOCKS.registerSimpleBlock(
+      "deepslate_silver_ore",
+      BlockBehaviour.Properties.ofFullCopy(Blocks.DEEPSLATE_IRON_ORE));
+  public static final Holder<Block> DEEPSLATE_BISMUTH_ORE = BLOCKS.registerSimpleBlock(
+      "deepslate_bismuth_ore",
+      BlockBehaviour.Properties.ofFullCopy(Blocks.DEEPSLATE_IRON_ORE));
 
   public static final Map<AllomanticMetal, Holder<Block>> METAL_BLOCKS = AllomanticMetal.stream()
       .filter(not(AllomanticMetal::isGodMetal))
@@ -77,6 +95,37 @@ public class CosmereCraftBlocks {
   public static final Holder<Block> LEAD_BLOCK = BLOCKS.registerSimpleBlock(
       "lead_block",
       BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_BLOCK));
+  public static final Holder<Block> NICKEL_BLOCK = BLOCKS.registerSimpleBlock(
+      "nickel_block",
+      BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_BLOCK));
+  public static final Holder<Block> SILVER_BLOCK = BLOCKS.registerSimpleBlock(
+      "silver_block",
+      BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_BLOCK));
+  public static final Holder<Block> BISMUTH_BLOCK = BLOCKS.registerSimpleBlock(
+      "bismuth_block",
+      BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_BLOCK));
+
+  public static final Map<AllomanticMetal, Holder<Block>> RAW_METAL_BLOCKS = AllomanticMetal.stream()
+      .filter(not(AllomanticMetal::isGodMetal))
+      .filter(not(AllomanticMetal::isVanilla))
+      .filter(not(AllomanticMetal::isAlloy))
+      .collect(Collectors.toMap(
+          Function.identity(),
+          metal -> BLOCKS.registerSimpleBlock(
+              "raw_%s_block".formatted(metal.lowerCaseName()),
+              BlockBehaviour.Properties.ofFullCopy(Blocks.RAW_IRON_BLOCK))));
+  public static final Holder<Block> RAW_LEAD_BLOCK = BLOCKS.registerSimpleBlock(
+      "raw_lead_block",
+      BlockBehaviour.Properties.ofFullCopy(Blocks.RAW_IRON_BLOCK));
+  public static final Holder<Block> RAW_NICKEL_BLOCK = BLOCKS.registerSimpleBlock(
+      "raw_nickel_block",
+      BlockBehaviour.Properties.ofFullCopy(Blocks.RAW_IRON_BLOCK));
+  public static final Holder<Block> RAW_SILVER_BLOCK = BLOCKS.registerSimpleBlock(
+      "raw_silver_block",
+      BlockBehaviour.Properties.ofFullCopy(Blocks.RAW_IRON_BLOCK));
+  public static final Holder<Block> RAW_BISMUTH_BLOCK = BLOCKS.registerSimpleBlock(
+      "raw_bismuth_block",
+      BlockBehaviour.Properties.ofFullCopy(Blocks.RAW_IRON_BLOCK));
 
   public static final DeferredBlock<LiquidBlock> INVESTITURE_LIQUID = BLOCKS.register(
       "investiture_liquid",

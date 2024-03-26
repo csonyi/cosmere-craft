@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    [
+      {
+        "item": "minecraft:iron_ore"
+      },
+      {
+        "item": "minecraft:deepslate_iron_ore"
+      }
+    ],
+    {
+      "item": "cosmerecraft:mortar_and_pestle"
+    }
+  ],
+  "result": {
+    "count": 2,
+    "item": "cosmerecraft:iron_powder"
+  }
+}

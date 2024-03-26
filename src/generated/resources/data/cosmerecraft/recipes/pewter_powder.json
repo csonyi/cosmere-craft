@@ -3,13 +3,35 @@
   "category": "misc",
   "ingredients": [
     {
-      "item": "cosmerecraft:pewter_powder"
+      "item": "cosmerecraft:tin_powder"
     },
     {
-      "item": "cosmerecraft:mortar_and_pestle"
+      "item": "cosmerecraft:tin_powder"
+    },
+    {
+      "item": "cosmerecraft:tin_powder"
+    },
+    {
+      "item": "cosmerecraft:tin_powder"
+    },
+    {
+      "item": "cosmerecraft:tin_powder"
+    },
+    {
+      "item": "cosmerecraft:tin_powder"
+    },
+    {
+      "item": "cosmerecraft:tin_powder"
+    },
+    {
+      "item": "cosmerecraft:tin_powder"
+    },
+    {
+      "item": "cosmerecraft:lead_powder"
     }
   ],
   "result": {
+    "count": 9,
     "item": "cosmerecraft:pewter_powder"
   }
 }

@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    [
+      {
+        "item": "cosmerecraft:cadmium_ore"
+      },
+      {
+        "item": "cosmerecraft:deepslate_cadmium_ore"
+      }
+    ],
+    {
+      "item": "cosmerecraft:mortar_and_pestle"
+    }
+  ],
+  "result": {
+    "count": 2,
+    "item": "cosmerecraft:cadmium_powder"
+  }
+}

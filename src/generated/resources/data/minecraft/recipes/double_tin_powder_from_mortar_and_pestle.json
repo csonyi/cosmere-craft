@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    [
+      {
+        "item": "cosmerecraft:tin_ore"
+      },
+      {
+        "item": "cosmerecraft:deepslate_tin_ore"
+      }
+    ],
+    {
+      "item": "cosmerecraft:mortar_and_pestle"
+    }
+  ],
+  "result": {
+    "count": 2,
+    "item": "cosmerecraft:tin_powder"
+  }
+}

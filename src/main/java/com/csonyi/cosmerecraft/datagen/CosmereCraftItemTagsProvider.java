@@ -15,6 +15,7 @@ import net.neoforged.neoforge.common.data.ExistingFileHelper;
 
 public class CosmereCraftItemTagsProvider extends ItemTagsProvider {
 
+  // TODO: is this needed?
   public CosmereCraftItemTagsProvider(
       PackOutput packOutput,
       CompletableFuture<HolderLookup.Provider> lookupProvider,
@@ -30,7 +31,6 @@ public class CosmereCraftItemTagsProvider extends ItemTagsProvider {
 
   @Override
   protected void addTags(HolderLookup.Provider lookupProvider) {
-    // TODO: add new items
     CosmereCraftItems.METAL_POWDERS.values().stream()
         .map(Holder::value)
         .forEach(this::tagAsMetalPowder);

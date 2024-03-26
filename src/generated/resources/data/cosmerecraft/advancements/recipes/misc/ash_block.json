@@ -1,12 +1,12 @@
 {
   "parent": "minecraft:recipes/root",
   "criteria": {
-    "has_lerasium": {
+    "has_ash_pile": {
       "conditions": {
         "items": [
           {
             "items": [
-              "cosmerecraft:lerasium_nugget"
+              "cosmerecraft:ash_pile"
             ]
           }
         ]
@@ -18,19 +18,12 @@
         "recipe": "cosmerecraft:ash_block"
       },
       "trigger": "minecraft:recipe_unlocked"
-    },
-    "inside_of_investiture": {
-      "conditions": {
-        "block": "cosmerecraft:investiture_liquid"
-      },
-      "trigger": "minecraft:enter_block"
     }
   },
   "requirements": [
     [
       "has_the_recipe",
-      "has_lerasium",
-      "inside_of_investiture"
+      "has_ash_pile"
     ]
   ],
   "rewards": {

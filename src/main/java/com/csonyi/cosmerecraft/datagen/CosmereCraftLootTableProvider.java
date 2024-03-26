@@ -55,13 +55,29 @@ public class CosmereCraftLootTableProvider extends LootTableProvider {
       CosmereCraftBlocks.METAL_ORES
           .forEach(this::addMetalOreLootTable);
       add(CosmereCraftBlocks.LEAD_ORE.value(), block -> createOreDrop(block, CosmereCraftItems.RAW_LEAD.value()));
+      add(CosmereCraftBlocks.NICKEL_ORE.value(), block -> createOreDrop(block, CosmereCraftItems.RAW_NICKEL.value()));
+      add(CosmereCraftBlocks.SILVER_ORE.value(), block -> createOreDrop(block, CosmereCraftItems.RAW_SILVER.value()));
+      add(CosmereCraftBlocks.BISMUTH_ORE.value(), block -> createOreDrop(block, CosmereCraftItems.RAW_BISMUTH.value()));
       CosmereCraftBlocks.DEEPSLATE_METAL_ORES
           .forEach(this::addMetalOreLootTable);
       add(CosmereCraftBlocks.DEEPSLATE_LEAD_ORE.value(), block -> createOreDrop(block, CosmereCraftItems.RAW_LEAD.value()));
+      add(CosmereCraftBlocks.DEEPSLATE_NICKEL_ORE.value(), block -> createOreDrop(block, CosmereCraftItems.RAW_NICKEL.value()));
+      add(CosmereCraftBlocks.DEEPSLATE_SILVER_ORE.value(), block -> createOreDrop(block, CosmereCraftItems.RAW_SILVER.value()));
+      add(CosmereCraftBlocks.DEEPSLATE_BISMUTH_ORE.value(), block -> createOreDrop(block, CosmereCraftItems.RAW_BISMUTH.value()));
       CosmereCraftBlocks.METAL_BLOCKS.values().stream()
           .map(Holder::value)
           .forEach(this::dropSelf);
       dropSelf(CosmereCraftBlocks.LEAD_BLOCK.value());
+      dropSelf(CosmereCraftBlocks.NICKEL_BLOCK.value());
+      dropSelf(CosmereCraftBlocks.SILVER_BLOCK.value());
+      dropSelf(CosmereCraftBlocks.BISMUTH_BLOCK.value());
+      CosmereCraftBlocks.RAW_METAL_BLOCKS.values().stream()
+          .map(Holder::value)
+          .forEach(this::dropSelf);
+      dropSelf(CosmereCraftBlocks.RAW_LEAD_BLOCK.value());
+      dropSelf(CosmereCraftBlocks.RAW_NICKEL_BLOCK.value());
+      dropSelf(CosmereCraftBlocks.RAW_SILVER_BLOCK.value());
+      dropSelf(CosmereCraftBlocks.RAW_BISMUTH_BLOCK.value());
     }
 
     private void addMetalOreLootTable(AllomanticMetal metal, Holder<Block> metalOreBlockHolder) {

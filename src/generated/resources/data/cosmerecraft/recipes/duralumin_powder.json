@@ -3,13 +3,35 @@
   "category": "misc",
   "ingredients": [
     {
-      "item": "cosmerecraft:duralumin_powder"
+      "item": "cosmerecraft:aluminum_powder"
     },
     {
-      "item": "cosmerecraft:mortar_and_pestle"
+      "item": "cosmerecraft:aluminum_powder"
+    },
+    {
+      "item": "cosmerecraft:aluminum_powder"
+    },
+    {
+      "item": "cosmerecraft:aluminum_powder"
+    },
+    {
+      "item": "cosmerecraft:aluminum_powder"
+    },
+    {
+      "item": "cosmerecraft:aluminum_powder"
+    },
+    {
+      "item": "cosmerecraft:aluminum_powder"
+    },
+    {
+      "item": "cosmerecraft:aluminum_powder"
+    },
+    {
+      "item": "cosmerecraft:copper_powder"
     }
   ],
   "result": {
+    "count": 9,
     "item": "cosmerecraft:duralumin_powder"
   }
 }
