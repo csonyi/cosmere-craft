@@ -5,6 +5,8 @@ import static com.csonyi.cosmerecraft.registry.CosmereCraftAttachments.metalBurn
 import static com.csonyi.cosmerecraft.registry.CosmereCraftAttachments.metalReserve;
 
 import com.csonyi.cosmerecraft.Config;
+import java.util.function.Predicate;
+import java.util.stream.Stream;
 import net.minecraft.world.entity.player.Player;
 
 public class MetalStateManager {
@@ -86,6 +88,17 @@ public class MetalStateManager {
 
   public boolean canIngest(int amount) {
     return Config.Server.collectiveAllomanticCapacity > getCollectiveMetalAmount() + amount;
+  }
+
+  public Stream<AllomanticMetal> metals() {
+    return AllomanticMetal.stream()
+        .filter(Predicate.not(AllomanticMetal::isGodMetal))
+        .filter(this::isAvailable);
+  }
+
+  public Stream<AllomanticMetal> activeMetals() {
+    return metals()
+        .filter(this::isActive);
   }
 
   private int getCollectiveMetalAmount() {

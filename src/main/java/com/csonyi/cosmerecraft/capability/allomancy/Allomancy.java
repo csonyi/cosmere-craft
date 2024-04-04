@@ -21,7 +21,7 @@ public class Allomancy {
   private final Lazy<AnchorObserver> anchorObserver;
   private final Lazy<TickUtils> tickUtils;
 
-  public Allomancy(Player player) {
+  private Allomancy(Player player) {
     this.player = (ServerPlayer) player;
     this.metalStateManager = Lazy.of(() -> new MetalStateManager(this.player));
     this.externalPhysicalMovement = Lazy.of(() -> new ExternalPhysicalMovement(this.player));
@@ -74,6 +74,12 @@ public class Allomancy {
             metalStateManager().getBurnStrength(metal),
             true, true))
         .collect(Collectors.toSet());
+  }
+
+  public boolean isBurningMetal() {
+    return metalStateManager().activeMetals()
+        .findAny()
+        .isPresent();
   }
 
   public void tick() {

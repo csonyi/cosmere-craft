@@ -6,6 +6,7 @@ import static java.util.function.Predicate.not;
 import com.csonyi.cosmerecraft.CosmereCraft;
 import com.csonyi.cosmerecraft.capability.allomancy.AllomanticMetal;
 import com.csonyi.cosmerecraft.item.EdibleMetalNugget;
+import com.csonyi.cosmerecraft.item.InquisitorAxe;
 import com.csonyi.cosmerecraft.item.MetalVial;
 import java.util.Collection;
 import java.util.Map;
@@ -15,14 +16,19 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.BucketItem;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.Tier;
+import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.material.Fluid;
 import net.neoforged.bus.api.IEventBus;
+import net.neoforged.neoforge.common.SimpleTier;
+import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
 public class CosmereCraftItems {
@@ -32,6 +38,10 @@ public class CosmereCraftItems {
 
   public static final TagKey<Item> METAL_POWDERS_TAG = ItemTags.create(createResourceLocation("metal_powders"));
   public static final TagKey<Item> METAL_INGOTS_TAG = ItemTags.create(createResourceLocation("metal_ingots"));
+  public static final TagKey<Item> OBSIDIAN_ITEMS_TAG = ItemTags.create(createResourceLocation("obsidian_items"));
+  public static final TagKey<Item> GLASS_ITEMS_TAG = ItemTags.create(createResourceLocation("glass_items"));
+
+
   public static final Holder<Item> INVESTITURE_BUCKET = ITEMS.register(
       "bucket_investiture",
       bucketItem(CosmereCraftFluids.INVESTITURE::value));
@@ -117,6 +127,10 @@ public class CosmereCraftItems {
   public static final Holder<Item> RAW_NICKEL_BLOCK_ITEM = ITEMS.registerSimpleBlockItem(CosmereCraftBlocks.RAW_NICKEL_BLOCK);
   public static final Holder<Item> RAW_SILVER_BLOCK_ITEM = ITEMS.registerSimpleBlockItem(CosmereCraftBlocks.RAW_SILVER_BLOCK);
   public static final Holder<Item> RAW_BISMUTH_BLOCK_ITEM = ITEMS.registerSimpleBlockItem(CosmereCraftBlocks.RAW_BISMUTH_BLOCK);
+
+  public static final Holder<Item> OBSIDIAN_AXE = ITEMS.register(
+      "obsidian_axe",
+      () -> new InquisitorAxe(Tiers.OBSIDIAN_ITEM_TIER, 5.0F, -4.0F));
 
 
   public static void generateDisplayItems(CreativeModeTab.ItemDisplayParameters parameters, CreativeModeTab.Output output) {
@@ -237,6 +251,18 @@ public class CosmereCraftItems {
       case COPPER -> BuiltInRegistries.ITEM.wrapAsHolder(copperItem);
       default -> moddedItems.get(metal);
     };
+  }
+
+  public static final class Tiers {
+
+    public static final Tier GLASS_ITEM_TIER = new SimpleTier(
+        0, 32, 10.0F, 2.5F, 20,
+        Tags.Blocks.NEEDS_WOOD_TOOL,
+        () -> Ingredient.of(GLASS_ITEMS_TAG));
+    public static final Tier OBSIDIAN_ITEM_TIER = new SimpleTier(
+        3, 1024, 7.0F, 2.5F, 10,
+        BlockTags.NEEDS_DIAMOND_TOOL,
+        () -> Ingredient.of(OBSIDIAN_ITEMS_TAG));
   }
 
 }
