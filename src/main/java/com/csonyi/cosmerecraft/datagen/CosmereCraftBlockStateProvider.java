@@ -152,7 +152,7 @@ public class CosmereCraftBlockStateProvider extends BlockStateProvider {
   }
 
   private void cubeAllBlockItemModel(String name) {
-    cubeAllModel(name, modLoc("block/" + name));
+    itemModels().cubeAll(name, modLoc("block/" + name));
   }
 
   // private BlockModelBuilder ashyGrassModel() {

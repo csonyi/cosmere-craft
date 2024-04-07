@@ -5,15 +5,19 @@ import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.getRawMetalItem
 import com.csonyi.cosmerecraft.block.AshLayerBlock;
 import com.csonyi.cosmerecraft.capability.allomancy.AllomanticMetal;
 import com.csonyi.cosmerecraft.registry.CosmereCraftBlocks;
+import com.csonyi.cosmerecraft.registry.CosmereCraftEntities;
 import com.csonyi.cosmerecraft.registry.CosmereCraftItems;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Stream;
 import net.minecraft.advancements.critereon.StatePropertiesPredicate;
 import net.minecraft.core.Holder;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.loot.BlockLootSubProvider;
+import net.minecraft.data.loot.EntityLootSubProvider;
 import net.minecraft.data.loot.LootTableProvider;
 import net.minecraft.data.loot.packs.VanillaBlockLoot;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -27,6 +31,7 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.minecraft.world.level.storage.loot.predicates.LootItemBlockStatePropertyCondition;
 import net.minecraft.world.level.storage.loot.predicates.LootItemEntityPropertyCondition;
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
+import net.minecraft.world.level.storage.loot.providers.number.UniformGenerator;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import org.jetbrains.annotations.NotNull;
 
@@ -36,7 +41,10 @@ public class CosmereCraftLootTableProvider extends LootTableProvider {
   public CosmereCraftLootTableProvider(PackOutput pOutput) {
     super(
         pOutput, Collections.emptySet(),
-        List.of(BlockLootTables.entry()));
+        List.of(
+            BlockLootTables.entry(),
+            EntityLootTables.entry()
+        ));
   }
 
   public static class BlockLootTables extends BlockLootSubProvider {
@@ -148,6 +156,44 @@ public class CosmereCraftLootTableProvider extends LootTableProvider {
 
     private static SubProviderEntry entry() {
       return new SubProviderEntry(BlockLootTables::new, LootContextParamSets.BLOCK);
+    }
+  }
+
+  public static class EntityLootTables extends EntityLootSubProvider {
+
+    protected EntityLootTables() {
+      super(FeatureFlags.REGISTRY.allFlags());
+    }
+
+
+    @Override
+    public void generate() {
+      generateInquisitorLootTable();
+    }
+
+    private void generateInquisitorLootTable() {
+      // Create loot pool from all metal vials
+      var metalVialPool = LootPool.lootPool()
+          // Uniform distribution of 0 to 4 rolls
+          .setRolls(UniformGenerator.between(0, 4));
+      CosmereCraftItems.METAL_VIALS.values().stream()
+          .map(Holder::value)
+          .map(LootItem::lootTableItem)
+          .forEach(metalVialPool::add);
+      add(
+          CosmereCraftEntities.INQUISITOR_ENTITY_TYPE.value(),
+          LootTable.lootTable()
+              .withPool(metalVialPool));
+    }
+
+    @Override
+    protected Stream<EntityType<?>> getKnownEntityTypes() {
+      return CosmereCraftEntities.ENTITY_TYPES.getEntries().stream()
+          .map(DeferredHolder::value);
+    }
+
+    private static SubProviderEntry entry() {
+      return new SubProviderEntry(EntityLootTables::new, LootContextParamSets.ENTITY);
     }
   }
 }

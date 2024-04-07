@@ -8,11 +8,19 @@ import com.csonyi.cosmerecraft.datagen.CosmereCraftItemModelProvider;
 import com.csonyi.cosmerecraft.datagen.CosmereCraftItemTagsProvider;
 import com.csonyi.cosmerecraft.datagen.CosmereCraftLootTableProvider;
 import com.csonyi.cosmerecraft.datagen.CosmereCraftRecipeProvider;
+import com.csonyi.cosmerecraft.entity.Inquisitor;
+import com.csonyi.cosmerecraft.entity.InquisitorModel;
+import com.csonyi.cosmerecraft.entity.InquisitorRenderer;
 import com.csonyi.cosmerecraft.networking.MetalStateUpdateHandler;
+import net.minecraft.world.entity.SpawnPlacements;
+import net.minecraft.world.level.levelgen.Heightmap;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.Mod;
+import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
 import net.neoforged.neoforge.data.event.GatherDataEvent;
+import net.neoforged.neoforge.event.entity.EntityAttributeCreationEvent;
+import net.neoforged.neoforge.event.entity.SpawnPlacementRegisterEvent;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlerEvent;
 import net.neoforged.neoforge.network.registration.IPayloadRegistrar;
 
@@ -68,5 +76,36 @@ public class RegistryEventHandlers {
     generator.addProvider(
         event.includeServer(),
         new CosmereCraftLootTableProvider(packOutput));
+  }
+
+  @SubscribeEvent
+  public static void registerEntityRenderers(EntityRenderersEvent.RegisterRenderers event) {
+    event.registerEntityRenderer(
+        CosmereCraftEntities.INQUISITOR_ENTITY_TYPE.get(),
+        InquisitorRenderer::new);
+  }
+
+  @SubscribeEvent
+  public static void registerLayerDefinitions(EntityRenderersEvent.RegisterLayerDefinitions event) {
+    event.registerLayerDefinition(
+        InquisitorModel.LAYER_LOCATION,
+        InquisitorModel::createBodyLayer);
+  }
+
+  @SubscribeEvent
+  public static void registerEntityAttributes(EntityAttributeCreationEvent event) {
+    event.put(
+        CosmereCraftEntities.INQUISITOR_ENTITY_TYPE.get(),
+        Inquisitor.createAttributes().build());
+  }
+
+  @SubscribeEvent
+  public static void registerSpawnPlacements(SpawnPlacementRegisterEvent event) {
+    event.register(
+        CosmereCraftEntities.INQUISITOR_ENTITY_TYPE.get(),
+        SpawnPlacements.Type.ON_GROUND,
+        Heightmap.Types.WORLD_SURFACE,
+        Inquisitor::canSpawn,
+        SpawnPlacementRegisterEvent.Operation.OR);
   }
 }

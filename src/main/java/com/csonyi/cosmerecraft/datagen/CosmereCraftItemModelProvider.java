@@ -1,13 +1,22 @@
 package com.csonyi.cosmerecraft.datagen;
 
 import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.ASH_PILE;
+import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.BISMUTH_INGOT;
+import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.BISMUTH_POWDER;
 import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.COAL_POWDER;
 import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.INVESTITURE_BUCKET;
 import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.LEAD_INGOT;
 import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.LEAD_POWDER;
 import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.LERASIUM_NUGGET;
 import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.MORTAR_AND_PESTLE;
+import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.NICKEL_INGOT;
+import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.NICKEL_POWDER;
+import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.RAW_BISMUTH;
 import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.RAW_LEAD;
+import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.RAW_NICKEL;
+import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.RAW_SILVER;
+import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.SILVER_INGOT;
+import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.SILVER_POWDER;
 
 import com.csonyi.cosmerecraft.CosmereCraft;
 import com.csonyi.cosmerecraft.registry.CosmereCraftItems;
@@ -44,8 +53,17 @@ public class CosmereCraftItemModelProvider extends ItemModelProvider {
                 MORTAR_AND_PESTLE,
                 COAL_POWDER,
                 LEAD_POWDER,
+                NICKEL_POWDER,
+                SILVER_POWDER,
+                BISMUTH_POWDER,
                 LEAD_INGOT,
-                RAW_LEAD))
+                NICKEL_INGOT,
+                SILVER_INGOT,
+                BISMUTH_INGOT,
+                RAW_LEAD,
+                RAW_NICKEL,
+                RAW_SILVER,
+                RAW_BISMUTH))
         .flatMap(Function.identity())
         .map(Holder::value)
         .forEach(this::basicItem);

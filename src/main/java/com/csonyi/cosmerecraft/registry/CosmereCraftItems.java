@@ -27,6 +27,7 @@ import net.minecraft.world.item.Tier;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.material.Fluid;
 import net.neoforged.bus.api.IEventBus;
+import net.neoforged.neoforge.common.DeferredSpawnEggItem;
 import net.neoforged.neoforge.common.SimpleTier;
 import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.registries.DeferredRegister;
@@ -130,7 +131,14 @@ public class CosmereCraftItems {
 
   public static final Holder<Item> OBSIDIAN_AXE = ITEMS.register(
       "obsidian_axe",
-      () -> new InquisitorAxe(Tiers.OBSIDIAN_ITEM_TIER, 5.0F, -4.0F));
+      () -> new InquisitorAxe(Tiers.OBSIDIAN_ITEM_TIER, 5.0F, -3.3F));
+
+  public static final Holder<Item> INQUISITOR_SPAWN_EGG = ITEMS.register(
+      "inquisitor_spawn_egg",
+      () -> new DeferredSpawnEggItem(
+          CosmereCraftEntities.INQUISITOR_ENTITY_TYPE::value,
+          3089702, 7498103,
+          new Item.Properties()));
 
 
   public static void generateDisplayItems(CreativeModeTab.ItemDisplayParameters parameters, CreativeModeTab.Output output) {
@@ -183,7 +191,9 @@ public class CosmereCraftItems {
                 RAW_LEAD_BLOCK_ITEM,
                 RAW_NICKEL_BLOCK_ITEM,
                 RAW_SILVER_BLOCK_ITEM,
-                RAW_BISMUTH_BLOCK_ITEM))
+                RAW_BISMUTH_BLOCK_ITEM,
+                OBSIDIAN_AXE,
+                INQUISITOR_SPAWN_EGG))
         .flatMap(Function.identity())
         .map(Holder::value)
         .map(Item::getDefaultInstance)

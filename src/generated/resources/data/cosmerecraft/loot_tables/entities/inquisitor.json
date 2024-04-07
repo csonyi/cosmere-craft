@@ -1,0 +1,80 @@
+{
+  "type": "minecraft:entity",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "cosmerecraft:steel_vial"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "cosmerecraft:bendalloy_vial"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "cosmerecraft:nicrosil_vial"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "cosmerecraft:aluminum_vial"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "cosmerecraft:copper_vial"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "cosmerecraft:duralumin_vial"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "cosmerecraft:chromium_vial"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "cosmerecraft:bronze_vial"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "cosmerecraft:electrum_vial"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "cosmerecraft:cadmium_vial"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "cosmerecraft:pewter_vial"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "cosmerecraft:iron_vial"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "cosmerecraft:zinc_vial"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "cosmerecraft:tin_vial"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "cosmerecraft:brass_vial"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "cosmerecraft:gold_vial"
+        }
+      ],
+      "rolls": {
+        "type": "minecraft:uniform",
+        "max": 4.0,
+        "min": 0.0
+      }
+    }
+  ],
+  "random_sequence": "cosmerecraft:entities/inquisitor"
+}

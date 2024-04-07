@@ -15,7 +15,9 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.MobType;
+import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
@@ -25,6 +27,7 @@ import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -39,11 +42,15 @@ public class Inquisitor extends Monster {
     xpReward = 25;
   }
 
+  public Inquisitor(Level pLevel, BlockPos pPos) {
+    this(CosmereCraftEntities.INQUISITOR_ENTITY_TYPE.value(), pLevel);
+    setPos(pPos.getX(), pPos.getY(), pPos.getZ());
+  }
+
   @Override
   protected void registerGoals() {
     addGoals();
     addTargets();
-
   }
 
   private void addGoals() {
@@ -104,5 +111,15 @@ public class Inquisitor extends Monster {
     } catch (IOException e) {
       LOGGER.error("IOException while retrieving level in scan: {}", e.getMessage());
     }
+  }
+
+  public static AttributeSupplier.Builder createAttributes() {
+    return Monster.createMonsterAttributes();
+  }
+
+  public static boolean canSpawn(
+      EntityType<Inquisitor> inquisitorEntityType, ServerLevelAccessor serverLevelAccessor,
+      MobSpawnType mobSpawnType, BlockPos blockPos, RandomSource randomSource) {
+    return Monster.checkMonsterSpawnRules(inquisitorEntityType, serverLevelAccessor, mobSpawnType, blockPos, randomSource);
   }
 }

@@ -2,6 +2,7 @@ package com.csonyi.cosmerecraft;
 
 import com.csonyi.cosmerecraft.registry.CosmereCraftAttachments;
 import com.csonyi.cosmerecraft.registry.CosmereCraftBlocks;
+import com.csonyi.cosmerecraft.registry.CosmereCraftEntities;
 import com.csonyi.cosmerecraft.registry.CosmereCraftFeatures;
 import com.csonyi.cosmerecraft.registry.CosmereCraftFluids;
 import com.csonyi.cosmerecraft.registry.CosmereCraftItems;
@@ -44,6 +45,7 @@ public class CosmereCraft {
     CosmereCraftBlocks.register(modEventBus);
     CosmereCraftFeatures.register(modEventBus);
     CosmereCraftAttachments.register(modEventBus);
+    CosmereCraftEntities.register(modEventBus);
 
     ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, Config.Server.SPEC);
   }
