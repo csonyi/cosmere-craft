@@ -2,6 +2,7 @@ package com.csonyi.cosmerecraft.capability.allomancy;
 
 import static com.csonyi.cosmerecraft.capability.allomancy.AllomanticMetal.STEEL;
 
+import com.csonyi.cosmerecraft.capability.allomancy.AllomanticMetal.MetalAmount;
 import com.csonyi.cosmerecraft.capability.anchorobserver.AnchorObserver;
 import com.csonyi.cosmerecraft.util.TickUtils;
 import java.util.Set;
@@ -51,6 +52,10 @@ public class Allomancy {
 
   public boolean canIngestMetal(int amount) {
     return metalStateManager().canIngest(amount);
+  }
+
+  public void ingestMetal(AllomanticMetal metal, MetalAmount metalAmount) {
+    ingestMetal(metal, metalAmount.amount);
   }
 
   public void ingestMetal(AllomanticMetal metal, int amount) {

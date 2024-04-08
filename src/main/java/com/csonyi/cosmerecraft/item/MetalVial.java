@@ -3,6 +3,7 @@ package com.csonyi.cosmerecraft.item;
 import com.csonyi.cosmerecraft.capability.allomancy.Allomancy;
 import com.csonyi.cosmerecraft.capability.allomancy.AllomanticMetal;
 import com.csonyi.cosmerecraft.util.TickUtils;
+import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
@@ -16,6 +17,7 @@ import net.minecraft.world.item.ItemUtils;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.gameevent.GameEvent;
 import org.jetbrains.annotations.NotNull;
 
 public class MetalVial extends Item {
@@ -35,26 +37,28 @@ public class MetalVial extends Item {
       @NotNull Level level,
       @NotNull LivingEntity livingEntity) {
     super.finishUsingItem(itemStack, level, livingEntity);
-
-    if (!level.isClientSide()) {
-      if (livingEntity instanceof ServerPlayer player) {
-        var allomancy = Allomancy.of(player);
+    if (livingEntity instanceof Player player) {
+      if (player instanceof ServerPlayer serverPlayer) {
+        CriteriaTriggers.CONSUME_ITEM.trigger(serverPlayer, itemStack);
+        var allomancy = Allomancy.of(serverPlayer);
         var metalAmount = TickUtils.minutesToTicks(16);
         if (allomancy.canIngestMetal(metalAmount)) {
-          allomancy.ingestMetal(metal, metalAmount);
+          allomancy.ingestMetal(metal, AllomanticMetal.MetalAmount.VIAL);
+        }
+      }
+
+      if (!player.getAbilities().instabuild) {
+        itemStack.shrink(1);
+        if (itemStack.isEmpty()) {
+          return new ItemStack(Items.GLASS_BOTTLE);
+        } else {
+          player.getInventory().add(new ItemStack(Items.GLASS_BOTTLE));
         }
       }
     }
 
-    if (!itemStack.isEmpty()) {
-      if (livingEntity instanceof Player player) {
-        if (!player.getInventory().add(itemStack)) {
-          player.drop(new ItemStack(Items.GLASS_BOTTLE), false);
-        }
-      }
-      return itemStack;
-    }
-    return new ItemStack(Items.GLASS_BOTTLE);
+    livingEntity.gameEvent(GameEvent.DRINK);
+    return itemStack;
   }
 
   @Override

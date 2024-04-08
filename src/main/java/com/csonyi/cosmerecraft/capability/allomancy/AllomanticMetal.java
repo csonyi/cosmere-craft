@@ -10,6 +10,7 @@ import static com.csonyi.cosmerecraft.capability.allomancy.AllomanticMetal.Type.
 import static com.csonyi.cosmerecraft.capability.allomancy.AllomanticMetal.Type.TEMPORAL;
 
 import com.csonyi.cosmerecraft.CosmereCraft;
+import com.csonyi.cosmerecraft.util.TickUtils;
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.Set;
@@ -137,6 +138,16 @@ public enum AllomanticMetal {
 
   public enum Side {
     INTERNAL, EXTERNAL, GOD
+  }
+
+  public enum MetalAmount {
+    NUGGET(TickUtils.minutesToTicks(16) / 9), VIAL(TickUtils.minutesToTicks(16));
+
+    MetalAmount(int amount) {
+      this.amount = amount;
+    }
+
+    public final int amount;
   }
 
   public record State(AllomanticMetal metal, Integer reserve, Integer burnStrength, Boolean available) {

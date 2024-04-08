@@ -57,6 +57,10 @@ public class MetalStateManager {
     player.setData(metalAvailable(metal), available);
   }
 
+  public void makeAvailable(AllomanticMetal metal) {
+    setAvailable(metal, true);
+  }
+
   public boolean isActive(AllomanticMetal metal) {
     return getReserve(metal) > 0
         && getBurnStrength(metal) > 0
@@ -79,6 +83,11 @@ public class MetalStateManager {
   }
 
   public void ingest(AllomanticMetal metal, int amount) {
+    if (AllomanticMetal.LERASIUM.equals(metal)) {
+      AllomanticMetal.stream()
+          .filter(Predicate.not(AllomanticMetal::isGodMetal))
+          .forEach(this::makeAvailable);
+    }
     var newCollectiveReserve = getCollectiveMetalAmount() + amount;
     if (newCollectiveReserve > Config.Server.collectiveAllomanticCapacity) {
       return;
