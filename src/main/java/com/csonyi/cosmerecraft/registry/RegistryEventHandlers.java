@@ -2,16 +2,20 @@ package com.csonyi.cosmerecraft.registry;
 
 import static com.csonyi.cosmerecraft.CosmereCraft.MOD_ID;
 
-import com.csonyi.cosmerecraft.datagen.CosmereCraftBlockStateProvider;
 import com.csonyi.cosmerecraft.datagen.CosmereCraftBlockTagsProvider;
-import com.csonyi.cosmerecraft.datagen.CosmereCraftItemModelProvider;
 import com.csonyi.cosmerecraft.datagen.CosmereCraftItemTagsProvider;
 import com.csonyi.cosmerecraft.datagen.CosmereCraftLootTableProvider;
 import com.csonyi.cosmerecraft.datagen.CosmereCraftRecipeProvider;
+import com.csonyi.cosmerecraft.datagen.client.CosmereCraftBlockStateProvider;
+import com.csonyi.cosmerecraft.datagen.client.CosmereCraftItemModelProvider;
+import com.csonyi.cosmerecraft.datagen.client.lang.EnUsLanguageProvider;
+import com.csonyi.cosmerecraft.datagen.client.lang.HuHuLanguageProvider;
 import com.csonyi.cosmerecraft.entity.Inquisitor;
 import com.csonyi.cosmerecraft.entity.InquisitorModel;
 import com.csonyi.cosmerecraft.entity.InquisitorRenderer;
 import com.csonyi.cosmerecraft.networking.MetalStateUpdateHandler;
+import net.minecraft.data.DataGenerator;
+import net.minecraft.data.PackOutput;
 import net.minecraft.world.entity.SpawnPlacements;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -57,6 +61,10 @@ public class RegistryEventHandlers {
     generator.addProvider(
         event.includeClient(),
         new CosmereCraftBlockStateProvider(packOutput, existingFileHelper));
+    registerLanguageProviders(
+        generator,
+        event.includeClient(),
+        packOutput);
 
     generator.addProvider(
         event.includeServer(),
@@ -76,6 +84,15 @@ public class RegistryEventHandlers {
     generator.addProvider(
         event.includeServer(),
         new CosmereCraftLootTableProvider(packOutput));
+  }
+
+  private static void registerLanguageProviders(DataGenerator generator, boolean includeClient, PackOutput packOutput) {
+    generator.addProvider(
+        includeClient,
+        new EnUsLanguageProvider(packOutput));
+    generator.addProvider(
+        includeClient,
+        new HuHuLanguageProvider(packOutput));
   }
 
   @SubscribeEvent

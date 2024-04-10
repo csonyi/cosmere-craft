@@ -1,6 +1,6 @@
 package com.csonyi.cosmerecraft.registry;
 
-import static com.csonyi.cosmerecraft.CosmereCraft.createResourceLocation;
+import static com.csonyi.cosmerecraft.util.ResourceUtils.modResourceLocation;
 import static java.util.function.Predicate.not;
 
 import com.csonyi.cosmerecraft.CosmereCraft;
@@ -37,24 +37,14 @@ public class CosmereCraftItems {
   public static final DeferredRegister.Items ITEMS =
       DeferredRegister.createItems(CosmereCraft.MOD_ID);
 
-  public static final TagKey<Item> METAL_POWDERS_TAG = ItemTags.create(createResourceLocation("metal_powders"));
-  public static final TagKey<Item> METAL_INGOTS_TAG = ItemTags.create(createResourceLocation("metal_ingots"));
-  public static final TagKey<Item> OBSIDIAN_ITEMS_TAG = ItemTags.create(createResourceLocation("obsidian_items"));
-  public static final TagKey<Item> GLASS_ITEMS_TAG = ItemTags.create(createResourceLocation("glass_items"));
+  // === Item Tag keys ===
+  public static final TagKey<Item> METAL_POWDERS_TAG = ItemTags.create(modResourceLocation("metal_powders"));
+  public static final TagKey<Item> METAL_INGOTS_TAG = ItemTags.create(modResourceLocation("metal_ingots"));
+  public static final TagKey<Item> OBSIDIAN_ITEMS_TAG = ItemTags.create(modResourceLocation("obsidian_items"));
+  public static final TagKey<Item> GLASS_ITEMS_TAG = ItemTags.create(modResourceLocation("glass_items"));
 
-
-  public static final Holder<Item> INVESTITURE_BUCKET = ITEMS.register(
-      "bucket_investiture",
-      bucketItem(CosmereCraftFluids.INVESTITURE::value));
-  public static final Holder<Item> LERASIUM_NUGGET = ITEMS.register(
-      "lerasium_nugget",
-      EdibleMetalNugget::new);
-  public static final Holder<Item> ASH_PILE = ITEMS.registerSimpleItem("ash_pile");
-  public static final Holder<Item> ASH_BLOCK_ITEM = ITEMS.registerSimpleBlockItem(CosmereCraftBlocks.ASH_BLOCK);
-  public static final Holder<Item> ASH_ITEM = ITEMS.registerSimpleBlockItem(CosmereCraftBlocks.ASH);
-  public static final Holder<Item> MORTAR_AND_PESTLE = ITEMS.registerSimpleItem("mortar_and_pestle");
-  public static final Holder<Item> COAL_POWDER = ITEMS.registerSimpleItem("coal_powder");
-
+  // === Item Holders ===
+  // Metal powders
   public static final Map<AllomanticMetal, Holder<Item>> METAL_POWDERS = AllomanticMetal.stream()
       .filter(not(AllomanticMetal::isGodMetal))
       .collect(Collectors.toMap(
@@ -64,6 +54,8 @@ public class CosmereCraftItems {
   public static final Holder<Item> NICKEL_POWDER = ITEMS.registerSimpleItem("nickel_powder");
   public static final Holder<Item> SILVER_POWDER = ITEMS.registerSimpleItem("silver_powder");
   public static final Holder<Item> BISMUTH_POWDER = ITEMS.registerSimpleItem("bismuth_powder");
+
+  // Metal ingots
   public static final Map<AllomanticMetal, Holder<Item>> METAL_INGOTS = AllomanticMetal.stream()
       .filter(not(AllomanticMetal::isGodMetal))
       .filter(not(AllomanticMetal::isVanilla))
@@ -74,11 +66,15 @@ public class CosmereCraftItems {
   public static final Holder<Item> NICKEL_INGOT = ITEMS.registerSimpleItem("nickel_ingot");
   public static final Holder<Item> SILVER_INGOT = ITEMS.registerSimpleItem("silver_ingot");
   public static final Holder<Item> BISMUTH_INGOT = ITEMS.registerSimpleItem("bismuth_ingot");
+
+  // Metal vials
   public static final Map<AllomanticMetal, Holder<Item>> METAL_VIALS = AllomanticMetal.stream()
       .filter(not(AllomanticMetal::isGodMetal))
       .collect(Collectors.toMap(
           Function.identity(),
           metal -> ITEMS.register("%s_vial".formatted(metal.lowerCaseName()), () -> new MetalVial(metal))));
+
+  // Raw metals
   public static final Map<AllomanticMetal, Holder<Item>> RAW_METALS = AllomanticMetal.stream()
       .filter(not(AllomanticMetal::isGodMetal))
       .filter(not(AllomanticMetal::isVanilla))
@@ -90,6 +86,8 @@ public class CosmereCraftItems {
   public static final Holder<Item> RAW_NICKEL = ITEMS.registerSimpleItem("raw_nickel");
   public static final Holder<Item> RAW_SILVER = ITEMS.registerSimpleItem("raw_silver");
   public static final Holder<Item> RAW_BISMUTH = ITEMS.registerSimpleItem("raw_bismuth");
+
+  // Ore blocks
   public static final Map<AllomanticMetal, Holder<Item>> METAL_ORE_BLOCK_ITEMS =
       CosmereCraftBlocks.METAL_ORES.entrySet().stream()
           .collect(Collectors.toMap(
@@ -99,6 +97,8 @@ public class CosmereCraftItems {
   public static final Holder<Item> NICKEL_ORE_BLOCK_ITEM = ITEMS.registerSimpleBlockItem(CosmereCraftBlocks.NICKEL_ORE);
   public static final Holder<Item> SILVER_ORE_BLOCK_ITEM = ITEMS.registerSimpleBlockItem(CosmereCraftBlocks.SILVER_ORE);
   public static final Holder<Item> BISMUTH_ORE_BLOCK_ITEM = ITEMS.registerSimpleBlockItem(CosmereCraftBlocks.BISMUTH_ORE);
+
+  // Deepslate ore blocks
   public static final Map<AllomanticMetal, Holder<Item>> DEEPSLATE_METAL_ORE_BLOCK_ITEMS =
       CosmereCraftBlocks.DEEPSLATE_METAL_ORES.entrySet().stream()
           .collect(Collectors.toMap(
@@ -109,6 +109,8 @@ public class CosmereCraftItems {
   public static final Holder<Item> DEEPSLATE_SILVER_ORE_BLOCK_ITEM = ITEMS.registerSimpleBlockItem(CosmereCraftBlocks.DEEPSLATE_SILVER_ORE);
   public static final Holder<Item> DEEPSLATE_BISMUTH_ORE_BLOCK_ITEM = ITEMS.registerSimpleBlockItem(
       CosmereCraftBlocks.DEEPSLATE_BISMUTH_ORE);
+
+  // Metal blocks
   public static final Map<AllomanticMetal, Holder<Item>> METAL_BLOCK_ITEMS =
       CosmereCraftBlocks.METAL_BLOCKS.entrySet().stream()
           .collect(Collectors.toMap(
@@ -119,6 +121,7 @@ public class CosmereCraftItems {
   public static final Holder<Item> SILVER_BLOCK_ITEM = ITEMS.registerSimpleBlockItem(CosmereCraftBlocks.SILVER_BLOCK);
   public static final Holder<Item> BISMUTH_BLOCK_ITEM = ITEMS.registerSimpleBlockItem(CosmereCraftBlocks.BISMUTH_BLOCK);
 
+  // Raw metal blocks
   public static final Map<AllomanticMetal, Holder<Item>> RAW_METAL_BLOCK_ITEMS =
       CosmereCraftBlocks.RAW_METAL_BLOCKS.entrySet().stream()
           .collect(Collectors.toMap(
@@ -129,16 +132,38 @@ public class CosmereCraftItems {
   public static final Holder<Item> RAW_SILVER_BLOCK_ITEM = ITEMS.registerSimpleBlockItem(CosmereCraftBlocks.RAW_SILVER_BLOCK);
   public static final Holder<Item> RAW_BISMUTH_BLOCK_ITEM = ITEMS.registerSimpleBlockItem(CosmereCraftBlocks.RAW_BISMUTH_BLOCK);
 
+  // Other items
+  public static final Holder<Item> ASH_PILE = ITEMS.registerSimpleItem("ash_pile");
+  public static final Holder<Item> ASH_BLOCK_ITEM = ITEMS.registerSimpleBlockItem(CosmereCraftBlocks.ASH_BLOCK);
+  public static final Holder<Item> ASH_ITEM = ITEMS.registerSimpleBlockItem(CosmereCraftBlocks.ASH);
+  public static final Holder<Item> MORTAR_AND_PESTLE = ITEMS.registerSimpleItem("mortar_and_pestle");
+  public static final Holder<Item> COAL_POWDER = ITEMS.registerSimpleItem("coal_powder");
+
+  // TODO: add nuggets for all metals
+  public static final Holder<Item> LERASIUM_NUGGET = ITEMS.register(
+      "lerasium_nugget",
+      () -> new EdibleMetalNugget(AllomanticMetal.LERASIUM));
+
+  // Tools
   public static final Holder<Item> OBSIDIAN_AXE = ITEMS.register(
       "obsidian_axe",
       () -> new InquisitorAxe(Tiers.OBSIDIAN_ITEM_TIER, 5.0F, -3.3F));
 
+  // Spawn eggs
   public static final Holder<Item> INQUISITOR_SPAWN_EGG = ITEMS.register(
       "inquisitor_spawn_egg",
       () -> new DeferredSpawnEggItem(
           CosmereCraftEntities.INQUISITOR_ENTITY_TYPE::value,
           3089702, 7498103,
           new Item.Properties()));
+
+  // Bucket items
+  public static final Holder<Item> INVESTITURE_BUCKET = ITEMS.register(
+      "bucket_investiture",
+      bucketItem(CosmereCraftFluids.INVESTITURE::value));
+  public static final Holder<Item> INVESTITURE_PORTAL_BUCKET = ITEMS.register(
+      "portal_poi_bucket",
+      bucketItem(CosmereCraftFluids.INVESTITURE_PORTAL::value));
 
 
   public static void generateDisplayItems(CreativeModeTab.ItemDisplayParameters parameters, CreativeModeTab.Output output) {
@@ -161,6 +186,7 @@ public class CosmereCraftItems {
                 ASH_ITEM,
                 ASH_PILE,
                 INVESTITURE_BUCKET,
+                INVESTITURE_PORTAL_BUCKET,
                 LERASIUM_NUGGET,
                 MORTAR_AND_PESTLE,
                 COAL_POWDER,

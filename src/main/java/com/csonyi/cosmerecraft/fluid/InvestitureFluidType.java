@@ -1,12 +1,16 @@
 package com.csonyi.cosmerecraft.fluid;
 
-import com.csonyi.cosmerecraft.CosmereCraft;
+import com.csonyi.cosmerecraft.util.ResourceUtils;
 import java.util.function.Consumer;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions;
 import net.neoforged.neoforge.fluids.FluidType;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * The fluid type for the investiture fluid. This class is responsible for defining the properties of the fluid type, and the client side
+ * rendering properties.
+ */
 public class InvestitureFluidType extends FluidType {
 
   public InvestitureFluidType() {
@@ -23,12 +27,12 @@ public class InvestitureFluidType extends FluidType {
 
       @Override
       public @NotNull ResourceLocation getStillTexture() {
-        return CosmereCraft.createResourceLocation("block/investiture_still");
+        return ResourceUtils.modResourceLocation("block/investiture_still");
       }
 
       @Override
       public @NotNull ResourceLocation getFlowingTexture() {
-        return CosmereCraft.createResourceLocation("block/investiture_flowing");
+        return ResourceUtils.modResourceLocation("block/investiture_flowing");
       }
     });
   }

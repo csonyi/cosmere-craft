@@ -1,10 +1,11 @@
-package com.csonyi.cosmerecraft.datagen;
+package com.csonyi.cosmerecraft.datagen.client;
 
 import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.ASH_PILE;
 import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.BISMUTH_INGOT;
 import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.BISMUTH_POWDER;
 import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.COAL_POWDER;
 import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.INVESTITURE_BUCKET;
+import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.INVESTITURE_PORTAL_BUCKET;
 import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.LEAD_INGOT;
 import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.LEAD_POWDER;
 import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.LERASIUM_NUGGET;
@@ -49,6 +50,7 @@ public class CosmereCraftItemModelProvider extends ItemModelProvider {
             Stream.of(
                 ASH_PILE,
                 INVESTITURE_BUCKET,
+                INVESTITURE_PORTAL_BUCKET,
                 LERASIUM_NUGGET,
                 MORTAR_AND_PESTLE,
                 COAL_POWDER,

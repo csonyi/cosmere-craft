@@ -3,6 +3,7 @@ package com.csonyi.cosmerecraft.entity;// Made with Blockbench 4.9.4
 // Paste this class into your mod and generate all required imports
 
 
+import com.csonyi.cosmerecraft.util.ResourceUtils;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.model.PlayerModel;
@@ -14,14 +15,13 @@ import net.minecraft.client.model.geom.builders.CubeListBuilder;
 import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.monster.Monster;
 
 public class InquisitorModel<T extends Monster> extends PlayerModel<T> {
 
   // This layer location should be baked with EntityRendererProvider.Context in the entity renderer and passed into this model's constructor
-  public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(new ResourceLocation("modid", "inquisitor"),
-      "main");
+  public static final ModelLayerLocation LAYER_LOCATION =
+      new ModelLayerLocation(ResourceUtils.modResourceLocation("inquisitor"), "main");
 
   public InquisitorModel(ModelPart root) {
     super(root, false);

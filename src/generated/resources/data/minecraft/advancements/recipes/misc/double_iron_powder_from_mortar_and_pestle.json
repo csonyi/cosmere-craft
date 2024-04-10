@@ -24,13 +24,20 @@
         "block": "cosmerecraft:investiture_liquid"
       },
       "trigger": "minecraft:enter_block"
+    },
+    "inside_of_investiture_portal": {
+      "conditions": {
+        "block": "cosmerecraft:investiture_portal"
+      },
+      "trigger": "minecraft:enter_block"
     }
   },
   "requirements": [
     [
       "has_the_recipe",
       "has_lerasium",
-      "inside_of_investiture"
+      "inside_of_investiture",
+      "inside_of_investiture_portal"
     ]
   ],
   "rewards": {

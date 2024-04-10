@@ -66,6 +66,10 @@ description='''${mod_description}'''
     versionRange="${minecraft_version_range}"
     ordering="NONE"
     side="BOTH"
+[[dependencies.${mod_id}]]
+    modId="jei"
+    type="optional"
+    versionRange="17.3.0.49"
 
 [[accessTransformers]]
 file="META-INF/accesstransformer.cfg"

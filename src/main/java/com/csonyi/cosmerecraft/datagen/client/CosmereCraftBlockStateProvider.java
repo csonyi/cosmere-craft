@@ -1,4 +1,4 @@
-package com.csonyi.cosmerecraft.datagen;
+package com.csonyi.cosmerecraft.datagen.client;
 
 import com.csonyi.cosmerecraft.CosmereCraft;
 import com.csonyi.cosmerecraft.block.AshLayerBlock;

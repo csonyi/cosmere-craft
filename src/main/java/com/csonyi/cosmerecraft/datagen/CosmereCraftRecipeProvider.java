@@ -17,6 +17,7 @@ import static com.csonyi.cosmerecraft.capability.allomancy.AllomanticMetal.STEEL
 import static com.csonyi.cosmerecraft.capability.allomancy.AllomanticMetal.TIN;
 import static com.csonyi.cosmerecraft.capability.allomancy.AllomanticMetal.ZINC;
 import static com.csonyi.cosmerecraft.registry.CosmereCraftBlocks.INVESTITURE_LIQUID;
+import static com.csonyi.cosmerecraft.registry.CosmereCraftBlocks.INVESTITURE_PORTAL_BLOCK;
 import static com.csonyi.cosmerecraft.registry.CosmereCraftBlocks.METAL_BLOCKS;
 import static com.csonyi.cosmerecraft.registry.CosmereCraftBlocks.RAW_METAL_BLOCKS;
 import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.ASH_BLOCK_ITEM;
@@ -24,6 +25,7 @@ import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.ASH_ITEM;
 import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.ASH_PILE;
 import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.BISMUTH_BLOCK_ITEM;
 import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.BISMUTH_INGOT;
+import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.BISMUTH_ORE_BLOCK_ITEM;
 import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.BISMUTH_POWDER;
 import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.COAL_POWDER;
 import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.DEEPSLATE_BISMUTH_ORE_BLOCK_ITEM;
@@ -41,6 +43,7 @@ import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.METAL_VIALS;
 import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.MORTAR_AND_PESTLE;
 import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.NICKEL_BLOCK_ITEM;
 import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.NICKEL_INGOT;
+import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.NICKEL_ORE_BLOCK_ITEM;
 import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.NICKEL_POWDER;
 import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.RAW_BISMUTH;
 import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.RAW_BISMUTH_BLOCK_ITEM;
@@ -52,6 +55,7 @@ import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.RAW_SILVER;
 import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.RAW_SILVER_BLOCK_ITEM;
 import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.SILVER_BLOCK_ITEM;
 import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.SILVER_INGOT;
+import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.SILVER_ORE_BLOCK_ITEM;
 import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.SILVER_POWDER;
 import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.getDeepslateOreBlockItemHolder;
 import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.getIngotItemHolder;
@@ -265,7 +269,7 @@ public class CosmereCraftRecipeProvider extends RecipeProvider {
         .save(recipeOutput, "single_nickel_powder_from_mortar_and_pestle");
     shapeless(NICKEL_POWDER, 2)
         .requires(Ingredient.of(
-            NICKEL_BLOCK_ITEM.value(),
+            NICKEL_ORE_BLOCK_ITEM.value(),
             DEEPSLATE_NICKEL_ORE_BLOCK_ITEM.value()))
         .requires(MORTAR_AND_PESTLE.value())
         .save(recipeOutput, "double_nickel_powder_from_mortar_and_pestle");
@@ -277,7 +281,7 @@ public class CosmereCraftRecipeProvider extends RecipeProvider {
         .save(recipeOutput, "single_silver_powder_from_mortar_and_pestle");
     shapeless(SILVER_POWDER, 2)
         .requires(Ingredient.of(
-            SILVER_BLOCK_ITEM.value(),
+            SILVER_ORE_BLOCK_ITEM.value(),
             DEEPSLATE_SILVER_ORE_BLOCK_ITEM.value()))
         .requires(MORTAR_AND_PESTLE.value())
         .save(recipeOutput, "double_silver_powder_from_mortar_and_pestle");
@@ -289,7 +293,7 @@ public class CosmereCraftRecipeProvider extends RecipeProvider {
         .save(recipeOutput, "single_bismuth_powder_from_mortar_and_pestle");
     shapeless(BISMUTH_POWDER, 2)
         .requires(Ingredient.of(
-            BISMUTH_BLOCK_ITEM.value(),
+            BISMUTH_ORE_BLOCK_ITEM.value(),
             DEEPSLATE_BISMUTH_ORE_BLOCK_ITEM.value()))
         .requires(MORTAR_AND_PESTLE.value())
         .save(recipeOutput, "double_bismuth_powder_from_mortar_and_pestle");
@@ -347,6 +351,7 @@ public class CosmereCraftRecipeProvider extends RecipeProvider {
             0.7f, 200)
         .unlockedBy("has_lerasium", has(LERASIUM_NUGGET.value()))
         .unlockedBy("inside_of_investiture", insideOf(INVESTITURE_LIQUID.value()))
+        .unlockedBy("inside_of_investiture_portal", insideOf(INVESTITURE_PORTAL_BLOCK.value()))
         .save(recipeOutput); // same as vanilla iron ore TODO: move to AllomanticMetal and balance
   }
 
@@ -357,7 +362,8 @@ public class CosmereCraftRecipeProvider extends RecipeProvider {
   private static ShapelessRecipeBuilder shapeless(Holder<Item> outputItemHolder, int outputAmount) {
     return ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, outputItemHolder.value(), outputAmount)
         .unlockedBy("has_lerasium", has(LERASIUM_NUGGET.value()))
-        .unlockedBy("inside_of_investiture", insideOf(INVESTITURE_LIQUID.value()));
+        .unlockedBy("inside_of_investiture", insideOf(INVESTITURE_LIQUID.value()))
+        .unlockedBy("inside_of_investiture_portal", insideOf(INVESTITURE_PORTAL_BLOCK.value()));
   }
 
   private static ShapedRecipeBuilder shaped(Holder<Item> outputItemHolder) {
@@ -367,6 +373,7 @@ public class CosmereCraftRecipeProvider extends RecipeProvider {
   private static ShapedRecipeBuilder shaped(Holder<Item> outputItemHolder, int outputAmount) {
     return ShapedRecipeBuilder.shaped(RecipeCategory.MISC, outputItemHolder.value(), outputAmount)
         .unlockedBy("has_lerasium", has(LERASIUM_NUGGET.value()))
-        .unlockedBy("inside_of_investiture", insideOf(INVESTITURE_LIQUID.value()));
+        .unlockedBy("inside_of_investiture", insideOf(INVESTITURE_LIQUID.value()))
+        .unlockedBy("inside_of_investiture_portal", insideOf(INVESTITURE_PORTAL_BLOCK.value()));
   }
 }

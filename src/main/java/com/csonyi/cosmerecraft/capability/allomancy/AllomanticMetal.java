@@ -9,7 +9,7 @@ import static com.csonyi.cosmerecraft.capability.allomancy.AllomanticMetal.Type.
 import static com.csonyi.cosmerecraft.capability.allomancy.AllomanticMetal.Type.PHYSICAL;
 import static com.csonyi.cosmerecraft.capability.allomancy.AllomanticMetal.Type.TEMPORAL;
 
-import com.csonyi.cosmerecraft.CosmereCraft;
+import com.csonyi.cosmerecraft.util.ResourceUtils;
 import com.csonyi.cosmerecraft.util.TickUtils;
 import java.util.Arrays;
 import java.util.Optional;
@@ -105,7 +105,7 @@ public enum AllomanticMetal {
   }
 
   public ResourceLocation textureLocation() {
-    return CosmereCraft.createResourceLocation("textures/icon/metal/%s_icon.png".formatted(lowerCaseName()));
+    return ResourceUtils.modResourceLocation("textures/icon/metal/%s_icon.png".formatted(lowerCaseName()));
   }
 
   public String getTranslationKey() {

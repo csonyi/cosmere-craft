@@ -22,6 +22,13 @@ public class CosmereCraftAttachments {
       "known_anchors",
       () -> AttachmentType.builder(() -> new HashSet<BlockPos>()).build());
 
+  public static final Supplier<AttachmentType<Integer>> PERPENDICULARITY_TRAVEL_COOLDOWN =
+      ATTACHMENT_TYPES.register(
+          "perpendicularity_travel_cooldown",
+          () -> AttachmentType.builder(() -> 0)
+              .serialize(Codec.INT)
+              .build());
+
   public static final EnumMap<AllomanticMetal, Supplier<AttachmentType<Integer>>> METAL_RESERVES =
       new EnumMap<>(AllomanticMetal.class);
   public static final EnumMap<AllomanticMetal, Supplier<AttachmentType<Integer>>> METAL_BURN_STRENGTH =
@@ -32,9 +39,9 @@ public class CosmereCraftAttachments {
   static {
     AllomanticMetal.stream()
         .forEach(metal -> {
-          METAL_RESERVES.put(metal, registerIntegerAttachment(metal, "reserve"));
-          METAL_BURN_STRENGTH.put(metal, registerIntegerAttachment(metal, "burn_strength"));
-          METAL_AVAILABLE.put(metal, registerBooleanAttachment(metal, "available"));
+          METAL_RESERVES.put(metal, registerIntegerAttachmentForMetal(metal, "reserve"));
+          METAL_BURN_STRENGTH.put(metal, registerIntegerAttachmentForMetal(metal, "burn_strength"));
+          METAL_AVAILABLE.put(metal, registerBooleanAttachmentForMetal(metal, "available"));
         });
   }
 
@@ -50,7 +57,7 @@ public class CosmereCraftAttachments {
     return METAL_AVAILABLE.get(metal);
   }
 
-  private static Supplier<AttachmentType<Boolean>> registerBooleanAttachment(AllomanticMetal metal, String attachmentSuffix) {
+  private static Supplier<AttachmentType<Boolean>> registerBooleanAttachmentForMetal(AllomanticMetal metal, String attachmentSuffix) {
     return ATTACHMENT_TYPES.register(
         "%s_%s".formatted(metal.name().toLowerCase(), attachmentSuffix),
         () -> AttachmentType.builder(() -> false)
@@ -58,7 +65,7 @@ public class CosmereCraftAttachments {
             .build());
   }
 
-  private static Supplier<AttachmentType<Integer>> registerIntegerAttachment(AllomanticMetal metal, String attachmentSuffix) {
+  private static Supplier<AttachmentType<Integer>> registerIntegerAttachmentForMetal(AllomanticMetal metal, String attachmentSuffix) {
     return ATTACHMENT_TYPES.register(
         "%s_%s".formatted(metal.name().toLowerCase(), attachmentSuffix),
         () -> AttachmentType.builder(() -> 0)
