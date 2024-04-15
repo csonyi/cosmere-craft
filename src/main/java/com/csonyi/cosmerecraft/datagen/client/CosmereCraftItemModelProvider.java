@@ -43,6 +43,7 @@ public class CosmereCraftItemModelProvider extends ItemModelProvider {
             Stream.of(
                     CosmereCraftItems.METAL_POWDERS,
                     CosmereCraftItems.METAL_INGOTS,
+                    CosmereCraftItems.METAL_NUGGETS,
                     CosmereCraftItems.METAL_VIALS,
                     CosmereCraftItems.RAW_METALS)
                 .map(Map::values)

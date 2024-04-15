@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "group": "lead_ingot",
+  "key": {
+    "#": {
+      "item": "cosmerecraft:lead_nugget"
+    }
+  },
+  "pattern": [
+    "###",
+    "###",
+    "###"
+  ],
+  "result": {
+    "item": "cosmerecraft:lead_ingot"
+  }
+}

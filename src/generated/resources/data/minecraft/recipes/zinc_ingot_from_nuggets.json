@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "group": "zinc_ingot",
+  "key": {
+    "#": {
+      "item": "cosmerecraft:zinc_nugget"
+    }
+  },
+  "pattern": [
+    "###",
+    "###",
+    "###"
+  ],
+  "result": {
+    "item": "cosmerecraft:zinc_ingot"
+  }
+}

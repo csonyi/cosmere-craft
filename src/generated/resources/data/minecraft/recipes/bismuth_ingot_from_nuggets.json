@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "group": "bismuth_ingot",
+  "key": {
+    "#": {
+      "item": "cosmerecraft:bismuth_nugget"
+    }
+  },
+  "pattern": [
+    "###",
+    "###",
+    "###"
+  ],
+  "result": {
+    "item": "cosmerecraft:bismuth_ingot"
+  }
+}

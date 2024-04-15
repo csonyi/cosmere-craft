@@ -15,7 +15,7 @@ import net.neoforged.neoforge.common.data.ExistingFileHelper;
 
 public class CosmereCraftItemTagsProvider extends ItemTagsProvider {
 
-  // TODO: is this needed?
+  // TODO: is this needed? If yes, update
   public CosmereCraftItemTagsProvider(
       PackOutput packOutput,
       CompletableFuture<HolderLookup.Provider> lookupProvider,

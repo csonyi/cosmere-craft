@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "group": "duralumin_ingot",
+  "key": {
+    "#": {
+      "item": "cosmerecraft:duralumin_nugget"
+    }
+  },
+  "pattern": [
+    "###",
+    "###",
+    "###"
+  ],
+  "result": {
+    "item": "cosmerecraft:duralumin_ingot"
+  }
+}

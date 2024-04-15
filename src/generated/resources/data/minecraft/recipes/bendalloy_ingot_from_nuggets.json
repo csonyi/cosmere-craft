@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "group": "bendalloy_ingot",
+  "key": {
+    "#": {
+      "item": "cosmerecraft:bendalloy_nugget"
+    }
+  },
+  "pattern": [
+    "###",
+    "###",
+    "###"
+  ],
+  "result": {
+    "item": "cosmerecraft:bendalloy_ingot"
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "group": "pewter_ingot",
+  "key": {
+    "#": {
+      "item": "cosmerecraft:pewter_nugget"
+    }
+  },
+  "pattern": [
+    "###",
+    "###",
+    "###"
+  ],
+  "result": {
+    "item": "cosmerecraft:pewter_ingot"
+  }
+}

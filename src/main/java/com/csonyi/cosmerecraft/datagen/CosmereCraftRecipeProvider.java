@@ -25,6 +25,7 @@ import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.ASH_ITEM;
 import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.ASH_PILE;
 import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.BISMUTH_BLOCK_ITEM;
 import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.BISMUTH_INGOT;
+import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.BISMUTH_NUGGET;
 import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.BISMUTH_ORE_BLOCK_ITEM;
 import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.BISMUTH_POWDER;
 import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.COAL_POWDER;
@@ -34,6 +35,7 @@ import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.DEEPSLATE_NICKE
 import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.DEEPSLATE_SILVER_ORE_BLOCK_ITEM;
 import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.LEAD_BLOCK_ITEM;
 import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.LEAD_INGOT;
+import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.LEAD_NUGGET;
 import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.LEAD_ORE_BLOCK_ITEM;
 import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.LEAD_POWDER;
 import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.LERASIUM_NUGGET;
@@ -43,6 +45,7 @@ import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.METAL_VIALS;
 import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.MORTAR_AND_PESTLE;
 import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.NICKEL_BLOCK_ITEM;
 import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.NICKEL_INGOT;
+import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.NICKEL_NUGGET;
 import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.NICKEL_ORE_BLOCK_ITEM;
 import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.NICKEL_POWDER;
 import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.RAW_BISMUTH;
@@ -55,10 +58,12 @@ import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.RAW_SILVER;
 import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.RAW_SILVER_BLOCK_ITEM;
 import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.SILVER_BLOCK_ITEM;
 import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.SILVER_INGOT;
+import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.SILVER_NUGGET;
 import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.SILVER_ORE_BLOCK_ITEM;
 import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.SILVER_POWDER;
 import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.getDeepslateOreBlockItemHolder;
 import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.getIngotItemHolder;
+import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.getNuggetItemHolder;
 import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.getOreBlockItemHolder;
 import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.getPowderItemHolder;
 import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.getRawMetalItemHolder;
@@ -189,7 +194,33 @@ public class CosmereCraftRecipeProvider extends RecipeProvider {
               getDeepslateOreBlockItemHolder(metal).value())
               : Ingredient.of(getPowderItemHolder(metal).value());
           smeltingRecipe(recipeOutput, ingredients, ingotItemHolder);
+          nuggetRecipes(recipeOutput, getNuggetItemHolder(metal), ingotItemHolder, metal.lowerCaseName());
         });
+    nuggetRecipes(
+        recipeOutput,
+        getNuggetItemHolder(COPPER),
+        getIngotItemHolder(COPPER),
+        "copper");
+    nuggetRecipes(
+        recipeOutput,
+        LEAD_NUGGET,
+        LEAD_INGOT,
+        "lead");
+    nuggetRecipes(
+        recipeOutput,
+        NICKEL_NUGGET,
+        NICKEL_INGOT,
+        "nickel");
+    nuggetRecipes(
+        recipeOutput,
+        SILVER_NUGGET,
+        SILVER_INGOT,
+        "silver");
+    nuggetRecipes(
+        recipeOutput,
+        BISMUTH_NUGGET,
+        BISMUTH_INGOT,
+        "bismuth");
     smeltingRecipe(
         recipeOutput,
         Ingredient.of(
@@ -339,6 +370,18 @@ public class CosmereCraftRecipeProvider extends RecipeProvider {
         .define('#', ASH_BLOCK_ITEM.value())
         .pattern("###")
         .save(recipeOutput);
+  }
+
+  private static void nuggetRecipes(
+      RecipeOutput recipeOutput, Holder<Item> nuggetItemHolder, Holder<Item> ingotItemHolder, String metalName) {
+    nineBlockStorageRecipesWithCustomPacking(
+        recipeOutput,
+        RecipeCategory.MISC,
+        nuggetItemHolder.value(),
+        RecipeCategory.MISC,
+        ingotItemHolder.value(),
+        "%s_ingot_from_nuggets".formatted(metalName),
+        "%s_ingot".formatted(metalName));
   }
 
 

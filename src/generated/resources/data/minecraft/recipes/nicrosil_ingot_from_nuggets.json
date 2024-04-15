@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "group": "nicrosil_ingot",
+  "key": {
+    "#": {
+      "item": "cosmerecraft:nicrosil_nugget"
+    }
+  },
+  "pattern": [
+    "###",
+    "###",
+    "###"
+  ],
+  "result": {
+    "item": "cosmerecraft:nicrosil_ingot"
+  }
+}

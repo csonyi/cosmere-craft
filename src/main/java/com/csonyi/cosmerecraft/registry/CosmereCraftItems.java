@@ -67,6 +67,19 @@ public class CosmereCraftItems {
   public static final Holder<Item> SILVER_INGOT = ITEMS.registerSimpleItem("silver_ingot");
   public static final Holder<Item> BISMUTH_INGOT = ITEMS.registerSimpleItem("bismuth_ingot");
 
+  // Metal nuggets
+  public static final Map<AllomanticMetal, Holder<Item>> METAL_NUGGETS = AllomanticMetal.stream()
+      .filter(not(AllomanticMetal::isGodMetal))
+      .filter(not(AllomanticMetal.GOLD::equals))
+      .filter(not(AllomanticMetal.IRON::equals))
+      .collect(Collectors.toMap(
+          Function.identity(),
+          metal -> ITEMS.registerSimpleItem("%s_nugget".formatted(metal.lowerCaseName()))));
+  public static final Holder<Item> LEAD_NUGGET = ITEMS.registerSimpleItem("lead_nugget");
+  public static final Holder<Item> NICKEL_NUGGET = ITEMS.registerSimpleItem("nickel_nugget");
+  public static final Holder<Item> SILVER_NUGGET = ITEMS.registerSimpleItem("silver_nugget");
+  public static final Holder<Item> BISMUTH_NUGGET = ITEMS.registerSimpleItem("bismuth_nugget");
+
   // Metal vials
   public static final Map<AllomanticMetal, Holder<Item>> METAL_VIALS = AllomanticMetal.stream()
       .filter(not(AllomanticMetal::isGodMetal))
@@ -172,6 +185,7 @@ public class CosmereCraftItems {
             Stream.of(
                     METAL_POWDERS,
                     METAL_INGOTS,
+                    METAL_NUGGETS,
                     METAL_VIALS,
                     RAW_METALS,
                     METAL_ORE_BLOCK_ITEMS,
@@ -246,6 +260,14 @@ public class CosmereCraftItems {
         Items.IRON_INGOT,
         Items.GOLD_INGOT,
         Items.COPPER_INGOT);
+  }
+
+  public static Holder<Item> getNuggetItemHolder(AllomanticMetal metal) {
+    return switch (metal) {
+      case IRON -> BuiltInRegistries.ITEM.wrapAsHolder(Items.IRON_NUGGET);
+      case GOLD -> BuiltInRegistries.ITEM.wrapAsHolder(Items.GOLD_NUGGET);
+      default -> METAL_NUGGETS.get(metal);
+    };
   }
 
   public static Holder<Item> getRawMetalItemHolder(AllomanticMetal metal) {

@@ -26,19 +26,23 @@ import static com.csonyi.cosmerecraft.registry.CosmereCraftBlocks.SILVER_BLOCK;
 import static com.csonyi.cosmerecraft.registry.CosmereCraftBlocks.SILVER_ORE;
 import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.ASH_PILE;
 import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.BISMUTH_INGOT;
+import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.BISMUTH_NUGGET;
 import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.BISMUTH_POWDER;
 import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.COAL_POWDER;
 import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.INQUISITOR_SPAWN_EGG;
 import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.INVESTITURE_BUCKET;
 import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.INVESTITURE_PORTAL_BUCKET;
 import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.LEAD_INGOT;
+import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.LEAD_NUGGET;
 import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.LEAD_POWDER;
 import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.LERASIUM_NUGGET;
 import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.METAL_INGOTS;
+import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.METAL_NUGGETS;
 import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.METAL_POWDERS;
 import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.METAL_VIALS;
 import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.MORTAR_AND_PESTLE;
 import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.NICKEL_INGOT;
+import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.NICKEL_NUGGET;
 import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.NICKEL_POWDER;
 import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.OBSIDIAN_AXE;
 import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.RAW_BISMUTH;
@@ -47,15 +51,16 @@ import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.RAW_METALS;
 import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.RAW_NICKEL;
 import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.RAW_SILVER;
 import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.SILVER_INGOT;
+import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.SILVER_NUGGET;
 import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.SILVER_POWDER;
 
+import com.csonyi.cosmerecraft.CosmereCraft;
 import com.csonyi.cosmerecraft.registry.CosmereCraftEntities;
 import net.minecraft.data.PackOutput;
 
 public class EnUsLanguageProvider extends BaseLanguageProvider {
 
   private static final String LOCALE = "en_US";
-  private static final String MOD_DESCRIPTION = "Egy Brandon Sanderson Ködszerzet regénye ihlette mod.";
 
   public EnUsLanguageProvider(PackOutput output) {
     super(output, LOCALE);
@@ -64,6 +69,7 @@ public class EnUsLanguageProvider extends BaseLanguageProvider {
   @Override
   protected void addTranslations() {
     super.addTranslations();
+    add("fml.menu.mods.info.description.%s".formatted(CosmereCraft.MOD_ID), "A mod inspired by Brandon Sanderson's Cosmere universe.");
     addItems();
     addBlocks();
     addEntityTypes();
@@ -88,6 +94,13 @@ public class EnUsLanguageProvider extends BaseLanguageProvider {
     addItem(NICKEL_INGOT::value, "Nickel Ingot");
     addItem(SILVER_INGOT::value, "Silver Ingot");
     addItem(BISMUTH_INGOT::value, "Bismuth Ingot");
+
+    METAL_NUGGETS
+        .forEach((metal, item) -> addAllomanticMetalItemName(metal, item, " Nugget"));
+    addItem(LEAD_NUGGET::value, "Lead Nugget");
+    addItem(NICKEL_NUGGET::value, "Nickel Nugget");
+    addItem(SILVER_NUGGET::value, "Silver Nugget");
+    addItem(BISMUTH_NUGGET::value, "Bismuth Nugget");
 
     METAL_VIALS
         .forEach((metal, item) -> addAllomanticMetalItemName(metal, item, " Vial"));
