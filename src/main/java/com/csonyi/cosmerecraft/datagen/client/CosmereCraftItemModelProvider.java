@@ -1,5 +1,6 @@
 package com.csonyi.cosmerecraft.datagen.client;
 
+import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.ANCIENT_MEDALLION;
 import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.ASH_PILE;
 import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.BISMUTH_INGOT;
 import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.BISMUTH_POWDER;
@@ -66,7 +67,8 @@ public class CosmereCraftItemModelProvider extends ItemModelProvider {
                 RAW_LEAD,
                 RAW_NICKEL,
                 RAW_SILVER,
-                RAW_BISMUTH))
+                RAW_BISMUTH,
+                ANCIENT_MEDALLION))
         .flatMap(Function.identity())
         .map(Holder::value)
         .forEach(this::basicItem);

@@ -7,18 +7,23 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.ai.village.poi.PoiManager;
 import net.minecraft.world.entity.ai.village.poi.PoiRecord;
 import net.minecraft.world.entity.ai.village.poi.PoiType;
 import net.minecraft.world.level.border.WorldBorder;
+import net.minecraft.world.level.levelgen.structure.Structure;
 import net.neoforged.neoforge.common.util.ITeleporter;
 
 public class ScadrialTeleporter implements ITeleporter {
 
   private static final int MAX_PORTAL_DISTANCE = 16;
-  private static final ResourceKey<PoiType> WELL_OF_ASCENSION = ResourceKey.create(
+  public static final TagKey<Structure> ANCIENT_MEDALLION_LOCATED = TagKey.create(
+      Registries.STRUCTURE,
+      ResourceUtils.modLocation("ancient_medallion_located"));
+  public static final ResourceKey<PoiType> WELL_OF_ASCENSION = ResourceKey.create(
       Registries.POINT_OF_INTEREST_TYPE,
-      ResourceUtils.modResourceLocation("well_of_ascension"));
+      ResourceUtils.modLocation("well_of_ascension"));
 
   private final ServerLevel level;
 
@@ -58,5 +63,29 @@ public class ScadrialTeleporter implements ITeleporter {
   private Comparator<PoiRecord> compareWellsByHeight() {
     return Comparator.comparingInt(well -> well.getPos().getY());
   }
+
+  public static Optional<BlockPos> getWellLocation(ServerLevel serverLevel, BlockPos playerPos) {
+    return Optional.ofNullable(serverLevel.findNearestMapStructure(
+        ScadrialTeleporter.ANCIENT_MEDALLION_LOCATED,
+        playerPos,
+        100,
+        false));
+  }
+
+  // public static Optional<BlockPos> getWellLocation(ServerLevel serverLevel, BlockPos playerPos) throws Exception {
+  //   var registry = serverLevel.registryAccess()
+  //       .registryOrThrow(Registries.STRUCTURE);
+  //   var key = ResourceKey.create(Registries.STRUCTURE, ResourceUtils.modLocation("well_of_ascension/well_of_ascension"));
+  //   return registry.getHolder(key)
+  //       .map(HolderSet::direct)
+  //       .map(holderSet -> serverLevel.getChunkSource()
+  //           .getGenerator()
+  //           .findNearestMapStructure(
+  //               serverLevel,
+  //               holderSet,
+  //               playerPos,
+  //               100, false))
+  //       .map(Pair::getFirst);
+  // }
 
 }

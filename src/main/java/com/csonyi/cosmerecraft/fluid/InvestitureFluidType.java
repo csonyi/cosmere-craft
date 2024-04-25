@@ -27,12 +27,12 @@ public class InvestitureFluidType extends FluidType {
 
       @Override
       public @NotNull ResourceLocation getStillTexture() {
-        return ResourceUtils.modResourceLocation("block/investiture_still");
+        return ResourceUtils.modLocation("block/investiture_still");
       }
 
       @Override
       public @NotNull ResourceLocation getFlowingTexture() {
-        return ResourceUtils.modResourceLocation("block/investiture_flowing");
+        return ResourceUtils.modLocation("block/investiture_flowing");
       }
     });
   }

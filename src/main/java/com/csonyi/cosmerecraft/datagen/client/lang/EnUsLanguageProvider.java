@@ -24,6 +24,7 @@ import static com.csonyi.cosmerecraft.registry.CosmereCraftBlocks.RAW_NICKEL_BLO
 import static com.csonyi.cosmerecraft.registry.CosmereCraftBlocks.RAW_SILVER_BLOCK;
 import static com.csonyi.cosmerecraft.registry.CosmereCraftBlocks.SILVER_BLOCK;
 import static com.csonyi.cosmerecraft.registry.CosmereCraftBlocks.SILVER_ORE;
+import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.ANCIENT_MEDALLION;
 import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.ASH_PILE;
 import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.BISMUTH_INGOT;
 import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.BISMUTH_NUGGET;
@@ -75,6 +76,7 @@ public class EnUsLanguageProvider extends BaseLanguageProvider {
     addEntityTypes();
     addBiomes();
     addMetalNames();
+    addCustomTooltips();
   }
 
   /**
@@ -121,6 +123,7 @@ public class EnUsLanguageProvider extends BaseLanguageProvider {
     addItem(INQUISITOR_SPAWN_EGG::value, "Inquisitor Spawn Egg");
     addItem(INVESTITURE_BUCKET::value, "Investiture Bucket");
     addItem(INVESTITURE_PORTAL_BUCKET::value, "Investiture Portal Bucket");
+    addItem(ANCIENT_MEDALLION::value, "Ancient Medallion");
   }
 
   /**
@@ -224,6 +227,12 @@ public class EnUsLanguageProvider extends BaseLanguageProvider {
     add("cosmerecraft.metals.side.internal", "Internal");
     add("cosmerecraft.metals.side.external", "External");
     add("cosmerecraft.metals.side.god", "God");
+
+    add("cosmerecraft.metals.unavailable", "Unavailable");
+  }
+
+  private void addCustomTooltips() {
+    add(ANCIENT_MEDALLION_TOOLTIP, "When I hold it in my hand, I can hear a faint pulsing in the distance...");
   }
 
 }

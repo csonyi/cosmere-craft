@@ -14,6 +14,7 @@ import com.csonyi.cosmerecraft.entity.Inquisitor;
 import com.csonyi.cosmerecraft.entity.InquisitorModel;
 import com.csonyi.cosmerecraft.entity.InquisitorRenderer;
 import com.csonyi.cosmerecraft.networking.MetalStateUpdateHandler;
+import com.csonyi.cosmerecraft.networking.WellLocationQueryHandler;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.PackOutput;
 import net.minecraft.world.entity.SpawnPlacements;
@@ -37,11 +38,24 @@ public class RegistryEventHandlers {
     registrar.play(
         MetalStateUpdateHandler.MetalStateQuery.ID,
         MetalStateUpdateHandler.MetalStateQuery::read,
-        handler -> handler.server(MetalStateUpdateHandler::handleQueryOnServer));
+        handler -> handler
+            .server(MetalStateUpdateHandler::handleQuery));
     registrar.play(
         MetalStateUpdateHandler.MetalStatePacket.ID,
         MetalStateUpdateHandler.MetalStatePacket::read,
-        MetalStateUpdateHandler::handleState);
+        handler -> handler
+            .server(MetalStateUpdateHandler::handleResponse)
+            .client(MetalStateUpdateHandler::handleResponse));
+    registrar.play(
+        WellLocationQueryHandler.WellLocationQuery.ID,
+        WellLocationQueryHandler.WellLocationQuery::read,
+        handler -> handler
+            .server(WellLocationQueryHandler::handleQuery));
+    registrar.play(
+        WellLocationQueryHandler.WellLocationResponse.ID,
+        WellLocationQueryHandler.WellLocationResponse::read,
+        handler -> handler
+            .client(WellLocationQueryHandler::handleResponse));
   }
 
   @SubscribeEvent

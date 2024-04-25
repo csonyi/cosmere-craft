@@ -10,6 +10,6 @@ public class AllomanticPropertyInfo implements IModPlugin {
 
   @Override
   public ResourceLocation getPluginUid() {
-    return ResourceUtils.modResourceLocation("allomantic_property_info");
+    return ResourceUtils.modLocation("allomantic_property_info");
   }
 }

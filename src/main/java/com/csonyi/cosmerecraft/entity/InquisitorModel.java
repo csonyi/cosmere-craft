@@ -21,7 +21,7 @@ public class InquisitorModel<T extends Monster> extends PlayerModel<T> {
 
   // This layer location should be baked with EntityRendererProvider.Context in the entity renderer and passed into this model's constructor
   public static final ModelLayerLocation LAYER_LOCATION =
-      new ModelLayerLocation(ResourceUtils.modResourceLocation("inquisitor"), "main");
+      new ModelLayerLocation(ResourceUtils.modLocation("inquisitor"), "main");
 
   public InquisitorModel(ModelPart root) {
     super(root, false);

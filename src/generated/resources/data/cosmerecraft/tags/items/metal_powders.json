@@ -1,20 +1,20 @@
 {
   "values": [
+    "cosmerecraft:aluminum_powder",
+    "cosmerecraft:chromium_powder",
+    "cosmerecraft:brass_powder",
     "cosmerecraft:bendalloy_powder",
+    "cosmerecraft:tin_powder",
+    "cosmerecraft:bronze_powder",
+    "cosmerecraft:electrum_powder",
     "cosmerecraft:pewter_powder",
     "cosmerecraft:nicrosil_powder",
-    "cosmerecraft:brass_powder",
-    "cosmerecraft:tin_powder",
-    "cosmerecraft:steel_powder",
-    "cosmerecraft:aluminum_powder",
-    "cosmerecraft:zinc_powder",
-    "cosmerecraft:duralumin_powder",
-    "cosmerecraft:chromium_powder",
     "cosmerecraft:copper_powder",
+    "cosmerecraft:duralumin_powder",
     "cosmerecraft:iron_powder",
+    "cosmerecraft:zinc_powder",
+    "cosmerecraft:steel_powder",
     "cosmerecraft:gold_powder",
-    "cosmerecraft:electrum_powder",
-    "cosmerecraft:cadmium_powder",
-    "cosmerecraft:bronze_powder"
+    "cosmerecraft:cadmium_powder"
   ]
 }

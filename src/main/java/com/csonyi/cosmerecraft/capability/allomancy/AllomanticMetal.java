@@ -18,6 +18,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffects;
@@ -105,11 +106,15 @@ public enum AllomanticMetal {
   }
 
   public ResourceLocation textureLocation() {
-    return ResourceUtils.modResourceLocation("textures/icon/metal/%s_icon.png".formatted(lowerCaseName()));
+    return textureLocation("black");
   }
 
-  public String getTranslationKey() {
-    return "cosmerecraft.metals.%s".formatted(lowerCaseName());
+  public ResourceLocation textureLocation(String color) {
+    return ResourceUtils.modLocation("textures/icon/metal/%s_icon_%s.png".formatted(lowerCaseName(), color));
+  }
+
+  public Component getNameAsComponent() {
+    return Component.translatable("cosmerecraft.metals.%s".formatted(lowerCaseName()));
   }
 
   public static Stream<AllomanticMetal> stream() {
@@ -130,6 +135,14 @@ public enum AllomanticMetal {
     PHYSICAL, MENTAL,
     ENHANCEMENT, TEMPORAL,
     GOD;
+
+    public boolean of(AllomanticMetal metal) {
+      return this.equals(metal.type);
+    }
+
+    public Component getNameAsComponent() {
+      return Component.translatable("cosmerecraft.metals.type.%s".formatted(name().toLowerCase()));
+    }
   }
 
   public enum Direction {
@@ -171,6 +184,10 @@ public enum AllomanticMetal {
       return new State(metal, 0, 0, false);
     }
 
+    public static State burnStrengthUpdate(AllomanticMetal metal, int burnStrength) {
+      return new State(metal, null, burnStrength, null);
+    }
+
     public Optional<Integer> getReserve() {
       return Optional.ofNullable(reserve);
     }
@@ -182,6 +199,7 @@ public enum AllomanticMetal {
     public Optional<Boolean> isAvailable() {
       return Optional.ofNullable(available);
     }
+
   }
 
 }

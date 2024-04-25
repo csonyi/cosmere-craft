@@ -1,13 +1,12 @@
 package com.csonyi.cosmerecraft;
 
-import com.csonyi.cosmerecraft.capability.allomancy.AllomanticMetal;
 import com.csonyi.cosmerecraft.registry.CosmereCraftAttachments;
 import com.csonyi.cosmerecraft.registry.CosmereCraftBlocks;
 import com.csonyi.cosmerecraft.registry.CosmereCraftEntities;
 import com.csonyi.cosmerecraft.registry.CosmereCraftFeatures;
 import com.csonyi.cosmerecraft.registry.CosmereCraftFluids;
 import com.csonyi.cosmerecraft.registry.CosmereCraftItems;
-import com.csonyi.cosmerecraft.registry.CosmereCraftPois;
+import com.csonyi.cosmerecraft.registry.CosmereCraftStructures;
 import com.csonyi.cosmerecraft.util.ResourceUtils;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
@@ -51,7 +50,7 @@ public class CosmereCraft {
    * The resource key for the scadrial dimension. Dimension properties are defined in the data pack.
    */
   public static final ResourceKey<Level> SCADRIAL =
-      ResourceKey.create(Registries.DIMENSION, ResourceUtils.modResourceLocation("scadrial"));
+      ResourceKey.create(Registries.DIMENSION, ResourceUtils.modLocation("scadrial"));
 
   /**
    * The constructor of the mod, registers and initializes all the features of the mod.
@@ -65,7 +64,7 @@ public class CosmereCraft {
     CREATIVE_MODE_TABS.register("cosmerecraft", () -> CreativeModeTab.builder()
         .title(Component.translatable("itemGroup.%s".formatted(MOD_ID)))
         .withTabsBefore(CreativeModeTabs.SPAWN_EGGS)
-        .withTabsImage(AllomanticMetal.IRON.textureLocation())
+        .icon(CosmereCraftItems.ANCIENT_MEDALLION.value()::getDefaultInstance)
         .displayItems(CosmereCraftItems::generateDisplayItems)
         .build());
 
@@ -75,7 +74,7 @@ public class CosmereCraft {
     CosmereCraftFeatures.register(modEventBus);
     CosmereCraftAttachments.register(modEventBus);
     CosmereCraftEntities.register(modEventBus);
-    CosmereCraftPois.register(modEventBus);
+    CosmereCraftStructures.register(modEventBus);
 
     ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, Config.Server.SPEC);
   }

@@ -5,6 +5,7 @@ import static com.csonyi.cosmerecraft.registry.CosmereCraftAttachments.metalBurn
 import static com.csonyi.cosmerecraft.registry.CosmereCraftAttachments.metalReserve;
 
 import com.csonyi.cosmerecraft.Config;
+import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 import net.minecraft.world.entity.player.Player;
@@ -65,6 +66,13 @@ public class MetalStateManager {
     return getReserve(metal) > 0
         && getBurnStrength(metal) > 0
         && isAvailable(metal);
+  }
+
+  public List<AllomanticMetal.State> getStates(AllomanticMetal.Type type) {
+    return AllomanticMetal.stream()
+        .filter(type::of)
+        .map(this::getState)
+        .toList();
   }
 
   public void drainActive() {

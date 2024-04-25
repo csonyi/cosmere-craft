@@ -16,7 +16,7 @@ public class ResourceUtils {
    * @param path the path of the resource location
    * @return the resource location
    */
-  public static ResourceLocation createResourceLocation(String path) {
+  public static ResourceLocation minecraftLocation(String path) {
     return new ResourceLocation(path);
   }
 
@@ -26,7 +26,7 @@ public class ResourceUtils {
    * @param path the path of the resource location
    * @return the resource location
    */
-  public static ResourceLocation modResourceLocation(String path) {
+  public static ResourceLocation modLocation(String path) {
     return new ResourceLocation(CosmereCraft.MOD_ID, path);
   }
 }

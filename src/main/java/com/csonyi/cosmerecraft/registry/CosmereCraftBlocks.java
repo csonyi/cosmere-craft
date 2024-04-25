@@ -1,6 +1,6 @@
 package com.csonyi.cosmerecraft.registry;
 
-import static com.csonyi.cosmerecraft.util.ResourceUtils.modResourceLocation;
+import static com.csonyi.cosmerecraft.util.ResourceUtils.modLocation;
 import static java.util.function.Predicate.not;
 
 import com.csonyi.cosmerecraft.CosmereCraft;
@@ -28,8 +28,8 @@ public class CosmereCraftBlocks {
   public static final DeferredRegister.Blocks BLOCKS =
       DeferredRegister.createBlocks(CosmereCraft.MOD_ID);
 
-  public static final TagKey<Block> ANCHOR_TAG = BlockTags.create(modResourceLocation("anchor"));
-  public static final TagKey<Block> ASH_TAG = BlockTags.create(modResourceLocation("ash"));
+  public static final TagKey<Block> ANCHOR_TAG = BlockTags.create(modLocation("anchor"));
+  public static final TagKey<Block> ASH_TAG = BlockTags.create(modLocation("ash"));
 
   public static final Map<AllomanticMetal, Holder<Block>> METAL_ORES = AllomanticMetal.stream()
       .filter(not(AllomanticMetal::isGodMetal))

@@ -24,6 +24,7 @@ import static com.csonyi.cosmerecraft.registry.CosmereCraftBlocks.RAW_NICKEL_BLO
 import static com.csonyi.cosmerecraft.registry.CosmereCraftBlocks.RAW_SILVER_BLOCK;
 import static com.csonyi.cosmerecraft.registry.CosmereCraftBlocks.SILVER_BLOCK;
 import static com.csonyi.cosmerecraft.registry.CosmereCraftBlocks.SILVER_ORE;
+import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.ANCIENT_MEDALLION;
 import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.ASH_PILE;
 import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.BISMUTH_INGOT;
 import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.BISMUTH_NUGGET;
@@ -70,6 +71,7 @@ public class HuHuLanguageProvider extends BaseLanguageProvider {
   protected void addTranslations() {
     super.addTranslations();
     add("fml.menu.mods.info.description.%s".formatted(CosmereCraft.MOD_ID), "Egy Brandon Sanderson Ködszerzet cimű regénye ihlette mod.");
+    addCustomTooltips();
     addItems();
     addBlocks();
     addEntityTypes();
@@ -121,6 +123,7 @@ public class HuHuLanguageProvider extends BaseLanguageProvider {
     addItem(INQUISITOR_SPAWN_EGG::value, "Inkvizítoridéző Tojás");
     addItem(INVESTITURE_BUCKET::value, "Invesztitúra Vödör");
     addItem(INVESTITURE_PORTAL_BUCKET::value, "Invesztitúra Portál Vödör");
+    addItem(ANCIENT_MEDALLION::value, "Ősi Medallion");
   }
 
   /**
@@ -224,6 +227,12 @@ public class HuHuLanguageProvider extends BaseLanguageProvider {
     add("cosmerecraft.metals.side.internal", "Belső");
     add("cosmerecraft.metals.side.external", "Kulső");
     add("cosmerecraft.metals.side.god", "Isteni");
+
+    add("cosmerecraft.metals.unavailable", "Nem elérhető");
+  }
+
+  private void addCustomTooltips() {
+    add(ANCIENT_MEDALLION_TOOLTIP, "Mikor kezemben tartom, mintha egy távoli lüktetést halanék...");
   }
 
 }

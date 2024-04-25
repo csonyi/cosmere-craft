@@ -1,11 +1,12 @@
 package com.csonyi.cosmerecraft.registry;
 
-import static com.csonyi.cosmerecraft.util.ResourceUtils.modResourceLocation;
+import static com.csonyi.cosmerecraft.util.ResourceUtils.modLocation;
 import static java.util.function.Predicate.not;
 
 import com.csonyi.cosmerecraft.CosmereCraft;
 import com.csonyi.cosmerecraft.capability.allomancy.AllomanticMetal;
 import com.csonyi.cosmerecraft.item.EdibleMetalNugget;
+import com.csonyi.cosmerecraft.item.FeruchemicalMedallion;
 import com.csonyi.cosmerecraft.item.InquisitorAxe;
 import com.csonyi.cosmerecraft.item.MetalVial;
 import java.util.Collection;
@@ -38,10 +39,10 @@ public class CosmereCraftItems {
       DeferredRegister.createItems(CosmereCraft.MOD_ID);
 
   // === Item Tag keys ===
-  public static final TagKey<Item> METAL_POWDERS_TAG = ItemTags.create(modResourceLocation("metal_powders"));
-  public static final TagKey<Item> METAL_INGOTS_TAG = ItemTags.create(modResourceLocation("metal_ingots"));
-  public static final TagKey<Item> OBSIDIAN_ITEMS_TAG = ItemTags.create(modResourceLocation("obsidian_items"));
-  public static final TagKey<Item> GLASS_ITEMS_TAG = ItemTags.create(modResourceLocation("glass_items"));
+  public static final TagKey<Item> METAL_POWDERS_TAG = ItemTags.create(modLocation("metal_powders"));
+  public static final TagKey<Item> METAL_INGOTS_TAG = ItemTags.create(modLocation("metal_ingots"));
+  public static final TagKey<Item> OBSIDIAN_ITEMS_TAG = ItemTags.create(modLocation("obsidian_items"));
+  public static final TagKey<Item> GLASS_ITEMS_TAG = ItemTags.create(modLocation("glass_items"));
 
   // === Item Holders ===
   // Metal powders
@@ -79,6 +80,9 @@ public class CosmereCraftItems {
   public static final Holder<Item> NICKEL_NUGGET = ITEMS.registerSimpleItem("nickel_nugget");
   public static final Holder<Item> SILVER_NUGGET = ITEMS.registerSimpleItem("silver_nugget");
   public static final Holder<Item> BISMUTH_NUGGET = ITEMS.registerSimpleItem("bismuth_nugget");
+  public static final Holder<Item> LERASIUM_NUGGET = ITEMS.register(
+      "lerasium_nugget",
+      () -> new EdibleMetalNugget(AllomanticMetal.LERASIUM));
 
   // Metal vials
   public static final Map<AllomanticMetal, Holder<Item>> METAL_VIALS = AllomanticMetal.stream()
@@ -152,10 +156,9 @@ public class CosmereCraftItems {
   public static final Holder<Item> MORTAR_AND_PESTLE = ITEMS.registerSimpleItem("mortar_and_pestle");
   public static final Holder<Item> COAL_POWDER = ITEMS.registerSimpleItem("coal_powder");
 
-  // TODO: add nuggets for all metals
-  public static final Holder<Item> LERASIUM_NUGGET = ITEMS.register(
-      "lerasium_nugget",
-      () -> new EdibleMetalNugget(AllomanticMetal.LERASIUM));
+  public static final Holder<Item> ANCIENT_MEDALLION = ITEMS.register(
+      "ancient_medallion",
+      FeruchemicalMedallion::ancient);
 
   // Tools
   public static final Holder<Item> OBSIDIAN_AXE = ITEMS.register(
@@ -233,7 +236,8 @@ public class CosmereCraftItems {
                 RAW_SILVER_BLOCK_ITEM,
                 RAW_BISMUTH_BLOCK_ITEM,
                 OBSIDIAN_AXE,
-                INQUISITOR_SPAWN_EGG))
+                INQUISITOR_SPAWN_EGG,
+                ANCIENT_MEDALLION))
         .flatMap(Function.identity())
         .map(Holder::value)
         .map(Item::getDefaultInstance)
