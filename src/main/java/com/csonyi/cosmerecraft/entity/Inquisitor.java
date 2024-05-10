@@ -7,6 +7,7 @@ import com.mojang.logging.LogUtils;
 import java.io.IOException;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.RandomSource;
@@ -86,8 +87,8 @@ public class Inquisitor extends Monster {
   }
 
   private static boolean isActiveAllomancer(LivingEntity entity) {
-    if (entity instanceof Player player) {
-      return Allomancy.of(player).isBurningMetal();
+    if (entity instanceof ServerPlayer serverPlayer) {
+      return Allomancy.of(serverPlayer).isBurningMetal();
     }
     return false;
   }

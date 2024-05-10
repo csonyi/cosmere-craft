@@ -46,8 +46,7 @@ public class CosmereCraftItems {
 
   // === Item Holders ===
   // Metal powders
-  public static final Map<AllomanticMetal, Holder<Item>> METAL_POWDERS = AllomanticMetal.stream()
-      .filter(not(AllomanticMetal::isGodMetal))
+  public static final Map<AllomanticMetal, Holder<Item>> METAL_POWDERS = AllomanticMetal.stream(not(AllomanticMetal::isGodMetal))
       .collect(Collectors.toMap(
           Function.identity(),
           metal -> ITEMS.registerSimpleItem("%s_powder".formatted(metal.lowerCaseName()))));
@@ -57,22 +56,23 @@ public class CosmereCraftItems {
   public static final Holder<Item> BISMUTH_POWDER = ITEMS.registerSimpleItem("bismuth_powder");
 
   // Metal ingots
-  public static final Map<AllomanticMetal, Holder<Item>> METAL_INGOTS = AllomanticMetal.stream()
-      .filter(not(AllomanticMetal::isGodMetal))
-      .filter(not(AllomanticMetal::isVanilla))
-      .collect(Collectors.toMap(
-          Function.identity(),
-          metal -> ITEMS.registerSimpleItem("%s_ingot".formatted(metal.lowerCaseName()))));
+  public static final Map<AllomanticMetal, Holder<Item>> METAL_INGOTS =
+      AllomanticMetal.stream(
+              not(AllomanticMetal::isGodMetal),
+              not(AllomanticMetal::isVanilla))
+          .collect(Collectors.toMap(
+              Function.identity(),
+              metal -> ITEMS.registerSimpleItem("%s_ingot".formatted(metal.lowerCaseName()))));
   public static final Holder<Item> LEAD_INGOT = ITEMS.registerSimpleItem("lead_ingot");
   public static final Holder<Item> NICKEL_INGOT = ITEMS.registerSimpleItem("nickel_ingot");
   public static final Holder<Item> SILVER_INGOT = ITEMS.registerSimpleItem("silver_ingot");
   public static final Holder<Item> BISMUTH_INGOT = ITEMS.registerSimpleItem("bismuth_ingot");
 
   // Metal nuggets
-  public static final Map<AllomanticMetal, Holder<Item>> METAL_NUGGETS = AllomanticMetal.stream()
-      .filter(not(AllomanticMetal::isGodMetal))
-      .filter(not(AllomanticMetal.GOLD::equals))
-      .filter(not(AllomanticMetal.IRON::equals))
+  public static final Map<AllomanticMetal, Holder<Item>> METAL_NUGGETS = AllomanticMetal.stream(
+          not(AllomanticMetal::isGodMetal),
+          not(AllomanticMetal.GOLD::equals),
+          not(AllomanticMetal.IRON::equals))
       .collect(Collectors.toMap(
           Function.identity(),
           metal -> ITEMS.registerSimpleItem("%s_nugget".formatted(metal.lowerCaseName()))));
@@ -85,17 +85,16 @@ public class CosmereCraftItems {
       () -> new EdibleMetalNugget(AllomanticMetal.LERASIUM));
 
   // Metal vials
-  public static final Map<AllomanticMetal, Holder<Item>> METAL_VIALS = AllomanticMetal.stream()
-      .filter(not(AllomanticMetal::isGodMetal))
+  public static final Map<AllomanticMetal, Holder<Item>> METAL_VIALS = AllomanticMetal.stream(not(AllomanticMetal::isGodMetal))
       .collect(Collectors.toMap(
           Function.identity(),
           metal -> ITEMS.register("%s_vial".formatted(metal.lowerCaseName()), () -> new MetalVial(metal))));
 
-  // Raw metals
-  public static final Map<AllomanticMetal, Holder<Item>> RAW_METALS = AllomanticMetal.stream()
-      .filter(not(AllomanticMetal::isGodMetal))
-      .filter(not(AllomanticMetal::isVanilla))
-      .filter(not(AllomanticMetal::isAlloy))
+  // Raw burningMetals
+  public static final Map<AllomanticMetal, Holder<Item>> RAW_METALS = AllomanticMetal.stream(
+          not(AllomanticMetal::isGodMetal),
+          not(AllomanticMetal::isVanilla),
+          not(AllomanticMetal::isAlloy))
       .collect(Collectors.toMap(
           Function.identity(),
           metal -> ITEMS.registerSimpleItem("raw_%s".formatted(metal.lowerCaseName()))));

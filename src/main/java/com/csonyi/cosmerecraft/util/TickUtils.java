@@ -12,10 +12,6 @@ public class TickUtils {
     this.level = level;
   }
 
-  public static TickUtils forLevel(Level level) {
-    return new TickUtils(level);
-  }
-
   private static final int TICKS_PER_SECOND = 20;
 
   public static int secondsToTicks(double seconds) {

@@ -13,7 +13,9 @@ import com.csonyi.cosmerecraft.datagen.client.lang.HuHuLanguageProvider;
 import com.csonyi.cosmerecraft.entity.Inquisitor;
 import com.csonyi.cosmerecraft.entity.InquisitorModel;
 import com.csonyi.cosmerecraft.entity.InquisitorRenderer;
-import com.csonyi.cosmerecraft.networking.MetalStateUpdateHandler;
+import com.csonyi.cosmerecraft.networking.AnchorUpdateHandler;
+import com.csonyi.cosmerecraft.networking.ClientMetalStateQueryHandler;
+import com.csonyi.cosmerecraft.networking.ServerBurnStateUpdateHandler;
 import com.csonyi.cosmerecraft.networking.WellLocationQueryHandler;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.PackOutput;
@@ -36,16 +38,20 @@ public class RegistryEventHandlers {
   public static void registerPayloads(final RegisterPayloadHandlerEvent event) {
     final IPayloadRegistrar registrar = event.registrar(MOD_ID);
     registrar.play(
-        MetalStateUpdateHandler.MetalStateQuery.ID,
-        MetalStateUpdateHandler.MetalStateQuery::read,
+        ClientMetalStateQueryHandler.MetalStateQuery.ID,
+        ClientMetalStateQueryHandler.MetalStateQuery::read,
         handler -> handler
-            .server(MetalStateUpdateHandler::handleQuery));
+            .server(ClientMetalStateQueryHandler::handleQuery));
     registrar.play(
-        MetalStateUpdateHandler.MetalStatePacket.ID,
-        MetalStateUpdateHandler.MetalStatePacket::read,
+        ClientMetalStateQueryHandler.MetalStatePacket.ID,
+        ClientMetalStateQueryHandler.MetalStatePacket::read,
         handler -> handler
-            .server(MetalStateUpdateHandler::handleResponse)
-            .client(MetalStateUpdateHandler::handleResponse));
+            .client(ClientMetalStateQueryHandler::handleResponse));
+    registrar.play(
+        ServerBurnStateUpdateHandler.BurnStateUpdate.ID,
+        ServerBurnStateUpdateHandler.BurnStateUpdate::read,
+        handler -> handler
+            .server(ServerBurnStateUpdateHandler::updateBurnStateOnServer));
     registrar.play(
         WellLocationQueryHandler.WellLocationQuery.ID,
         WellLocationQueryHandler.WellLocationQuery::read,
@@ -56,6 +62,11 @@ public class RegistryEventHandlers {
         WellLocationQueryHandler.WellLocationResponse::read,
         handler -> handler
             .client(WellLocationQueryHandler::handleResponse));
+    registrar.play(
+        AnchorUpdateHandler.Anchors.ID,
+        AnchorUpdateHandler.Anchors::read,
+        handler -> handler
+            .client(AnchorUpdateHandler::handleUpdate));
   }
 
   @SubscribeEvent

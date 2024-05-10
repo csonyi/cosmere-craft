@@ -1,107 +1,214 @@
 package com.csonyi.cosmerecraft.gui;
 
+import static java.util.function.Function.identity;
+import static java.util.function.Predicate.not;
+import static java.util.stream.Collectors.toMap;
+
 import com.csonyi.cosmerecraft.capability.allomancy.AllomanticMetal;
 import com.csonyi.cosmerecraft.capability.allomancy.MetalStateManager;
-import com.csonyi.cosmerecraft.networking.MetalStateUpdateHandler;
+import com.csonyi.cosmerecraft.networking.ServerBurnStateUpdateHandler;
 import com.csonyi.cosmerecraft.util.ResourceUtils;
-import java.util.Arrays;
-import java.util.Set;
-import net.minecraft.client.gui.components.ImageWidget;
+import com.csonyi.cosmerecraft.util.TickUtils;
+import java.util.Map;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.StringWidget;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
+import org.jetbrains.annotations.NotNull;
 
 public class AllomancyGui extends Screen {
 
-  private static final ResourceLocation BACKGROUND = ResourceUtils.modLocation("textures/gui/allomancy_gui_bg.png");
+  // Add this to the render function to display the mouse coordinates for debugging:
+  // guiGraphics.drawString(font, Component.literal("X: %s Y: %s".formatted(mouseX, mouseY)), 2, 2, 0xffffff);
 
-  private int scaledWidth;
-  private int scaledHeight;
-  private EditorQuadrant[][] editorQuadrants;
+  private static final ResourceLocation BACKGROUND = ResourceUtils.modLocation("textures/gui/allomancy_gui_bg.png");
+  private static final ResourceLocation TYPE_BOX = ResourceUtils.modLocation("textures/gui/allomancy_gui_box.png");
+  private static final ResourceLocation BUTTON_BACKGROUND = ResourceUtils.modLocation("textures/gui/allomancy_gui_button.png");
+  private static final int WHITE = 0xffffff;
+
+  private int backgroundXMargin;
+  private int backgroundYMargin;
+  private int backgroundWidth;
+  private int backgroundHeight;
+  private int typeBoxWidth;
+  private int typeBoxHeight;
+  private int typeBoxXMargin;
+  private int typeBoxYMargin;
+  private int typeBoxXPadding;
+  private int typeBoxYPadding;
+  private int typeBoxHeaderHeight;
+  private int editorXMargin;
+  private int editorYMargin;
+  private int editorXPadding;
+  private int editorYPadding;
+  private int editorWidth;
+  private int editorHeight;
+  private int editorComponentXPadding;
+  private int editorComponentYPadding;
+  private Map<AllomanticMetal, TextureToggleButton> metalButtons;
+  private Map<AllomanticMetal, StringWidget> metalNames;
 
   private MetalStateManager metalStateManager;
 
   public AllomancyGui() {
-    super(Component.literal("Allomancy"));
+    super(Component.translatable("cosmerecraft.gui.allomancy"));
+  }
+
+  @Override
+  public boolean isPauseScreen() {
+    return false;
   }
 
   @Override
   protected void init() {
-    if (minecraft == null) {
+    if (minecraft == null || minecraft.player == null) {
       return;
     }
-    scaledWidth = minecraft.getWindow().getGuiScaledWidth();
-    scaledHeight = minecraft.getWindow().getGuiScaledHeight();
-    MetalStateUpdateHandler.queryMetalStatesFromServer();
     metalStateManager = new MetalStateManager(minecraft.player);
 
-    renderBackground();
-    addEditorQuadrants();
+    int scaledWidth = minecraft.getWindow().getGuiScaledWidth();
+    int scaledHeight = minecraft.getWindow().getGuiScaledHeight();
+    backgroundXMargin = scaledWidth / 48;
+    backgroundYMargin = scaledHeight / 16;
+    backgroundWidth = scaledWidth - (2 * backgroundXMargin);
+    backgroundHeight = scaledHeight - (2 * backgroundYMargin);
+    typeBoxXMargin = scaledWidth / 25;
+    typeBoxYMargin = scaledHeight / 17;
+    typeBoxXPadding = scaledWidth / 50;
+    typeBoxYPadding = scaledHeight / 40;
+    typeBoxWidth = (backgroundWidth / 2) - Mth.floor(1.2 * typeBoxXMargin);
+    typeBoxHeight = (backgroundHeight / 2) - Mth.floor(1.2 * typeBoxYMargin);
+    typeBoxHeaderHeight = typeBoxHeight / 6;
+    editorXMargin = scaledWidth / 40;
+    editorYMargin = scaledHeight / 40;
+    editorXPadding = scaledWidth / 23;
+    editorYPadding = scaledHeight / 50;
+    editorWidth = typeBoxWidth / 2 - (editorXMargin * 2);
+    editorHeight = typeBoxHeight / 2 - (editorYMargin * 2);
+    editorComponentXPadding = scaledWidth / 50;
+    editorComponentYPadding = scaledHeight / 40;
+
+    metalButtons = metalStateManager.metals(not(AllomanticMetal::isGodMetal))
+        .collect(toMap(identity(), this::createMetalToggleButton));
+    metalNames = metalStateManager.metals(not(AllomanticMetal::isGodMetal))
+        .collect(toMap(identity(), this::createMetalName));
   }
 
-  private void renderBackground() {
-    var background = ImageWidget.texture(
-        scaledWidth - 2 * xMargin(), scaledHeight - 2 * yMargin(),
-        ResourceUtils.modLocation("textures/gui/allomancy_gui_bg.png"),
-        scaledWidth - 2 * xMargin(), scaledHeight - 2 * yMargin());
-    background.setPosition(xMargin(), yMargin());
-    addRenderableOnly(background);
+
+  @Override
+  public void render(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+    super.render(guiGraphics, mouseX, mouseY, partialTick);
+    renderBackground(guiGraphics);
+    renderTypeBoxes(guiGraphics);
+    metalButtons.forEach((metal, button) -> button.render(guiGraphics, mouseX, mouseY, partialTick));
+    metalNames.forEach((metal, name) -> name.render(guiGraphics, mouseX, mouseY, partialTick));
+    renderReserves(guiGraphics);
   }
 
-  private void addEditorQuadrants() {
-    var typeBoxWidth = Mth.floor(scaledWidth / 2.2 - xMargin());
-    var typeBoxHeight = Mth.floor(scaledHeight / 2.5 - yMargin());
-    editorQuadrants = new EditorQuadrant[][]{
-        {
-            new EditorQuadrant(
-                xMargin() + xPadding(),
-                yMargin() + yPadding(),
-                typeBoxWidth, typeBoxHeight,
-                font, AllomanticMetal.Type.PHYSICAL,
-                metalStateManager),
-            new EditorQuadrant(
-                scaledWidth - xMargin() - xPadding() - typeBoxWidth,
-                yMargin() + yPadding(),
-                typeBoxWidth, typeBoxHeight,
-                font, AllomanticMetal.Type.MENTAL,
-                metalStateManager)},
-        {
-            new EditorQuadrant(
-                xMargin() + xPadding(),
-                scaledHeight - yMargin() - yPadding() - typeBoxHeight,
-                typeBoxWidth, typeBoxHeight,
-                font, AllomanticMetal.Type.ENHANCEMENT,
-                metalStateManager),
-            new EditorQuadrant(
-                scaledWidth - xMargin() - xPadding() - typeBoxWidth,
-                scaledHeight - yMargin() - yPadding() - typeBoxHeight,
-                typeBoxWidth, typeBoxHeight,
-                font, AllomanticMetal.Type.TEMPORAL,
-                metalStateManager)}};
-    Arrays.stream(editorQuadrants)
-        .flatMap(Arrays::stream)
-        .peek(this::addRenderableOnly)
-        .flatMap(EditorQuadrant::streamChildren)
-        .forEach(this::addRenderableWidget);
+  private void renderBackground(GuiGraphics guiGraphics) {
+    guiGraphics.blit(
+        BACKGROUND,
+        backgroundXMargin, backgroundYMargin,
+        backgroundWidth, backgroundHeight,
+        0.0F, 0.0F,
+        backgroundWidth, backgroundHeight,
+        backgroundWidth, backgroundHeight);
   }
 
-  private void updateServer() {
-    MetalStateUpdateHandler.pushBurnStrengthUpdatesToServer(
-        Arrays.stream(editorQuadrants)
-            .flatMap(Arrays::stream)
-            .map(EditorQuadrant::getStates)
-            .flatMap(Set::stream));
+  private void renderTypeBoxes(GuiGraphics guiGraphics) {
+    for (var xIndex = 0; xIndex < 2; xIndex++) {
+      for (var yIndex = 0; yIndex < 2; yIndex++) {
+        guiGraphics.blit(
+            TYPE_BOX,
+            typeBoxX(xIndex), typeBoxY(yIndex),
+            typeBoxWidth, typeBoxHeight,
+            0, 0,
+            typeBoxWidth, typeBoxHeight,
+            typeBoxWidth, typeBoxHeight);
+        guiGraphics.drawString(
+            font,
+            AllomanticMetal.Type.values()[yIndex * 2 + xIndex].getNameAsComponent(),
+            typeBoxX(xIndex) + typeBoxWidth / 25,
+            typeBoxY(yIndex) + typeBoxHeight / 18,
+            WHITE);
+      }
+    }
+  }
+
+  private TextureToggleButton createMetalToggleButton(AllomanticMetal metal) {
+    var xIndex = metal.getTableXIndex();
+    var yIndex = metal.getTableYIndex();
+    var typeBoxXIndex = xIndex / 2;
+    var typeBoxYIndex = yIndex / 2;
+    var metalButton = new TextureToggleButton(
+        typeBoxX(typeBoxXIndex) + editorXMargin + (xIndex % 2) * (editorWidth + editorXPadding),
+        typeBoxY(typeBoxYIndex) + editorYMargin + typeBoxHeaderHeight + (yIndex % 2) * (editorHeight + editorYPadding),
+        32, 32,
+        button -> {
+          metalStateManager.setBurnState(metal, button.state);
+          ServerBurnStateUpdateHandler.sendBurnStateUpdatesToServer(metal, button.state);
+        },
+        BUTTON_BACKGROUND,
+        metal.texture("metal"),
+        metal.texture("white"));
+    metalButton.setState(metalStateManager.getBurnState(metal));
+    return addWidget(metalButton);
+  }
+
+  private StringWidget createMetalName(AllomanticMetal metal) {
+    var metalButton = metalButtons.get(metal);
+    var nameX = metalButton.getRight() + editorComponentXPadding;
+    var nameY = metalButton.getY();
+    var metalNameComponent = metal.getNameAsComponent();
+    return new StringWidget(
+        nameX, nameY,
+        font.width(metalNameComponent.getString()), font.lineHeight,
+        metalNameComponent, font);
+  }
+
+  private void renderReserves(GuiGraphics guiGraphics) {
+    metalStateManager.metals(not(AllomanticMetal::isGodMetal))
+        .forEach(metal -> {
+          var metalButton = metalButtons.get(metal);
+          var metalName = metalNames.get(metal);
+          var metalReserve = metalStateManager.getReserve(metal);
+          guiGraphics.drawString(
+              font, TickUtils.toTimeFormat(metalReserve),
+              metalButton.getRight() + editorComponentXPadding,
+              metalName.getBottom() + editorComponentYPadding,
+              WHITE);
+        });
+  }
+
+  private int typeBoxY(int yIndex) {
+    return backgroundYMargin + typeBoxYMargin + (yIndex * (typeBoxHeight + typeBoxYPadding));
+  }
+
+  private int typeBoxX(int xIndex) {
+    return backgroundXMargin + typeBoxXMargin + (xIndex * (typeBoxWidth + typeBoxXPadding));
+  }
+
+  @Override
+  public boolean keyPressed(int pKeyCode, int pScanCode, int pModifiers) {
+    if (pKeyCode == 73) {
+      onClose();
+      return true;
+    }
+    return super.keyPressed(pKeyCode, pScanCode, pModifiers);
   }
 
   @Override
   public void tick() {
-    MetalStateUpdateHandler.queryMetalStatesFromServer();
+    if (minecraft == null) {
+      return;
+    }
+    metalStateManager.tick();
   }
 
   @Override
   public void onClose() {
-    updateServer();
     super.onClose();
   }
 
@@ -110,19 +217,4 @@ public class AllomancyGui extends Screen {
     return false;
   }
 
-  private int xMargin() {
-    return scaledWidth / 48;
-  }
-
-  private int yMargin() {
-    return scaledHeight / 16;
-  }
-
-  private int xPadding() {
-    return scaledWidth / 24;
-  }
-
-  private int yPadding() {
-    return scaledHeight / 12;
-  }
 }

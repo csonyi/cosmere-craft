@@ -23,9 +23,9 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 // TODO:
 //  * Make allomancy work
 //  * Allomantic vibration system based on the skulk system
-//    * Rudimentary version to find the well of ascension
-//    * Unsealed nicrosilmind
 //  * Banner patterns for allomantic metal icons, created with a corresponding metal item
+//  * remove anchors when spawning iron golem§
+//  * optimize
 
 /**
  * Main class of the mod, the entrypoint of the application.

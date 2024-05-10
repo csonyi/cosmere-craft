@@ -31,15 +31,16 @@ public class CosmereCraftBlocks {
   public static final TagKey<Block> ANCHOR_TAG = BlockTags.create(modLocation("anchor"));
   public static final TagKey<Block> ASH_TAG = BlockTags.create(modLocation("ash"));
 
-  public static final Map<AllomanticMetal, Holder<Block>> METAL_ORES = AllomanticMetal.stream()
-      .filter(not(AllomanticMetal::isGodMetal))
-      .filter(not(AllomanticMetal::isVanilla))
-      .filter(not(AllomanticMetal::isAlloy))
-      .collect(Collectors.toMap(
-          Function.identity(),
-          metal -> BLOCKS.registerSimpleBlock(
-              "%s_ore".formatted(metal.lowerCaseName()),
-              BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_ORE))));
+  public static final Map<AllomanticMetal, Holder<Block>> METAL_ORES =
+      AllomanticMetal.stream(
+              not(AllomanticMetal::isGodMetal),
+              not(AllomanticMetal::isVanilla),
+              not(AllomanticMetal::isAlloy))
+          .collect(Collectors.toMap(
+              Function.identity(),
+              metal -> BLOCKS.registerSimpleBlock(
+                  "%s_ore".formatted(metal.lowerCaseName()),
+                  BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_ORE))));
   public static final Holder<Block> LEAD_ORE = BLOCKS.registerSimpleBlock(
       "lead_ore",
       BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_ORE));
@@ -53,15 +54,16 @@ public class CosmereCraftBlocks {
       "bismuth_ore",
       BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_ORE));
 
-  public static final Map<AllomanticMetal, Holder<Block>> DEEPSLATE_METAL_ORES = AllomanticMetal.stream()
-      .filter(not(AllomanticMetal::isGodMetal))
-      .filter(not(AllomanticMetal::isVanilla))
-      .filter(not(AllomanticMetal::isAlloy))
-      .collect(Collectors.toMap(
-          Function.identity(),
-          metal -> BLOCKS.registerSimpleBlock(
-              "deepslate_%s_ore".formatted(metal.lowerCaseName()),
-              BlockBehaviour.Properties.ofFullCopy(Blocks.DEEPSLATE_IRON_ORE))));
+  public static final Map<AllomanticMetal, Holder<Block>> DEEPSLATE_METAL_ORES =
+      AllomanticMetal.stream(
+              not(AllomanticMetal::isGodMetal),
+              not(AllomanticMetal::isVanilla),
+              not(AllomanticMetal::isAlloy))
+          .collect(Collectors.toMap(
+              Function.identity(),
+              metal -> BLOCKS.registerSimpleBlock(
+                  "deepslate_%s_ore".formatted(metal.lowerCaseName()),
+                  BlockBehaviour.Properties.ofFullCopy(Blocks.DEEPSLATE_IRON_ORE))));
   public static final Holder<Block> DEEPSLATE_LEAD_ORE = BLOCKS.registerSimpleBlock(
       "deepslate_lead_ore",
       BlockBehaviour.Properties.ofFullCopy(Blocks.DEEPSLATE_IRON_ORE));
@@ -75,14 +77,15 @@ public class CosmereCraftBlocks {
       "deepslate_bismuth_ore",
       BlockBehaviour.Properties.ofFullCopy(Blocks.DEEPSLATE_IRON_ORE));
 
-  public static final Map<AllomanticMetal, Holder<Block>> METAL_BLOCKS = AllomanticMetal.stream()
-      .filter(not(AllomanticMetal::isGodMetal))
-      .filter(not(AllomanticMetal::isVanilla))
-      .collect(Collectors.toMap(
-          Function.identity(),
-          metal -> BLOCKS.registerSimpleBlock(
-              "%s_block".formatted(metal.lowerCaseName()),
-              BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_BLOCK))));
+  public static final Map<AllomanticMetal, Holder<Block>> METAL_BLOCKS =
+      AllomanticMetal.stream(
+              not(AllomanticMetal::isGodMetal),
+              not(AllomanticMetal::isVanilla))
+          .collect(Collectors.toMap(
+              Function.identity(),
+              metal -> BLOCKS.registerSimpleBlock(
+                  "%s_block".formatted(metal.lowerCaseName()),
+                  BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_BLOCK))));
   public static final Holder<Block> LEAD_BLOCK = BLOCKS.registerSimpleBlock(
       "lead_block",
       BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_BLOCK));
@@ -96,15 +99,16 @@ public class CosmereCraftBlocks {
       "bismuth_block",
       BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_BLOCK));
 
-  public static final Map<AllomanticMetal, Holder<Block>> RAW_METAL_BLOCKS = AllomanticMetal.stream()
-      .filter(not(AllomanticMetal::isGodMetal))
-      .filter(not(AllomanticMetal::isVanilla))
-      .filter(not(AllomanticMetal::isAlloy))
-      .collect(Collectors.toMap(
-          Function.identity(),
-          metal -> BLOCKS.registerSimpleBlock(
-              "raw_%s_block".formatted(metal.lowerCaseName()),
-              BlockBehaviour.Properties.ofFullCopy(Blocks.RAW_IRON_BLOCK))));
+  public static final Map<AllomanticMetal, Holder<Block>> RAW_METAL_BLOCKS =
+      AllomanticMetal.stream(
+              not(AllomanticMetal::isGodMetal),
+              not(AllomanticMetal::isVanilla),
+              not(AllomanticMetal::isAlloy))
+          .collect(Collectors.toMap(
+              Function.identity(),
+              metal -> BLOCKS.registerSimpleBlock(
+                  "raw_%s_block".formatted(metal.lowerCaseName()),
+                  BlockBehaviour.Properties.ofFullCopy(Blocks.RAW_IRON_BLOCK))));
   public static final Holder<Block> RAW_LEAD_BLOCK = BLOCKS.registerSimpleBlock(
       "raw_lead_block",
       BlockBehaviour.Properties.ofFullCopy(Blocks.RAW_IRON_BLOCK));

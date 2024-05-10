@@ -11,7 +11,11 @@ import net.minecraft.server.level.ServerLevel;
 import net.neoforged.neoforge.network.handling.PlayPayloadContext;
 import org.jetbrains.annotations.NotNull;
 
-public class WellLocationQueryHandler {
+public class WellLocationQueryHandler extends NetworkHandler {
+
+  public static void queryWellLocation(BlockPos playerPos) {
+    sendToServer(new WellLocationQuery(playerPos));
+  }
 
   // server side handler
   public static void handleQuery(WellLocationQuery packet, PlayPayloadContext context) {

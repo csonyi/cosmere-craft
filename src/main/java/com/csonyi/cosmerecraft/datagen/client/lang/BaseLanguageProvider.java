@@ -11,8 +11,6 @@ import org.apache.commons.lang3.StringUtils;
 
 public abstract class BaseLanguageProvider extends LanguageProvider {
 
-  protected static final String ANCIENT_MEDALLION_TOOLTIP = "item.cosmerecraft.feruchemical_medallion.ancient.tooltip";
-
   public BaseLanguageProvider(PackOutput output, String locale) {
     super(output, CosmereCraft.MOD_ID, locale);
   }

@@ -76,7 +76,7 @@ public class EnUsLanguageProvider extends BaseLanguageProvider {
     addEntityTypes();
     addBiomes();
     addMetalNames();
-    addCustomTooltips();
+    addGuiText();
   }
 
   /**
@@ -231,8 +231,10 @@ public class EnUsLanguageProvider extends BaseLanguageProvider {
     add("cosmerecraft.metals.unavailable", "Unavailable");
   }
 
-  private void addCustomTooltips() {
-    add(ANCIENT_MEDALLION_TOOLTIP, "When I hold it in my hand, I can hear a faint pulsing in the distance...");
+  private void addGuiText() {
+    add("cosmerecraft.gui.allomancy", "Allomancy");
+    add("item.cosmerecraft.feruchemical_medallion.ancient.tooltip",
+        "When I hold it in my hand, I can hear a faint pulsing in the distance...");
   }
 
 }

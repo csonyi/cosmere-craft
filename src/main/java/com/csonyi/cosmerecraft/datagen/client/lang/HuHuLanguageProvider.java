@@ -232,7 +232,9 @@ public class HuHuLanguageProvider extends BaseLanguageProvider {
   }
 
   private void addCustomTooltips() {
-    add(ANCIENT_MEDALLION_TOOLTIP, "Mikor kezemben tartom, mintha egy távoli lüktetést halanék...");
+    add("cosmerecraft.gui.allomancy", "Allomancia");
+    add("item.cosmerecraft.feruchemical_medallion.ancient.tooltip",
+        "Mikor kezemben tartom, mintha egy távoli lüktetést halanék...");
   }
 
 }

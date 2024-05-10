@@ -9,7 +9,9 @@ import static com.csonyi.cosmerecraft.capability.allomancy.AllomanticMetal.Type.
 import static com.csonyi.cosmerecraft.capability.allomancy.AllomanticMetal.Type.PHYSICAL;
 import static com.csonyi.cosmerecraft.capability.allomancy.AllomanticMetal.Type.TEMPORAL;
 
+import com.csonyi.cosmerecraft.util.ColorUtils;
 import com.csonyi.cosmerecraft.util.ResourceUtils;
+import com.csonyi.cosmerecraft.util.StreamUtils;
 import com.csonyi.cosmerecraft.util.TickUtils;
 import java.util.Arrays;
 import java.util.Optional;
@@ -36,7 +38,8 @@ public enum AllomanticMetal {
       MobEffects.DIG_SPEED,
       MobEffects.DAMAGE_BOOST,
       MobEffects.REGENERATION,
-      MobEffects.DAMAGE_RESISTANCE),
+      MobEffects.DAMAGE_RESISTANCE,
+      MobEffects.JUMP),
   TIN(PHYSICAL, PULLING, INTERNAL,
       MobEffects.NIGHT_VISION),
   COPPER(MENTAL, PULLING, INTERNAL, true, false),
@@ -58,7 +61,6 @@ public enum AllomanticMetal {
   public final Direction direction;
   public final Side side;
 
-  public final int maxBurnStrength;
   public final boolean isVanilla;
   public final boolean isAlloy;
   public final Set<MobEffect> effects;
@@ -67,7 +69,6 @@ public enum AllomanticMetal {
     this.type = type;
     this.direction = direction;
     this.side = side;
-    this.maxBurnStrength = 4; // TODO: move to config
     this.isVanilla = isVanilla;
     this.isAlloy = isAlloy;
     this.effects = Set.of(effects);
@@ -105,11 +106,7 @@ public enum AllomanticMetal {
     return name().toLowerCase();
   }
 
-  public ResourceLocation textureLocation() {
-    return textureLocation("black");
-  }
-
-  public ResourceLocation textureLocation(String color) {
+  public ResourceLocation texture(String color) {
     return ResourceUtils.modLocation("textures/icon/metal/%s_icon_%s.png".formatted(lowerCaseName(), color));
   }
 
@@ -117,17 +114,37 @@ public enum AllomanticMetal {
     return Component.translatable("cosmerecraft.metals.%s".formatted(lowerCaseName()));
   }
 
-  public static Stream<AllomanticMetal> stream() {
-    return Arrays.stream(values());
+  public int getTableXIndex() {
+    return ordinal() % 4;
   }
 
-  public static Stream<AllomanticMetal> stream(Predicate<AllomanticMetal> filter) {
-    return stream().filter(filter);
+  public int getTableYIndex() {
+    return ordinal() / 4;
+  }
+
+  public float[] getColor() {
+    return ColorUtils.getColor(ColorUtils.ALLOMANTIC_METALS[ordinal()]);
+  }
+
+  @SafeVarargs
+  public static Stream<AllomanticMetal> stream(Predicate<AllomanticMetal>... filters) {
+    return Arrays.stream(values())
+        .filter(StreamUtils.combinePredicates(filters));
   }
 
   public static Set<String> names() {
     return stream()
         .map(AllomanticMetal::lowerCaseName)
+        .collect(Collectors.toSet());
+  }
+
+  public static AllomanticMetal read(FriendlyByteBuf buffer) {
+    return buffer.readEnum(AllomanticMetal.class);
+  }
+
+  public static Set<MobEffect> allMetalEffects() {
+    return stream(AllomanticMetal::hasEffect)
+        .flatMap(AllomanticMetal::getEffects)
         .collect(Collectors.toSet());
   }
 
@@ -163,12 +180,12 @@ public enum AllomanticMetal {
     public final int amount;
   }
 
-  public record State(AllomanticMetal metal, Integer reserve, Integer burnStrength, Boolean available) {
+  public record State(AllomanticMetal metal, Integer reserve, Boolean burnState, Boolean available) {
 
     public void write(FriendlyByteBuf buffer) {
       buffer.writeEnum(metal);
       buffer.writeInt(reserve);
-      buffer.writeInt(burnStrength);
+      buffer.writeBoolean(burnState);
       buffer.writeBoolean(available);
     }
 
@@ -176,30 +193,40 @@ public enum AllomanticMetal {
       return new State(
           buffer.readEnum(AllomanticMetal.class),
           buffer.readInt(),
-          buffer.readInt(),
+          buffer.readBoolean(),
           buffer.readBoolean());
     }
 
     public static State defaultState(AllomanticMetal metal) {
-      return new State(metal, 0, 0, false);
+      return new State(metal, 0, false, false);
     }
 
-    public static State burnStrengthUpdate(AllomanticMetal metal, int burnStrength) {
-      return new State(metal, null, burnStrength, null);
+    public static State burnStateUpdate(AllomanticMetal metal) {
+      return new State(metal, null, true, null);
     }
 
     public Optional<Integer> getReserve() {
       return Optional.ofNullable(reserve);
     }
 
-    public Optional<Integer> getBurnStrength() {
-      return Optional.ofNullable(burnStrength);
+    public Optional<Boolean> getBurnState() {
+      return Optional.ofNullable(burnState);
     }
 
     public Optional<Boolean> isAvailable() {
       return Optional.ofNullable(available);
     }
 
+    @Override
+    public boolean equals(Object obj) {
+      if (obj instanceof State state) {
+        return metal.equals(state.metal)
+            && (reserve == null || reserve.equals(state.reserve))
+            && (burnState == null || burnState.equals(state.burnState))
+            && (available == null || available.equals(state.available));
+      }
+      return false;
+    }
   }
 
 }

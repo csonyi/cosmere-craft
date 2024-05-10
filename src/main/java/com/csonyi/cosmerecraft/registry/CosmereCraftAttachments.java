@@ -28,9 +28,9 @@ public class CosmereCraftAttachments {
   public static final DeferredRegister<AttachmentType<?>> ATTACHMENT_TYPES =
       DeferredRegister.create(NeoForgeRegistries.ATTACHMENT_TYPES, MOD_ID);
 
-  public static final Supplier<AttachmentType<HashSet<BlockPos>>> KNOWN_ANCHORS =
+  public static final Supplier<AttachmentType<HashSet<BlockPos>>> CHUNK_ANCHORS =
       ATTACHMENT_TYPES.register(
-          "known_anchors",
+          "chunk_anchors",
           () -> AttachmentType.builder(() -> new HashSet<BlockPos>())
               .serialize(new AnchorMapSerializer())
               .build());
@@ -43,7 +43,7 @@ public class CosmereCraftAttachments {
 
   public static final EnumMap<AllomanticMetal, Supplier<AttachmentType<Integer>>> METAL_RESERVES =
       new EnumMap<>(AllomanticMetal.class);
-  public static final EnumMap<AllomanticMetal, Supplier<AttachmentType<Integer>>> METAL_BURN_STRENGTH =
+  public static final EnumMap<AllomanticMetal, Supplier<AttachmentType<Boolean>>> METAL_BURN_STATE =
       new EnumMap<>(AllomanticMetal.class);
   public static final EnumMap<AllomanticMetal, Supplier<AttachmentType<Boolean>>> METAL_AVAILABLE =
       new EnumMap<>(AllomanticMetal.class);
@@ -52,8 +52,8 @@ public class CosmereCraftAttachments {
     AllomanticMetal.stream()
         .forEach(metal -> {
           METAL_RESERVES.put(metal, registerIntegerAttachmentForMetal(metal, "reserve"));
-          METAL_BURN_STRENGTH.put(metal, registerIntegerAttachmentForMetal(metal, "burn_strength"));
-          METAL_AVAILABLE.put(metal, registerBooleanAttachmentForMetal(metal, "available"));
+          METAL_BURN_STATE.put(metal, registerBooleanAttachmentForMetal(metal, "burn_state"));
+          METAL_AVAILABLE.put(metal, registerBooleanAttachmentForMetal(metal, "available", true));
         });
   }
 
@@ -61,8 +61,8 @@ public class CosmereCraftAttachments {
     return METAL_RESERVES.get(metal);
   }
 
-  public static Supplier<AttachmentType<Integer>> metalBurnStrength(AllomanticMetal metal) {
-    return METAL_BURN_STRENGTH.get(metal);
+  public static Supplier<AttachmentType<Boolean>> metalBurnState(AllomanticMetal metal) {
+    return METAL_BURN_STATE.get(metal);
   }
 
   public static Supplier<AttachmentType<Boolean>> metalAvailable(AllomanticMetal metal) {
@@ -70,11 +70,19 @@ public class CosmereCraftAttachments {
   }
 
   private static Supplier<AttachmentType<Boolean>> registerBooleanAttachmentForMetal(AllomanticMetal metal, String attachmentSuffix) {
+    return registerBooleanAttachmentForMetal(metal, attachmentSuffix, false);
+  }
+
+  private static Supplier<AttachmentType<Boolean>> registerBooleanAttachmentForMetal(
+      AllomanticMetal metal, String attachmentSuffix, boolean copyOnDeath) {
+    var attachmentBuilder = AttachmentType.builder(() -> false)
+        .serialize(Codec.BOOL);
+    if (copyOnDeath) {
+      attachmentBuilder.copyOnDeath();
+    }
     return ATTACHMENT_TYPES.register(
         "%s_%s".formatted(metal.name().toLowerCase(), attachmentSuffix),
-        () -> AttachmentType.builder(() -> false)
-            .serialize(Codec.BOOL)
-            .build());
+        attachmentBuilder::build);
   }
 
   private static Supplier<AttachmentType<Integer>> registerIntegerAttachmentForMetal(AllomanticMetal metal, String attachmentSuffix) {
@@ -97,7 +105,7 @@ public class CosmereCraftAttachments {
               listTag.stream()
                   .map(CompoundTag.class::cast)
                   .map(NbtUtils::readBlockPos),
-              holder.getExistingData(KNOWN_ANCHORS).stream()
+              holder.getExistingData(CHUNK_ANCHORS).stream()
                   .flatMap(Set::stream)
           )
           .flatMap(Stream::distinct)

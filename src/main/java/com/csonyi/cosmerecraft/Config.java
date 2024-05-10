@@ -27,7 +27,7 @@ public class Config {
 
     private static final ModConfigSpec.IntValue MAX_STEEL_PUSH_DISTANCE = BUILDER
         .comment("Maximum distance a steel push can affect things (in blocks)")
-        .defineInRange("steelPushMaxDistance", 30, 0, Integer.MAX_VALUE);
+        .defineInRange("steelPushMaxDistance", 16, 0, Integer.MAX_VALUE);
 
     private static final ModConfigSpec.ConfigValue<List<? extends String>> ADDITIONAL_METAL_NAMES = BUILDER
         .comment("Additional metal names to be used as anchors")
