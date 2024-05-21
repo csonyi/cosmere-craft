@@ -17,5 +17,8 @@
       "item": "cosmerecraft:deepslate_chromium_ore"
     }
   ],
-  "result": "cosmerecraft:chromium_ingot"
+  "result": {
+    "count": 1,
+    "id": "cosmerecraft:chromium_ingot"
+  }
 }

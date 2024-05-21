@@ -5,9 +5,7 @@
       "conditions": {
         "items": [
           {
-            "items": [
-              "cosmerecraft:lead_block"
-            ]
+            "items": "cosmerecraft:lead_block"
           }
         ]
       },

@@ -5,9 +5,7 @@
       "conditions": {
         "items": [
           {
-            "items": [
-              "cosmerecraft:aluminum_ingot"
-            ]
+            "items": "cosmerecraft:aluminum_ingot"
           }
         ]
       },

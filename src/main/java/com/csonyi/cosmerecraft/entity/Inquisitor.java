@@ -1,13 +1,8 @@
 package com.csonyi.cosmerecraft.entity;
 
-import com.csonyi.cosmerecraft.capability.allomancy.Allomancy;
-import com.csonyi.cosmerecraft.registry.CosmereCraftEntities;
+import com.csonyi.cosmerecraft.capability.allomancy.IAllomancy;
 import com.csonyi.cosmerecraft.registry.CosmereCraftItems;
-import com.mojang.logging.LogUtils;
-import java.io.IOException;
 import net.minecraft.core.BlockPos;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.RandomSource;
@@ -17,7 +12,6 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MobSpawnType;
-import net.minecraft.world.entity.MobType;
 import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -36,11 +30,8 @@ import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.slf4j.Logger;
 
 public class Inquisitor extends Monster {
-
-  private static final Logger LOGGER = LogUtils.getLogger();
 
   public Inquisitor(EntityType<? extends Monster> pEntityType, Level pLevel) {
     super(pEntityType, pLevel);
@@ -69,8 +60,8 @@ public class Inquisitor extends Monster {
   private void addGoals() {
     goalSelector.addGoal(8, new LookAtPlayerGoal(this, Player.class, 8.0F));
     goalSelector.addGoal(8, new RandomLookAroundGoal(this));
-    goalSelector.addGoal(7, new WaterAvoidingRandomStrollGoal(this, 1.0));
-    goalSelector.addGoal(2, new MeleeAttackGoal(this, 1.5D, true));
+    goalSelector.addGoal(7, new WaterAvoidingRandomStrollGoal(this, 0));
+    goalSelector.addGoal(2, new MeleeAttackGoal(this, 1d, true));
     goalSelector.addGoal(0, new FloatGoal(this));
   }
 
@@ -87,8 +78,8 @@ public class Inquisitor extends Monster {
   }
 
   private static boolean isActiveAllomancer(LivingEntity entity) {
-    if (entity instanceof ServerPlayer serverPlayer) {
-      return Allomancy.of(serverPlayer).isBurningMetal();
+    if (entity instanceof Player serverPlayer) {
+      return IAllomancy.of(serverPlayer).isBurningAnyOf();
     }
     return false;
   }
@@ -96,7 +87,7 @@ public class Inquisitor extends Monster {
   /**
    * For now, Inquisitors use the same sound set as zombies. This could be improved later.
    *
-   * @return
+   * @return the ambient sound of the Inquisitor.
    */
   @Nullable
   @Override
@@ -123,11 +114,6 @@ public class Inquisitor extends Monster {
     this.playSound(this.getStepSound(), 0.15F, 1.0F);
   }
 
-  @Override
-  public @NotNull MobType getMobType() {
-    return CosmereCraftEntities.MobTypes.INQUISITOR;
-  }
-
   /**
    * Inquisitors have a chance to spawn with obsidian axes in their main and off hands. The chance is based on the difficulty level.
    *
@@ -137,27 +123,24 @@ public class Inquisitor extends Monster {
   @Override
   protected void populateDefaultEquipmentSlots(@NotNull RandomSource randomSource, @NotNull DifficultyInstance difficultyInstance) {
     super.populateDefaultEquipmentSlots(randomSource, difficultyInstance);
-    try (var level = level()) {
-      var mainHandAxeChance = switch (level.getDifficulty()) {
-        case HARD -> 1F;
-        case NORMAL -> 0.5F;
-        case EASY -> 0.25F;
-        default -> 0.0F;
-      };
-      var offHandAxeChance = switch (level.getDifficulty()) {
-        case HARD -> 0.5F;
-        case NORMAL -> 0.25F;
-        case EASY -> 0F;
-        default -> 0.0F;
-      };
-      if (randomSource.nextFloat() < mainHandAxeChance) {
-        this.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(CosmereCraftItems.OBSIDIAN_AXE));
-      }
-      if (randomSource.nextFloat() < offHandAxeChance) {
-        this.setItemSlot(EquipmentSlot.OFFHAND, new ItemStack(CosmereCraftItems.OBSIDIAN_AXE));
-      }
-    } catch (IOException e) {
-      LOGGER.error("IOException while retrieving level in scan: {}", e.getMessage());
+    var level = level();
+    var mainHandAxeChance = switch (level.getDifficulty()) {
+      case HARD -> 1F;
+      case NORMAL -> 0.5F;
+      case EASY -> 0.25F;
+      default -> 0.0F;
+    };
+    var offHandAxeChance = switch (level.getDifficulty()) {
+      case HARD -> 0.5F;
+      case NORMAL -> 0.25F;
+      case EASY -> 0F;
+      default -> 0.0F;
+    };
+    if (randomSource.nextFloat() < mainHandAxeChance) {
+      this.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(CosmereCraftItems.OBSIDIAN_AXE));
+    }
+    if (randomSource.nextFloat() < offHandAxeChance) {
+      this.setItemSlot(EquipmentSlot.OFFHAND, new ItemStack(CosmereCraftItems.OBSIDIAN_AXE));
     }
   }
 
@@ -169,16 +152,17 @@ public class Inquisitor extends Monster {
    * @param difficulty          the difficulty of the current level.
    * @param spawnReason         the reason for the spawn.
    * @param spawnGroupData      the spawn group data (determines how many mobs will spawn together).
-   * @param compoundTag         an nbt tag for the mob.
    * @return the superclass's method's return value after setting up the default equipment.
    */
   @Nullable
   @Override
   public SpawnGroupData finalizeSpawn(
-      @NotNull ServerLevelAccessor serverLevelAccessor, @NotNull DifficultyInstance difficulty, @NotNull MobSpawnType spawnReason,
-      @Nullable SpawnGroupData spawnGroupData, @Nullable CompoundTag compoundTag) {
+      ServerLevelAccessor serverLevelAccessor,
+      DifficultyInstance difficulty,
+      MobSpawnType spawnReason,
+      @Nullable SpawnGroupData spawnGroupData) {
     populateDefaultEquipmentSlots(serverLevelAccessor.getRandom(), difficulty);
-    return super.finalizeSpawn(serverLevelAccessor, difficulty, spawnReason, spawnGroupData, compoundTag);
+    return super.finalizeSpawn(serverLevelAccessor, difficulty, spawnReason, spawnGroupData);
   }
 
   /**

@@ -5,9 +5,7 @@
       "conditions": {
         "items": [
           {
-            "items": [
-              "cosmerecraft:raw_bismuth"
-            ]
+            "items": "cosmerecraft:raw_bismuth"
           }
         ]
       },

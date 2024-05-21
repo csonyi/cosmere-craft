@@ -5,9 +5,7 @@
       "conditions": {
         "items": [
           {
-            "items": [
-              "cosmerecraft:raw_zinc_block"
-            ]
+            "items": "cosmerecraft:raw_zinc_block"
           }
         ]
       },

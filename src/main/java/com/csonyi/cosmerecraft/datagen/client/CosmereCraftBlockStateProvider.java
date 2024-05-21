@@ -75,7 +75,20 @@ public class CosmereCraftBlockStateProvider extends BlockStateProvider {
         .modelForState()
         .modelFile(cubeAllModel("ash_block", ASH_BLOCK_LOCATION))
         .addModel();
+    getVariantBuilder(CosmereCraftBlocks.ASHY_DIRT.value()).partialState()
+        .modelForState()
+        .modelFile(models().cubeBottomTop(
+            "ashy_dirt",
+            modLoc("block/ashy_dirt"),
+            mcLoc("block/dirt"),
+            ASH_BLOCK_LOCATION))
+        .addModel();
     itemModels().cubeAll("ash_block", ASH_BLOCK_LOCATION);
+    itemModels().cubeBottomTop(
+        "ashy_dirt",
+        modLoc("block/ashy_dirt"),
+        mcLoc("block/dirt"),
+        ASH_BLOCK_LOCATION);
 
     // TODO: add ashy grass behaviour
     // getVariantBuilder(Blocks.GRASS_BLOCK).partialState()

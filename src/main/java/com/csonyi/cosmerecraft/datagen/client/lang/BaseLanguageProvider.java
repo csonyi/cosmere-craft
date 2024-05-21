@@ -49,12 +49,16 @@ public abstract class BaseLanguageProvider extends LanguageProvider {
   }
 
   private String formattedMetalName(AllomanticMetal metal, String prefix) {
+    var translatedName = getTranslatedMetalName(metal);
+    var capitalizedName = StringUtils.capitalize(translatedName);
     if (StringUtils.isEmpty(prefix)) {
-      return StringUtils.capitalize(metal.lowerCaseName());
+      return capitalizedName;
     }
     return prefix.charAt(prefix.length() - 1) == ' '
-        ? StringUtils.capitalize(metal.lowerCaseName())
-        : metal.lowerCaseName();
+        ? capitalizedName
+        : translatedName;
   }
+
+  protected abstract String getTranslatedMetalName(AllomanticMetal metal);
 
 }

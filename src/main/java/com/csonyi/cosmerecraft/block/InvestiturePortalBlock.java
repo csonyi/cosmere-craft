@@ -19,7 +19,7 @@ public class InvestiturePortalBlock extends LiquidBlock {
 
   public InvestiturePortalBlock() {
     super(
-        CosmereCraftFluids.INVESTITURE_PORTAL,
+        CosmereCraftFluids.INVESTITURE_PORTAL.value(),
         BlockBehaviour.Properties.of()
             .noLootTable()
             .liquid()
@@ -38,7 +38,9 @@ public class InvestiturePortalBlock extends LiquidBlock {
       }
       var destinationLevel = getDestination(serverLevel);
       if (destinationLevel != null && entityInBlock.canChangeDimensions()) {
-        entityInBlock.changeDimension(destinationLevel, new ScadrialTeleporter(serverLevel));
+        var teleporter = new ScadrialTeleporter(serverLevel);
+        teleporter.generateWellIfNeeded(currentBlockPos);
+        entityInBlock.changeDimension(destinationLevel, teleporter);
       }
     }
   }
@@ -60,7 +62,7 @@ public class InvestiturePortalBlock extends LiquidBlock {
   }
 
   private static boolean isDestinationPositionInvestitureLiquidBlock(ServerLevel destinationLevel, BlockPos destinationPosition) {
-    return destinationLevel.getBlockState(destinationPosition).is(CosmereCraftBlocks.INVESTITURE_LIQUID);
+    return destinationLevel.getBlockState(destinationPosition).is(CosmereCraftBlocks.INVESTITURE_LIQUID_TAG);
   }
 
 

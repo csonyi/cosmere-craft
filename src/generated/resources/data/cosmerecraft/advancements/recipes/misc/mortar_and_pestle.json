@@ -1,0 +1,46 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_lerasium": {
+      "conditions": {
+        "items": [
+          {
+            "items": "cosmerecraft:lerasium_nugget"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "cosmerecraft:mortar_and_pestle"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    },
+    "inside_of_investiture": {
+      "conditions": {
+        "block": "cosmerecraft:investiture_liquid"
+      },
+      "trigger": "minecraft:enter_block"
+    },
+    "inside_of_investiture_portal": {
+      "conditions": {
+        "block": "cosmerecraft:investiture_portal"
+      },
+      "trigger": "minecraft:enter_block"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_lerasium",
+      "inside_of_investiture",
+      "inside_of_investiture_portal"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "cosmerecraft:mortar_and_pestle"
+    ]
+  }
+}

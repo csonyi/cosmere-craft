@@ -1,6 +1,7 @@
 package com.csonyi.cosmerecraft.capability.anchors;
 
 import com.csonyi.cosmerecraft.Config;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -20,9 +21,9 @@ public class AnchorObserver {
   public AnchorObserver(Player player) {
     this.player = player;
     this.level = player.level();
-    this.currentChunk = ChunkAnchors.of(level.getChunkAt(player.blockPosition()));
+    this.currentChunk = ChunkAnchors.ofExisting(level.getChunkAt(player.blockPosition()));
     this.surroundingChunks = findSurroundingChunks()
-        .map(ChunkAnchors::of)
+        .map(ChunkAnchors::ofExisting)
         .collect(Collectors.toSet());
   }
 
@@ -42,7 +43,7 @@ public class AnchorObserver {
   private Stream<BlockPos> streamSurroundingAnchors() {
     return surroundingChunks.stream()
         .map(ChunkAnchors::getAnchors)
-        .flatMap(Set::stream);
+        .flatMap(List::stream);
   }
 
   private Stream<LevelChunk> findSurroundingChunks() {

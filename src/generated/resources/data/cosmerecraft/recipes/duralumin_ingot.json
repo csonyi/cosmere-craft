@@ -6,5 +6,8 @@
   "ingredient": {
     "item": "cosmerecraft:duralumin_powder"
   },
-  "result": "cosmerecraft:duralumin_ingot"
+  "result": {
+    "count": 1,
+    "id": "cosmerecraft:duralumin_ingot"
+  }
 }

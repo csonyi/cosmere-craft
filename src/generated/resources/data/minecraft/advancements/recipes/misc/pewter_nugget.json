@@ -5,9 +5,7 @@
       "conditions": {
         "items": [
           {
-            "items": [
-              "cosmerecraft:pewter_ingot"
-            ]
+            "items": "cosmerecraft:pewter_ingot"
           }
         ]
       },

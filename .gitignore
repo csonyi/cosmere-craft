@@ -27,3 +27,4 @@ repo
 
 .sdkmanrc
 /src/generated/resources/.cache/
+*.hprof

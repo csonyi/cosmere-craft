@@ -11,9 +11,7 @@
       "conditions": {
         "items": [
           {
-            "items": [
-              "cosmerecraft:zinc_nugget"
-            ]
+            "items": "cosmerecraft:zinc_nugget"
           }
         ]
       },

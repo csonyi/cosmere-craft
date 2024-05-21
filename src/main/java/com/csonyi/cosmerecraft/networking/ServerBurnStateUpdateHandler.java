@@ -4,42 +4,37 @@ import com.csonyi.cosmerecraft.capability.allomancy.AllomanticMetal;
 import com.csonyi.cosmerecraft.capability.allomancy.MetalStateManager;
 import com.csonyi.cosmerecraft.util.ResourceUtils;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
-import net.neoforged.neoforge.network.handling.PlayPayloadContext;
+import net.neoforged.neoforge.network.PacketDistributor;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jetbrains.annotations.NotNull;
 
-public class ServerBurnStateUpdateHandler extends NetworkHandler {
+public class ServerBurnStateUpdateHandler {
 
   public static void sendBurnStateUpdatesToServer(AllomanticMetal metal, boolean state) {
-    sendToServer(new BurnStateUpdate(metal, state));
+    PacketDistributor.sendToServer(new BurnStateUpdate(metal, state));
   }
 
-  public static void updateBurnStateOnServer(BurnStateUpdate packet, PlayPayloadContext context) {
-    context.player()
-        .map(MetalStateManager::new)
-        .ifPresent(metalStateManager -> metalStateManager.setBurnState(packet.metal, packet.state));
+  public static void updateBurnStateOnServer(BurnStateUpdate packet, IPayloadContext context) {
+    var metalStateManager = new MetalStateManager(context.player());
+    metalStateManager.setBurnState(packet.metal, packet.state);
   }
 
   public record BurnStateUpdate(AllomanticMetal metal, boolean state) implements CustomPacketPayload {
 
-    public static ResourceLocation ID = ResourceUtils.modLocation("burn_state_update");
+    public static final Type<BurnStateUpdate> TYPE = new Type<>(ResourceUtils.modLocation("burn_state_update"));
+    public static final StreamCodec<FriendlyByteBuf, BurnStateUpdate> CODEC = StreamCodec.composite(
+        AllomanticMetal.CODEC,
+        BurnStateUpdate::metal,
+        ByteBufCodecs.BOOL,
+        BurnStateUpdate::state,
+        BurnStateUpdate::new);
 
     @Override
-    public @NotNull ResourceLocation id() {
-      return ID;
-    }
-
-    public static BurnStateUpdate read(FriendlyByteBuf friendlyByteBuf) {
-      return new BurnStateUpdate(
-          friendlyByteBuf.readEnum(AllomanticMetal.class),
-          friendlyByteBuf.readBoolean());
-    }
-
-    @Override
-    public void write(@NotNull FriendlyByteBuf friendlyByteBuf) {
-      friendlyByteBuf.writeEnum(metal);
-      friendlyByteBuf.writeBoolean(state);
+    public @NotNull Type<BurnStateUpdate> type() {
+      return TYPE;
     }
   }
 }

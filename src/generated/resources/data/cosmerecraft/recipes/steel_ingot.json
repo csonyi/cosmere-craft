@@ -6,5 +6,8 @@
   "ingredient": {
     "item": "cosmerecraft:steel_powder"
   },
-  "result": "cosmerecraft:steel_ingot"
+  "result": {
+    "count": 1,
+    "id": "cosmerecraft:steel_ingot"
+  }
 }

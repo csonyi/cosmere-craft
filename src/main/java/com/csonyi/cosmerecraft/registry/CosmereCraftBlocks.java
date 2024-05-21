@@ -5,6 +5,7 @@ import static java.util.function.Predicate.not;
 
 import com.csonyi.cosmerecraft.CosmereCraft;
 import com.csonyi.cosmerecraft.block.AshLayerBlock;
+import com.csonyi.cosmerecraft.block.AshyDirtBlock;
 import com.csonyi.cosmerecraft.block.InvestiturePortalBlock;
 import com.csonyi.cosmerecraft.capability.allomancy.AllomanticMetal;
 import java.util.Map;
@@ -30,6 +31,7 @@ public class CosmereCraftBlocks {
 
   public static final TagKey<Block> ANCHOR_TAG = BlockTags.create(modLocation("anchor"));
   public static final TagKey<Block> ASH_TAG = BlockTags.create(modLocation("ash"));
+  public static final TagKey<Block> INVESTITURE_LIQUID_TAG = BlockTags.create(modLocation("investiture_liquid"));
 
   public static final Map<AllomanticMetal, Holder<Block>> METAL_ORES =
       AllomanticMetal.stream(
@@ -127,15 +129,20 @@ public class CosmereCraftBlocks {
       AshLayerBlock::new,
       BlockBehaviour.Properties.ofFullCopy(Blocks.SNOW)
           .mapColor(DyeColor.LIGHT_GRAY));
+
   public static final Holder<Block> ASH_BLOCK = BLOCKS.registerSimpleBlock(
       "ash_block",
       BlockBehaviour.Properties.ofFullCopy(Blocks.SNOW_BLOCK)
           .mapColor(DyeColor.LIGHT_GRAY));
+  public static final Holder<Block> ASHY_DIRT = BLOCKS.registerBlock(
+      "ashy_dirt",
+      AshyDirtBlock::new,
+      BlockBehaviour.Properties.ofFullCopy(Blocks.GRASS_BLOCK));
 
   public static final DeferredBlock<LiquidBlock> INVESTITURE_LIQUID = BLOCKS.register(
       "investiture_liquid",
       () -> new LiquidBlock(
-          CosmereCraftFluids.INVESTITURE,
+          CosmereCraftFluids.INVESTITURE.value(),
           BlockBehaviour.Properties.of()
               .noLootTable()
               .liquid()

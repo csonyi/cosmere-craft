@@ -3,42 +3,43 @@ package com.csonyi.cosmerecraft.registry;
 import static com.csonyi.cosmerecraft.CosmereCraft.MOD_ID;
 
 import com.csonyi.cosmerecraft.capability.allomancy.AllomanticMetal;
+import com.csonyi.cosmerecraft.capability.anchors.ChunkAnchors;
 import com.mojang.serialization.Codec;
+import java.time.Instant;
+import java.util.ArrayList;
 import java.util.EnumMap;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import net.minecraft.core.BlockPos;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.NbtUtils;
+import net.minecraft.world.entity.Entity;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.attachment.AttachmentType;
-import net.neoforged.neoforge.attachment.IAttachmentHolder;
-import net.neoforged.neoforge.attachment.IAttachmentSerializer;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public class CosmereCraftAttachments {
 
   public static final DeferredRegister<AttachmentType<?>> ATTACHMENT_TYPES =
       DeferredRegister.create(NeoForgeRegistries.ATTACHMENT_TYPES, MOD_ID);
 
-  public static final Supplier<AttachmentType<HashSet<BlockPos>>> CHUNK_ANCHORS =
+  public static final Supplier<AttachmentType<List<BlockPos>>> CHUNK_ANCHORS =
       ATTACHMENT_TYPES.register(
           "chunk_anchors",
-          () -> AttachmentType.builder(() -> new HashSet<BlockPos>())
-              .serialize(new AnchorMapSerializer())
+          () -> AttachmentType.<List<BlockPos>>builder(() -> new ArrayList<>())
+              .serialize(ChunkAnchors.CODEC)
               .build());
 
   public static final Supplier<AttachmentType<BlockPos>> TRACKED_WELL =
       ATTACHMENT_TYPES.register(
           "tracked_well",
           () -> AttachmentType.builder(() -> BlockPos.ZERO)
+              .build());
+
+  public static final Supplier<AttachmentType<Instant>> FOUND_MEDALLION =
+      ATTACHMENT_TYPES.register(
+          "found_medallion",
+          () -> AttachmentType.builder(() -> Instant.EPOCH)
+              .serialize(Codec.LONG.xmap(Instant::ofEpochMilli, Instant::toEpochMilli))
               .build());
 
   public static final EnumMap<AllomanticMetal, Supplier<AttachmentType<Integer>>> METAL_RESERVES =
@@ -93,48 +94,11 @@ public class CosmereCraftAttachments {
             .build());
   }
 
+  public static <T> void copyAttachments(Entity source, Entity target, Supplier<AttachmentType<T>> attachment) {
+    source.setData(attachment, target.getData(attachment));
+  }
+
   public static void register(IEventBus modEventBus) {
     ATTACHMENT_TYPES.register(modEventBus);
-  }
-
-  static class AnchorMapSerializer implements IAttachmentSerializer<ListTag, HashSet<BlockPos>> {
-
-    @Override
-    public @NotNull HashSet<BlockPos> read(IAttachmentHolder holder, ListTag listTag) {
-      return Stream.of(
-              listTag.stream()
-                  .map(CompoundTag.class::cast)
-                  .map(NbtUtils::readBlockPos),
-              holder.getExistingData(CHUNK_ANCHORS).stream()
-                  .flatMap(Set::stream)
-          )
-          .flatMap(Stream::distinct)
-          .collect(Collectors.toCollection(HashSet::new));
-    }
-
-    @Override
-    public @Nullable ListTag write(HashSet<BlockPos> attachment) {
-      var listTag = new ListTag();
-      attachment.stream()
-          .map(NbtUtils::writeBlockPos)
-          .forEach(listTag::add);
-      return listTag;
-    }
-  }
-
-  static class TrackedWellSerializer implements IAttachmentSerializer<CompoundTag, BlockPos> {
-
-    @Override
-    public @NotNull BlockPos read(IAttachmentHolder holder, CompoundTag tag) {
-      if (holder.hasData(TRACKED_WELL)) {
-        return holder.getData(TRACKED_WELL);
-      }
-      return NbtUtils.readBlockPos(tag);
-    }
-
-    @Override
-    public @Nullable CompoundTag write(BlockPos attachment) {
-      return NbtUtils.writeBlockPos(attachment);
-    }
   }
 }

@@ -5,9 +5,7 @@
       "conditions": {
         "items": [
           {
-            "items": [
-              "cosmerecraft:bismuth_nugget"
-            ]
+            "items": "cosmerecraft:bismuth_nugget"
           }
         ]
       },

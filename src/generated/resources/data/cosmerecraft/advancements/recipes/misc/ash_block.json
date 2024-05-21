@@ -5,9 +5,7 @@
       "conditions": {
         "items": [
           {
-            "items": [
-              "cosmerecraft:ash_pile"
-            ]
+            "items": "cosmerecraft:ash_pile"
           }
         ]
       },

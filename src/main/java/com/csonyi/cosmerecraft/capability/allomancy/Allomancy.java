@@ -2,64 +2,68 @@ package com.csonyi.cosmerecraft.capability.allomancy;
 
 import static com.csonyi.cosmerecraft.capability.allomancy.AllomanticMetal.STEEL;
 
-import com.csonyi.cosmerecraft.capability.allomancy.AllomanticMetal.MetalAmount;
 import com.csonyi.cosmerecraft.capability.anchors.AnchorObserver;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import com.csonyi.cosmerecraft.networking.SteelJumpHandler;
+import com.csonyi.cosmerecraft.util.TickUtils;
+import java.util.Set;
 import java.util.stream.Collectors;
+import net.minecraft.client.Minecraft;
+import net.minecraft.core.Holder;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.common.util.Lazy;
-import org.apache.commons.lang3.ArrayUtils;
 
-public class Allomancy {
+public class Allomancy implements IAllomancy {
 
-  private static final int EFFECT_DURATION = -1;
+  private static final int INFINITE_DURATION = -1;
+  public static final int EXTRA_TICKS = 8;
+  public static final float MOB_SLOW_FACTOR = 0.25f;
 
-  private static final Map<UUID, Allomancy> INSTANCES = new HashMap<>();
-
-  private final Player player;
-  private final Lazy<ExternalPhysicalMovement> externalPhysicalMovement;
-  private final Lazy<MetalStateManager> metalStateManager;
-  private final Lazy<AnchorObserver> anchorObserver;
+  private final ServerPlayer player;
+  private final Lazy<ExternalPhysicalMovement> lazyExternalPhysicalMovement;
+  private final Lazy<MetalStateManager> lazyMetalStateManager;
+  private final Lazy<AnchorObserver> lazyAnchorObserver;
 
   private Allomancy(Player player) {
-    this.player = player;
-    this.metalStateManager = Lazy.of(() -> new MetalStateManager(this.player));
-    this.externalPhysicalMovement = Lazy.of(() -> new ExternalPhysicalMovement(this.player));
-    this.anchorObserver = Lazy.of(() -> new AnchorObserver(this.player));
+    this.player = (ServerPlayer) player;
+    this.lazyMetalStateManager = Lazy.of(() -> new MetalStateManager(this.player));
+    this.lazyExternalPhysicalMovement = Lazy.of(() -> new ExternalPhysicalMovement(this.player));
+    this.lazyAnchorObserver = Lazy.of(() -> new AnchorObserver(this.player));
   }
 
   private ExternalPhysicalMovement externalPhysicalMovement() {
-    return externalPhysicalMovement.get();
+    return lazyExternalPhysicalMovement.get();
   }
 
   private MetalStateManager metalStateManager() {
-    return metalStateManager.get();
+    return lazyMetalStateManager.get();
   }
 
   private AnchorObserver anchorObserver() {
-    return anchorObserver.get();
+    return lazyAnchorObserver.get();
   }
 
-  public static Allomancy of(Player player) {
-    return INSTANCES.computeIfAbsent(
-        player.getUUID(),
-        uuid -> new Allomancy(player));
-  }
-
-  public boolean canIngestMetal(int amount) {
-    return metalStateManager().canIngest(amount);
-  }
-
-  public void ingestMetal(AllomanticMetal metal, MetalAmount metalAmount) {
-    ingestMetal(metal, metalAmount.amount);
+  public static Allomancy register(Player player, Void nothing) {
+    return player instanceof ServerPlayer serverPlayer
+        ? new Allomancy(serverPlayer)
+        : null;
   }
 
   public void ingestMetal(AllomanticMetal metal, int amount) {
     metalStateManager().ingest(metal, amount);
+  }
+
+  @Override
+  public Set<AllomanticMetal.State> getMetalStates() {
+    return metalStateManager().getMetalStates();
+  }
+
+  @Override
+  public void copyFrom(Player oldPlayer, boolean isDeath) {
+    metalStateManager().copyFrom(oldPlayer, isDeath);
   }
 
   private void applyActiveMetalEffects() {
@@ -78,38 +82,69 @@ public class Allomancy {
         .filter(effect -> !currentEffects.contains(effect))
         .map(this::effectInstance)
         .forEach(player::addEffect);
-
   }
 
-  private MobEffectInstance effectInstance(MobEffect effect) {
+  private MobEffectInstance effectInstance(Holder<MobEffect> effect) {
     return new MobEffectInstance(
         effect,
-        EFFECT_DURATION,
+        INFINITE_DURATION,
         0, true, true);
   }
 
   public boolean isBurningMetal() {
-    return metalStateManager().activeMetals()
-        .findAny()
-        .isPresent();
+    return metalStateManager().isBurningMetal();
   }
 
   public boolean isBurningAnyOf(AllomanticMetal... metals) {
-    return metalStateManager().activeMetals()
-        .anyMatch(metal -> ArrayUtils.contains(metals, metal));
+    return metalStateManager().isBurningAnyOf(metals);
+  }
+
+  @Override
+  public boolean canIngestMetalAmount(int powerTicks) {
+    return metalStateManager().canIngestMetalAmount(powerTicks);
   }
 
   public void tick() {
-
+    if (!isBurningMetal()) {
+      return;
+    }
     if (metalStateManager().isActive(STEEL)) {
-      if (player.jumping) {
+      if (Minecraft.getInstance().options.keyJump.isDown()) {
         player.resetFallDistance();
         if (anchorObserver().hasAnchorInRange()) {
-          externalPhysicalMovement().applySteelPush();
+          SteelJumpHandler.apply(player);
         }
+      }
+    }
+    var isCadmiumActive = metalStateManager().isActive(AllomanticMetal.CADMIUM);
+    var isBendalloyActive = metalStateManager().isActive(AllomanticMetal.BENDALLOY);
+    if (isCadmiumActive ^ isBendalloyActive) {
+      if (isCadmiumActive) {
+        var level = (ServerLevel) player.level();
+        level.setDayTime(Math.min(level.getDayTime() + 4, Long.MAX_VALUE));
+      }
+      if (isBendalloyActive) {
+        var playerAABB = player.getBoundingBox();
+        TickUtils.speedUpRandomTicks(
+            (ServerLevel) player.level(),
+            EXTRA_TICKS,
+            playerAABB.inflate(4));
+        TickUtils.speedUpBlockEntities(
+            player.level(),
+            EXTRA_TICKS,
+            playerAABB.inflate(4));
+        TickUtils.slowDownMobs(
+            player.level(),
+            MOB_SLOW_FACTOR,
+            playerAABB.inflate(EXTRA_TICKS),
+            playerAABB.inflate(2));
       }
     }
     applyActiveMetalEffects();
     metalStateManager().drainActive();
+    metalStateManager().emptyBurningMetals()
+        .forEach(metal -> metalStateManager().setBurnState(metal, false));
   }
+
+
 }

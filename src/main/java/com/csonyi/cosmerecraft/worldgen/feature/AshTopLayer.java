@@ -1,10 +1,10 @@
 package com.csonyi.cosmerecraft.worldgen.feature;
 
-import com.csonyi.cosmerecraft.block.AshyDirtBlock;
 import com.csonyi.cosmerecraft.registry.CosmereCraftBlocks;
 import java.util.stream.Stream;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.Heightmap;
@@ -40,8 +40,8 @@ public class AshTopLayer extends Feature<NoneFeatureConfiguration> {
         var blockStateUnderCurrent = worldgenlevel.getBlockState(blockUnderCurrent);
         if (!isFluid(blockStateUnderCurrent)) {
           worldgenlevel.setBlock(currentBlock, CosmereCraftBlocks.ASH.value().defaultBlockState(), 2);
-          if (blockStateUnderCurrent.hasProperty(AshyDirtBlock.ASHY)) {
-            worldgenlevel.setBlock(blockUnderCurrent, blockStateUnderCurrent.setValue(AshyDirtBlock.ASHY, true), 2);
+          if (blockStateUnderCurrent.is(BlockTags.DIRT)) {
+            worldgenlevel.setBlock(blockUnderCurrent, CosmereCraftBlocks.ASHY_DIRT.value().defaultBlockState(), 2);
           }
         }
       }

@@ -6,5 +6,8 @@
   "ingredient": {
     "item": "cosmerecraft:brass_powder"
   },
-  "result": "cosmerecraft:brass_ingot"
+  "result": {
+    "count": 1,
+    "id": "cosmerecraft:brass_ingot"
+  }
 }

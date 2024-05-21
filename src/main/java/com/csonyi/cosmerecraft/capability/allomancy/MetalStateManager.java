@@ -11,32 +11,21 @@ import com.csonyi.cosmerecraft.registry.CosmereCraftAttachments;
 import com.csonyi.cosmerecraft.util.StreamUtils;
 import java.util.Set;
 import java.util.function.Predicate;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
+import org.apache.commons.lang3.ArrayUtils;
 
-public class MetalStateManager {
+public class MetalStateManager implements IAllomancy {
 
   private final Player player;
   private final boolean isLocal;
 
   public MetalStateManager(Player player) {
-    this.player = player;
     this.isLocal = player instanceof LocalPlayer;
-    sync();
-  }
-
-  private void sync() {
-    if (isLocal) {
-      ClientMetalStateQueryHandler.queryMetalStatesFromServer();
-    }
-  }
-
-  public void tick() {
-    sync();
+    this.player = player;
   }
 
   public void setStates(Set<AllomanticMetal.State> state) {
@@ -80,6 +69,10 @@ public class MetalStateManager {
     setAvailable(metal, true);
   }
 
+  public boolean isEmpty(AllomanticMetal metal) {
+    return getReserve(metal) <= 0;
+  }
+
   public void drainActive() {
     AllomanticMetal.stream(this::isActive)
         .forEach(this::drain);
@@ -95,6 +88,12 @@ public class MetalStateManager {
         && getBurnState(metal);
   }
 
+  public boolean isBurningMetal() {
+    return activeMetals()
+        .findAny()
+        .isPresent();
+  }
+
   public AllomanticMetal.State getState(AllomanticMetal metal) {
     return new AllomanticMetal.State(metal,
         getReserve(metal),
@@ -102,24 +101,14 @@ public class MetalStateManager {
         isAvailable(metal));
   }
 
-  public Set<AllomanticMetal.State> getStates() {
+  public Set<AllomanticMetal.State> getMetalStates() {
     return metals()
         .map(this::getState)
         .collect(Collectors.toSet());
   }
 
-  public boolean hasAllAttachments() {
-    return AllomanticMetal.stream(not(AllomanticMetal::isGodMetal))
-        .flatMap(metal -> Stream.of(
-            CosmereCraftAttachments.metalBurnState(metal),
-            CosmereCraftAttachments.metalReserve(metal),
-            CosmereCraftAttachments.metalAvailable(metal)))
-        .map(Supplier::get)
-        .allMatch(player::hasData);
-  }
 
-
-  public boolean canIngest(int amount) {
+  public boolean canIngestMetalAmount(int amount) {
     return Config.Server.collectiveAllomanticCapacity > getCollectiveMetalAmount() + amount;
   }
 
@@ -153,6 +142,7 @@ public class MetalStateManager {
     if (AllomanticMetal.LERASIUM.equals(metal)) {
       AllomanticMetal.stream(not(AllomanticMetal::isGodMetal))
           .forEach(this::makeAvailable);
+      return;
     }
     var newCollectiveReserve = getCollectiveMetalAmount() + amount;
     if (newCollectiveReserve > Config.Server.collectiveAllomanticCapacity) {
@@ -161,9 +151,49 @@ public class MetalStateManager {
     setReserve(metal, getReserve(metal) + amount);
   }
 
-  public void copyFromOldPlayer(Player oldPlayer) {
-    AllomanticMetal.stream()
-        .forEach(metal -> setAvailable(metal, oldPlayer.getData(metalAvailable(metal))));
+  public Stream<AllomanticMetal> emptyBurningMetals() {
+    return metals(
+        not(AllomanticMetal::isGodMetal),
+        this::getAvailable,
+        this::getBurnState,
+        this::isEmpty);
   }
 
+  public void copyFrom(Player oldPlayer, boolean isDeath) {
+    AllomanticMetal.stream()
+        .forEach(metal -> {
+          CosmereCraftAttachments.copyAttachments(oldPlayer, player, metalAvailable(metal));
+          if (!isDeath) {
+            CosmereCraftAttachments.copyAttachments(oldPlayer, player, metalBurnState(metal));
+            CosmereCraftAttachments.copyAttachments(oldPlayer, player, metalReserve(metal));
+          }
+        });
+  }
+
+  @Override
+  public void tick() {
+    if (isLocal) {
+      var metals = metals(
+          this::isAvailable,
+          not(AllomanticMetal::isGodMetal))
+          .collect(Collectors.toSet());
+      ClientMetalStateQueryHandler.queryMetalStatesFromServer(metals);
+    }
+  }
+
+  public boolean isBurningAnyOf(AllomanticMetal... metals) {
+    return activeMetals()
+        .anyMatch(metal -> ArrayUtils.contains(metals, metal));
+  }
+
+  @Override
+  public void ingestMetal(AllomanticMetal metal, int amount) {
+    ingest(metal, amount);
+  }
+
+  public static IAllomancy register(Player player, Void context) {
+    return player instanceof LocalPlayer serverPlayer
+        ? new MetalStateManager(serverPlayer)
+        : null;
+  }
 }

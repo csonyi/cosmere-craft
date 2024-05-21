@@ -6,5 +6,8 @@
   "ingredient": {
     "item": "cosmerecraft:electrum_powder"
   },
-  "result": "cosmerecraft:electrum_ingot"
+  "result": {
+    "count": 1,
+    "id": "cosmerecraft:electrum_ingot"
+  }
 }

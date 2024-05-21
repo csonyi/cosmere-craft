@@ -17,5 +17,8 @@
       "item": "cosmerecraft:deepslate_silver_ore"
     }
   ],
-  "result": "cosmerecraft:silver_ingot"
+  "result": {
+    "count": 1,
+    "id": "cosmerecraft:silver_ingot"
+  }
 }

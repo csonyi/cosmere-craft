@@ -5,9 +5,7 @@
       "conditions": {
         "items": [
           {
-            "items": [
-              "cosmerecraft:raw_cadmium"
-            ]
+            "items": "cosmerecraft:raw_cadmium"
           }
         ]
       },

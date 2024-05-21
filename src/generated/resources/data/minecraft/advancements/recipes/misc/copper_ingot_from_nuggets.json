@@ -5,9 +5,7 @@
       "conditions": {
         "items": [
           {
-            "items": [
-              "cosmerecraft:copper_nugget"
-            ]
+            "items": "cosmerecraft:copper_nugget"
           }
         ]
       },

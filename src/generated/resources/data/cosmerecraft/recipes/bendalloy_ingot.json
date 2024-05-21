@@ -6,5 +6,8 @@
   "ingredient": {
     "item": "cosmerecraft:bendalloy_powder"
   },
-  "result": "cosmerecraft:bendalloy_ingot"
+  "result": {
+    "count": 1,
+    "id": "cosmerecraft:bendalloy_ingot"
+  }
 }

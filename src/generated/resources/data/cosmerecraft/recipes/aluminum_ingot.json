@@ -17,5 +17,8 @@
       "item": "cosmerecraft:deepslate_aluminum_ore"
     }
   ],
-  "result": "cosmerecraft:aluminum_ingot"
+  "result": {
+    "count": 1,
+    "id": "cosmerecraft:aluminum_ingot"
+  }
 }

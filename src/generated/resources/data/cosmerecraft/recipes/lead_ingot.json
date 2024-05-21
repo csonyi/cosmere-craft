@@ -17,5 +17,8 @@
       "item": "cosmerecraft:deepslate_lead_ore"
     }
   ],
-  "result": "cosmerecraft:lead_ingot"
+  "result": {
+    "count": 1,
+    "id": "cosmerecraft:lead_ingot"
+  }
 }

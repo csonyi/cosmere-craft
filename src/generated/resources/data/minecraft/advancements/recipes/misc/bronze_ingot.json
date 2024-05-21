@@ -5,9 +5,7 @@
       "conditions": {
         "items": [
           {
-            "items": [
-              "cosmerecraft:bronze_block"
-            ]
+            "items": "cosmerecraft:bronze_block"
           }
         ]
       },

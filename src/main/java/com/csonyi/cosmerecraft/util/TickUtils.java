@@ -1,8 +1,20 @@
 package com.csonyi.cosmerecraft.util;
 
+import static java.util.function.Predicate.not;
+
+import com.mojang.datafixers.util.Pair;
+import java.util.Objects;
+import java.util.stream.IntStream;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.LiquidBlock;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.phys.AABB;
 
 public class TickUtils {
 
@@ -37,4 +49,72 @@ public class TickUtils {
     return level.getGameTime() % n == 0;
   }
 
+  public static void speedUpRandomTicks(ServerLevel level, int extraTicks, AABB range) {
+    if (range == null || extraTicks == 0) {
+      return;
+    }
+
+    // TODO: Implement deny list config
+    BlockPos.betweenClosedStream(range)
+        .filter(level::isLoaded)
+        .map(pos -> Pair.of(pos.immutable(), level.getBlockState(pos)))
+        .filter(pair -> pair.getSecond().isRandomlyTicking())
+        .filter(not(pair -> pair.getSecond().getBlock() instanceof LiquidBlock))
+        .forEach(pair -> {
+          var pos = pair.getFirst();
+          var state = pair.getSecond();
+          IntStream.range(0, extraTicks)
+              .forEach(n -> state.randomTick(level, pos, level.random));
+        });
+  }
+
+  public static void speedUpBlockEntities(Level level, int extraTicks, AABB range) {
+    if (range == null || extraTicks == 0) {
+      return;
+    }
+    // TODO: Implement deny list config
+    BlockPos.betweenClosedStream(range)
+        .map(level::getBlockEntity)
+        .filter(Objects::nonNull)
+        .filter(not(BlockEntity::isRemoved))
+        .filter(entity -> level.shouldTickBlocksAt(entity.getBlockPos()))
+        .forEach(entity -> {
+          var blockEntity = level.getBlockEntity(entity.getBlockPos());
+          if (blockEntity != null) {
+            tickBlockEntity(level, extraTicks, blockEntity);
+          }
+        });
+  }
+
+  public static void slowDownMobs(Level level, float slowDownFactor, AABB range, AABB exclusionRange) {
+    if (range == null || slowDownFactor == 0) {
+      return;
+    }
+    var entitiesInRange = level.getEntitiesOfClass(LivingEntity.class, range);
+    if (range.intersects(exclusionRange)) {
+      entitiesInRange.stream()
+          .filter(livingEntity -> exclusionRange.contains(livingEntity.position()))
+          .forEach(livingEntity -> slowEntity(livingEntity, slowDownFactor));
+    } else {
+      entitiesInRange.forEach(livingEntity -> slowEntity(livingEntity, slowDownFactor));
+    }
+  }
+
+  private static void slowEntity(LivingEntity livingEntity, float slowDownFactor) {
+    livingEntity.setDeltaMovement(
+        livingEntity.getDeltaMovement()
+            .multiply(slowDownFactor, 1, slowDownFactor));
+  }
+
+  @SuppressWarnings("unchecked")
+  private static <T extends BlockEntity> void tickBlockEntity(Level level, int extraTicks, T blockEntity) {
+    var blockPos = blockEntity.getBlockPos();
+    var blockEntityTicker = level.getBlockState(blockPos)
+        .getTicker(level, (BlockEntityType<T>) blockEntity.getType());
+    if (blockEntityTicker != null) {
+      var blockState = blockEntity.getBlockState();
+      StreamUtils.repeat(extraTicks,
+          () -> blockEntityTicker.tick(level, blockPos, blockState, blockEntity));
+    }
+  }
 }

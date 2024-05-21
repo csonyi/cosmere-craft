@@ -17,5 +17,8 @@
       "item": "cosmerecraft:deepslate_zinc_ore"
     }
   ],
-  "result": "cosmerecraft:zinc_ingot"
+  "result": {
+    "count": 1,
+    "id": "cosmerecraft:zinc_ingot"
+  }
 }

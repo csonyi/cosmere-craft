@@ -1,6 +1,7 @@
 package com.csonyi.cosmerecraft.datagen.client.lang;
 
 import static com.csonyi.cosmerecraft.registry.CosmereCraftBlocks.ASH;
+import static com.csonyi.cosmerecraft.registry.CosmereCraftBlocks.ASHY_DIRT;
 import static com.csonyi.cosmerecraft.registry.CosmereCraftBlocks.ASH_BLOCK;
 import static com.csonyi.cosmerecraft.registry.CosmereCraftBlocks.BISMUTH_BLOCK;
 import static com.csonyi.cosmerecraft.registry.CosmereCraftBlocks.BISMUTH_ORE;
@@ -56,6 +57,7 @@ import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.SILVER_NUGGET;
 import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.SILVER_POWDER;
 
 import com.csonyi.cosmerecraft.CosmereCraft;
+import com.csonyi.cosmerecraft.capability.allomancy.AllomanticMetal;
 import com.csonyi.cosmerecraft.registry.CosmereCraftEntities;
 import net.minecraft.data.PackOutput;
 
@@ -160,6 +162,7 @@ public class HuHuLanguageProvider extends BaseLanguageProvider {
 
     addBlock(ASH::value, "Hamu");
     addBlock(ASH_BLOCK::value, "Hamublokk");
+    addBlock(ASHY_DIRT::value, "Hamvas föld");
 
     addBlock(INVESTITURE_LIQUID::value, "Folyékony Invesztitúra");
     addBlock(INVESTITURE_PORTAL_BLOCK::value, "Folyékony Invesztitúra");
@@ -183,28 +186,8 @@ public class HuHuLanguageProvider extends BaseLanguageProvider {
    * Add all metal-related translations.
    */
   private void addMetalNames() {
-    add("cosmerecraft.metals.steel", "Acél");
-    add("cosmerecraft.metals.iron", "Vas");
-    add("cosmerecraft.metals.zinc", "Cink");
-    add("cosmerecraft.metals.brass", "Sárgaréz");
-
-    add("cosmerecraft.metals.pewter", "Forrasz");
-    add("cosmerecraft.metals.tin", "Ón");
-    add("cosmerecraft.metals.copper", "Vörösréz");
-    add("cosmerecraft.metals.bronze", "Bronz");
-
-    add("cosmerecraft.metals.duralumin", "Dúralumínium");
-    add("cosmerecraft.metals.aluminum", "Alumínium");
-    add("cosmerecraft.metals.gold", "Arany");
-    add("cosmerecraft.metals.electrum", "Elektrum");
-
-    add("cosmerecraft.metals.nicrosil", "Nikroszil");
-    add("cosmerecraft.metals.chromium", "Krómium");
-    add("cosmerecraft.metals.cadmium", "Kadmium");
-    add("cosmerecraft.metals.bendalloy", "Hajlafém");
-
-    add("cosmerecraft.metals.atium", "Atium");
-    add("cosmerecraft.metals.lerasium", "Lerasium");
+    AllomanticMetal.stream()
+        .forEach(metal -> add(metal.getNameAsComponent().getString(), getTranslatedMetalName(metal)));
 
     add("cosmerecraft.metals.lead", "Ólom");
     add("cosmerecraft.metals.nickel", "Nikkel");
@@ -237,4 +220,27 @@ public class HuHuLanguageProvider extends BaseLanguageProvider {
         "Mikor kezemben tartom, mintha egy távoli lüktetést halanék...");
   }
 
+  @Override
+  protected String getTranslatedMetalName(AllomanticMetal metal) {
+    return switch (metal) {
+      case STEEL -> "Acél";
+      case IRON -> "Vas";
+      case ZINC -> "Cink";
+      case BRASS -> "Sárgaréz";
+      case PEWTER -> "Forrasz";
+      case TIN -> "Ón";
+      case COPPER -> "Vörösréz";
+      case BRONZE -> "Bronz";
+      case DURALUMIN -> "Dúralumínium";
+      case ALUMINUM -> "Alumínium";
+      case GOLD -> "Arany";
+      case ELECTRUM -> "Elektrum";
+      case NICROSIL -> "Nikroszil";
+      case CHROMIUM -> "Krómium";
+      case CADMIUM -> "Kadmium";
+      case BENDALLOY -> "Hajlafém";
+      case ATIUM -> "Atium";
+      case LERASIUM -> "Lerasium";
+    };
+  }
 }

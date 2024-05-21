@@ -1,5 +1,6 @@
 package com.csonyi.cosmerecraft;
 
+import com.csonyi.cosmerecraft.datagen.CosmereCraftArchaeologyLootModifierProvider;
 import com.csonyi.cosmerecraft.registry.CosmereCraftAttachments;
 import com.csonyi.cosmerecraft.registry.CosmereCraftBlocks;
 import com.csonyi.cosmerecraft.registry.CosmereCraftEntities;
@@ -15,7 +16,7 @@ import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.level.Level;
 import net.neoforged.bus.api.IEventBus;
-import net.neoforged.fml.ModLoadingContext;
+import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.neoforge.registries.DeferredRegister;
@@ -24,8 +25,8 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 //  * Make allomancy work
 //  * Allomantic vibration system based on the skulk system
 //  * Banner patterns for allomantic metal icons, created with a corresponding metal item
-//  * remove anchors when spawning iron golem§
-//  * optimize
+//  * remove anchors when spawning iron golem
+//  * configurable medallion drop rate
 
 /**
  * Main class of the mod, the entrypoint of the application.
@@ -57,11 +58,11 @@ public class CosmereCraft {
    *
    * @param modEventBus the event bus of the mod
    */
-  public CosmereCraft(IEventBus modEventBus) {
+  public CosmereCraft(IEventBus modEventBus, ModContainer modContainer) {
     // NeoForge.EVENT_BUS.register(this); // only needed if you want to listen to NeoForge events
 
     CREATIVE_MODE_TABS.register(modEventBus);
-    CREATIVE_MODE_TABS.register("cosmerecraft", () -> CreativeModeTab.builder()
+    CREATIVE_MODE_TABS.register(MOD_ID, () -> CreativeModeTab.builder()
         .title(Component.translatable("itemGroup.%s".formatted(MOD_ID)))
         .withTabsBefore(CreativeModeTabs.SPAWN_EGGS)
         .icon(CosmereCraftItems.ANCIENT_MEDALLION.value()::getDefaultInstance)
@@ -75,8 +76,9 @@ public class CosmereCraft {
     CosmereCraftAttachments.register(modEventBus);
     CosmereCraftEntities.register(modEventBus);
     CosmereCraftStructures.register(modEventBus);
+    CosmereCraftArchaeologyLootModifierProvider.register(modEventBus);
 
-    ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, Config.Server.SPEC);
+    modContainer.registerConfig(ModConfig.Type.SERVER, Config.Server.SPEC);
   }
 
 }

@@ -17,5 +17,8 @@
       "item": "cosmerecraft:deepslate_nickel_ore"
     }
   ],
-  "result": "cosmerecraft:nickel_ingot"
+  "result": {
+    "count": 1,
+    "id": "cosmerecraft:nickel_ingot"
+  }
 }

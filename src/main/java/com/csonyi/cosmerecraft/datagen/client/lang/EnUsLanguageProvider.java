@@ -1,6 +1,7 @@
 package com.csonyi.cosmerecraft.datagen.client.lang;
 
 import static com.csonyi.cosmerecraft.registry.CosmereCraftBlocks.ASH;
+import static com.csonyi.cosmerecraft.registry.CosmereCraftBlocks.ASHY_DIRT;
 import static com.csonyi.cosmerecraft.registry.CosmereCraftBlocks.ASH_BLOCK;
 import static com.csonyi.cosmerecraft.registry.CosmereCraftBlocks.BISMUTH_BLOCK;
 import static com.csonyi.cosmerecraft.registry.CosmereCraftBlocks.BISMUTH_ORE;
@@ -56,6 +57,7 @@ import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.SILVER_NUGGET;
 import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.SILVER_POWDER;
 
 import com.csonyi.cosmerecraft.CosmereCraft;
+import com.csonyi.cosmerecraft.capability.allomancy.AllomanticMetal;
 import com.csonyi.cosmerecraft.registry.CosmereCraftEntities;
 import net.minecraft.data.PackOutput;
 
@@ -160,6 +162,7 @@ public class EnUsLanguageProvider extends BaseLanguageProvider {
 
     addBlock(ASH::value, "Ash");
     addBlock(ASH_BLOCK::value, "Ash Block");
+    addBlock(ASHY_DIRT::value, "Ashy Dirt");
 
     addBlock(INVESTITURE_LIQUID::value, "Liquid Investiture");
     addBlock(INVESTITURE_PORTAL_BLOCK::value, "Liquid Investiture");
@@ -183,28 +186,8 @@ public class EnUsLanguageProvider extends BaseLanguageProvider {
    * Add all metal-related translations.
    */
   private void addMetalNames() {
-    add("cosmerecraft.metals.steel", "Steel");
-    add("cosmerecraft.metals.iron", "Iron");
-    add("cosmerecraft.metals.zinc", "Zinc");
-    add("cosmerecraft.metals.brass", "Brass");
-
-    add("cosmerecraft.metals.pewter", "Pewter");
-    add("cosmerecraft.metals.tin", "Tin");
-    add("cosmerecraft.metals.copper", "Copper");
-    add("cosmerecraft.metals.bronze", "Bronze");
-
-    add("cosmerecraft.metals.duralumin", "Duralumin");
-    add("cosmerecraft.metals.aluminum", "Aluminum");
-    add("cosmerecraft.metals.gold", "Gold");
-    add("cosmerecraft.metals.electrum", "Electrum");
-
-    add("cosmerecraft.metals.nicrosil", "Nicrosil");
-    add("cosmerecraft.metals.chromium", "Chromium");
-    add("cosmerecraft.metals.cadmium", "Cadmium");
-    add("cosmerecraft.metals.bendalloy", "Bendalloy");
-
-    add("cosmerecraft.metals.atium", "Atium");
-    add("cosmerecraft.metals.lerasium", "Lerasium");
+    AllomanticMetal.stream()
+        .forEach(metal -> add(metal.getNameAsComponent().getString(), getTranslatedMetalName(metal)));
 
     add("cosmerecraft.metals.lead", "Lead");
     add("cosmerecraft.metals.nickel", "Nickel");
@@ -237,4 +220,8 @@ public class EnUsLanguageProvider extends BaseLanguageProvider {
         "When I hold it in my hand, I can hear a faint pulsing in the distance...");
   }
 
+  @Override
+  protected String getTranslatedMetalName(AllomanticMetal metal) {
+    return metal.lowerCaseName();
+  }
 }

@@ -30,7 +30,6 @@ import net.minecraft.world.level.material.Fluid;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.common.DeferredSpawnEggItem;
 import net.neoforged.neoforge.common.SimpleTier;
-import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
 public class CosmereCraftItems {
@@ -151,6 +150,7 @@ public class CosmereCraftItems {
   // Other items
   public static final Holder<Item> ASH_PILE = ITEMS.registerSimpleItem("ash_pile");
   public static final Holder<Item> ASH_BLOCK_ITEM = ITEMS.registerSimpleBlockItem(CosmereCraftBlocks.ASH_BLOCK);
+  public static final Holder<Item> ASHY_DIRT = ITEMS.registerSimpleBlockItem(CosmereCraftBlocks.ASHY_DIRT);
   public static final Holder<Item> ASH_ITEM = ITEMS.registerSimpleBlockItem(CosmereCraftBlocks.ASH);
   public static final Holder<Item> MORTAR_AND_PESTLE = ITEMS.registerSimpleItem("mortar_and_pestle");
   public static final Holder<Item> COAL_POWDER = ITEMS.registerSimpleItem("coal_powder");
@@ -175,10 +175,10 @@ public class CosmereCraftItems {
   // Bucket items
   public static final Holder<Item> INVESTITURE_BUCKET = ITEMS.register(
       "bucket_investiture",
-      bucketItem(CosmereCraftFluids.INVESTITURE::value));
+      bucketItem(CosmereCraftFluids.INVESTITURE));
   public static final Holder<Item> INVESTITURE_PORTAL_BUCKET = ITEMS.register(
       "portal_poi_bucket",
-      bucketItem(CosmereCraftFluids.INVESTITURE_PORTAL::value));
+      bucketItem(CosmereCraftFluids.INVESTITURE_PORTAL));
 
 
   public static void generateDisplayItems(CreativeModeTab.ItemDisplayParameters parameters, CreativeModeTab.Output output) {
@@ -199,6 +199,7 @@ public class CosmereCraftItems {
             // Other item holders
             Stream.of(
                 ASH_BLOCK_ITEM,
+                ASHY_DIRT,
                 ASH_ITEM,
                 ASH_PILE,
                 INVESTITURE_BUCKET,
@@ -247,8 +248,8 @@ public class CosmereCraftItems {
     ITEMS.register(modEventBus);
   }
 
-  private static Supplier<BucketItem> bucketItem(Supplier<Fluid> fluid) {
-    return () -> new BucketItem(fluid, new Item.Properties());
+  private static Supplier<BucketItem> bucketItem(Holder<Fluid> fluid) {
+    return () -> new BucketItem(fluid.value(), new Item.Properties());
   }
 
 
@@ -317,12 +318,12 @@ public class CosmereCraftItems {
   public static final class Tiers {
 
     public static final Tier GLASS_ITEM_TIER = new SimpleTier(
-        0, 32, 10.0F, 2.5F, 20,
-        Tags.Blocks.NEEDS_WOOD_TOOL,
+        BlockTags.INCORRECT_FOR_WOODEN_TOOL, 32, 2.5F,
+        0, 10,
         () -> Ingredient.of(GLASS_ITEMS_TAG));
     public static final Tier OBSIDIAN_ITEM_TIER = new SimpleTier(
-        3, 1024, 7.0F, 2.5F, 10,
-        BlockTags.NEEDS_DIAMOND_TOOL,
+        BlockTags.INCORRECT_FOR_DIAMOND_TOOL, 1024, 2.5F,
+        3, 7,
         () -> Ingredient.of(OBSIDIAN_ITEMS_TAG));
   }
 

@@ -1,7 +1,7 @@
 package com.csonyi.cosmerecraft.item;
 
-import com.csonyi.cosmerecraft.capability.allomancy.Allomancy;
 import com.csonyi.cosmerecraft.capability.allomancy.AllomanticMetal;
+import com.csonyi.cosmerecraft.capability.allomancy.IAllomancy;
 import com.csonyi.cosmerecraft.util.TickUtils;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.server.level.ServerPlayer;
@@ -23,6 +23,7 @@ import org.jetbrains.annotations.NotNull;
 public class MetalVial extends Item {
 
   private static final int DRINK_DURATION = 40;
+  private static final int METAL_AMOUNT = TickUtils.minutesToTicks(16);
 
   protected AllomanticMetal metal;
 
@@ -36,29 +37,28 @@ public class MetalVial extends Item {
       @NotNull ItemStack itemStack,
       @NotNull Level level,
       @NotNull LivingEntity livingEntity) {
-    super.finishUsingItem(itemStack, level, livingEntity);
-    if (livingEntity instanceof Player player) {
-      if (player instanceof ServerPlayer serverPlayer) {
-        CriteriaTriggers.CONSUME_ITEM.trigger(serverPlayer, itemStack);
-        var allomancy = Allomancy.of(serverPlayer);
-        var metalAmount = TickUtils.minutesToTicks(16);
-        if (allomancy.canIngestMetal(metalAmount)) {
-          allomancy.ingestMetal(metal, AllomanticMetal.MetalAmount.VIAL);
-        }
-      }
+    if (!(livingEntity instanceof Player player)) {
+      return super.finishUsingItem(itemStack, level, livingEntity);
+    }
+    if (player instanceof ServerPlayer serverPlayer) {
+      CriteriaTriggers.CONSUME_ITEM.trigger(serverPlayer, itemStack);
+    }
+    var allomancy = IAllomancy.of(player);
+    if (allomancy.canIngestMetalAmount(METAL_AMOUNT)) {
+      allomancy.ingestMetal(metal, METAL_AMOUNT);
+    }
 
-      if (!player.getAbilities().instabuild) {
-        itemStack.shrink(1);
-        if (itemStack.isEmpty()) {
-          return new ItemStack(Items.GLASS_BOTTLE);
-        } else {
-          player.getInventory().add(new ItemStack(Items.GLASS_BOTTLE));
-        }
+    if (!player.getAbilities().instabuild) {
+      itemStack.shrink(1);
+      if (itemStack.isEmpty()) {
+        return new ItemStack(Items.GLASS_BOTTLE);
+      } else {
+        player.getInventory().add(new ItemStack(Items.GLASS_BOTTLE));
       }
     }
 
     livingEntity.gameEvent(GameEvent.DRINK);
-    return itemStack;
+    return super.finishUsingItem(itemStack, level, livingEntity);
   }
 
   @Override

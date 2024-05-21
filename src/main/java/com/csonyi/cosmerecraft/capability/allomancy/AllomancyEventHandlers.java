@@ -1,98 +1,79 @@
 package com.csonyi.cosmerecraft.capability.allomancy;
 
 import com.csonyi.cosmerecraft.CosmereCraft;
-import com.csonyi.cosmerecraft.capability.anchors.AnchorObserver;
-import com.csonyi.cosmerecraft.capability.anchors.ChunkAnchors;
 import com.csonyi.cosmerecraft.gui.AllomancyGui;
-import com.csonyi.cosmerecraft.gui.AllomanticLineRenderer;
-import com.csonyi.cosmerecraft.networking.AnchorUpdateHandler;
 import com.csonyi.cosmerecraft.networking.ClientMetalStateQueryHandler;
 import com.csonyi.cosmerecraft.networking.WellLocationQueryHandler;
 import com.csonyi.cosmerecraft.registry.CosmereCraftAttachments;
-import com.csonyi.cosmerecraft.registry.CosmereCraftBlocks;
 import com.csonyi.cosmerecraft.registry.CosmereCraftItems;
 import com.csonyi.cosmerecraft.registry.CosmereCraftKeyMappings;
 import com.csonyi.cosmerecraft.util.ErrorUtils;
+import com.csonyi.cosmerecraft.util.LevelUtils;
 import com.csonyi.cosmerecraft.util.MathUtils;
+import com.google.common.collect.Streams;
 import java.io.IOException;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.client.renderer.FogRenderer;
 import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent;
-import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
+import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.client.event.ViewportEvent;
-import net.neoforged.neoforge.event.TickEvent;
-import net.neoforged.neoforge.event.entity.living.LivingEvent;
-import net.neoforged.neoforge.event.level.BlockEvent;
-import net.neoforged.neoforge.event.level.ChunkEvent;
-import net.neoforged.neoforge.event.level.ChunkWatchEvent;
-import net.neoforged.neoforge.event.level.ExplosionEvent;
+import net.neoforged.neoforge.event.entity.player.PlayerEvent;
+import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 
-@Mod.EventBusSubscriber(modid = CosmereCraft.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
+@EventBusSubscriber(modid = CosmereCraft.MOD_ID, bus = EventBusSubscriber.Bus.GAME)
 public class AllomancyEventHandlers {
 
-  private final static int HALF_NIGHT_LENGTH = 5000;
-  private final static int DAY_START = 1000;
-  private final static int DAY_END = 13000;
-  private final static int MIDNIGHT = 18000;
+  private final static int FOG_TRANSITION_TIME = 3000;
+  private final static int FOG_GETTING_DENSER = 12000;
+  private final static int FOG_STOPS_GETTING_DENSER = 15000;
+  private final static int FOG_STARTS_THINNING = 22000;
+  private final static int FOG_FINISHES_THINNING = 1000;
 
   private final static int MIN_NEAR_PLANE_DISTANCE = 1;
-  private final static int MIN_FAR_PLANE_DISTANCE = 21;
+  private final static int MIN_FAR_PLANE_DISTANCE = 5;
 
 
   @SubscribeEvent
   public static void syncAttachmentsOnLogin(ClientPlayerNetworkEvent.LoggingIn event) {
-    ClientMetalStateQueryHandler.queryMetalStatesFromServer();
+    ClientMetalStateQueryHandler.initializeLocalMetalStates();
   }
 
   @SubscribeEvent
   public static void syncAttachmentsOnClone(ClientPlayerNetworkEvent.Clone event) {
-    new MetalStateManager(event.getNewPlayer()).copyFromOldPlayer(event.getOldPlayer());
+    IAllomancy.of(event.getNewPlayer()).copyFrom(event.getOldPlayer(), true);
   }
 
   @SubscribeEvent
-  public static void handleAllomancyUpdates(final LivingEvent.LivingTickEvent event) {
-    if (event.getEntity() instanceof Player player) {
-      Allomancy.of(player).tick();
+  public static void handlePlayerCloneEvent(PlayerEvent.Clone event) {
+    var originalPlayer = event.getOriginal();
+    var newPlayer = event.getEntity();
+    IAllomancy.of(newPlayer).copyFrom(originalPlayer, event.isWasDeath());
+    if (event.isWasDeath() && hadAncientMedal(originalPlayer)) {
+      CosmereCraftAttachments.copyAttachments(originalPlayer, newPlayer, CosmereCraftAttachments.FOUND_MEDALLION);
     }
   }
 
   @SubscribeEvent
-  public static void handleAllomancyGuiOpen(final TickEvent.ClientTickEvent event) {
-    if (event.phase == TickEvent.Phase.END) {
-      while (CosmereCraftKeyMappings.OPEN_ALLOMANCY_GUI.get().consumeClick()) {
-        Minecraft.getInstance().setScreen(new AllomancyGui());
-      }
+  public static void handleAllomancyUpdates(final PlayerTickEvent.Pre event) {
+    if (event.getEntity() instanceof ServerPlayer serverPlayer) {
+      IAllomancy.of(serverPlayer).tick();
     }
   }
 
-  /**
-   * Hooks into the world rendering process to draw the allomantic lines.
-   *
-   * @param event The NeoForge event used to hook into the renderer.
-   */
   @SubscribeEvent
-  public static void renderAllomanticLines(RenderLevelStageEvent event) {
-    if (RenderLevelStageEvent.Stage.AFTER_PARTICLES.equals(event.getStage())) {
-      var localPlayer = Minecraft.getInstance().player;
-      if (localPlayer == null) {
-        return;
-      }
-      if (Allomancy.of(localPlayer).isBurningAnyOf(AllomanticMetal.STEEL, AllomanticMetal.IRON)) {
-        var anchors = new AnchorObserver(localPlayer).getAnchorsInRange();
-        new AllomanticLineRenderer(event, anchors).renderLines();
-      }
+  public static void handleAllomancyGuiOpen(final ClientTickEvent.Pre event) {
+    while (CosmereCraftKeyMappings.OPEN_ALLOMANCY_GUI.get().consumeClick()) {
+      Minecraft.getInstance().setScreen(new AllomancyGui());
     }
   }
 
@@ -114,7 +95,7 @@ public class AllomancyEventHandlers {
     var level = minecraft.level;
     if (localPlayer == null
         || level == null
-        || !isHoldingAncientMedallion(localPlayer)) {
+        || notHoldingAncientMedallion(localPlayer)) {
       return;
     }
 
@@ -134,9 +115,9 @@ public class AllomancyEventHandlers {
   }
 
   @SubscribeEvent
-  public static void playWellOfAscensionSound(LivingEvent.LivingTickEvent event) {
+  public static void playWellOfAscensionSound(PlayerTickEvent.Post event) {
     if (!(event.getEntity() instanceof LocalPlayer localPlayer)
-        || !isHoldingAncientMedallion(localPlayer)) {
+        || notHoldingAncientMedallion(localPlayer)) {
       return;
     }
 
@@ -160,82 +141,37 @@ public class AllomancyEventHandlers {
 
   @SubscribeEvent
   public static void renderScadrialMistBasedOnTimeOfDay(ViewportEvent.RenderFog event) {
-    // TODO: test till you die
-    if (FogRenderer.FogMode.FOG_TERRAIN.equals(event.getMode())) {
-      var currentTimeOfDay = event.getCamera().getEntity().level().dayTime();
-      if (!isFogTime(currentTimeOfDay)) {
-        return;
-      }
-      var currentNearPlaneDistance = event.getNearPlaneDistance();
-      var currentFarPlaneDistance = event.getFarPlaneDistance();
-      if (isBeforeMidnight(currentTimeOfDay)) {
-        var ticksSinceDayEnd = (float) currentTimeOfDay - DAY_END;
-        var newNearPlaneDistance = calculateFogDistance(ticksSinceDayEnd, MIN_NEAR_PLANE_DISTANCE, currentNearPlaneDistance);
-        var newFarPlaneDistance = calculateFogDistance(ticksSinceDayEnd, MIN_FAR_PLANE_DISTANCE, currentFarPlaneDistance);
-        event.setNearPlaneDistance(newNearPlaneDistance);
-        event.setFarPlaneDistance(newFarPlaneDistance);
-      } else {
-        var ticksSinceMidnight = (float) currentTimeOfDay - MIDNIGHT;
-        var newNearPlaneDistance = calculateFogDistance(ticksSinceMidnight, currentNearPlaneDistance, MIN_NEAR_PLANE_DISTANCE);
-        var newFarPlaneDistance = calculateFogDistance(ticksSinceMidnight, currentFarPlaneDistance, MIN_FAR_PLANE_DISTANCE);
-        event.setNearPlaneDistance(newNearPlaneDistance);
-        event.setFarPlaneDistance(newFarPlaneDistance);
-      }
-      event.setCanceled(true);
-    }
-  }
-
-  @SubscribeEvent
-  public static void collectAnchorsInChunk(ChunkEvent.Load event) {
-    var chunkAnchors = new ChunkAnchors(event.getChunk(), event.isNewChunk());
-    chunkAnchors.scanIfNeeded();
-    chunkAnchors.saveAnchors();
-  }
-
-  @SubscribeEvent
-  public static void addAnchorToChunk(BlockEvent.EntityPlaceEvent event) {
-    if (!event.getPlacedBlock().is(CosmereCraftBlocks.ANCHOR_TAG)) {
+    if (!LevelUtils.isEntityInDimension(event.getCamera().getEntity(), CosmereCraft.SCADRIAL)) {
       return;
     }
-    var blockPos = event.getPos();
-    var chunk = event.getLevel().getChunk(blockPos);
-    var chunkAnchors = ChunkAnchors.of(chunk);
-    chunkAnchors.addAnchor(blockPos);
-    chunkAnchors.saveAnchors();
-  }
-
-  @SubscribeEvent
-  public static void removeAnchorFromChunk(BlockEvent.BreakEvent event) {
-    if (!event.getState().is(CosmereCraftBlocks.ANCHOR_TAG)) {
+    var currentTimeOfDay = event.getCamera().getEntity().level().dayTime();
+    if (!isFogTime(currentTimeOfDay)) {
       return;
     }
-    var blockPos = event.getPos();
-    var chunk = event.getLevel().getChunk(blockPos);
-    var chunkAnchors = ChunkAnchors.of(chunk);
-    chunkAnchors.removeAnchor(blockPos);
-    chunkAnchors.saveAnchors();
-  }
-
-  @SubscribeEvent
-  public static void removeExplodedAnchors(ExplosionEvent.Detonate event) {
-    var level = event.getLevel();
-    var destroyedAnchors = event.getAffectedBlocks().stream()
-        .filter(blockPos -> level.getBlockState(blockPos).is(CosmereCraftBlocks.ANCHOR_TAG))
-        .collect(Collectors.groupingBy(ChunkPos::new));
-
-    destroyedAnchors.forEach((chunkPos, blockPosList) -> {
-      var chunk = level.getChunk(chunkPos.x, chunkPos.z);
-      var chunkAnchors = ChunkAnchors.of(chunk);
-      chunkAnchors.removeAll(blockPosList);
-      chunkAnchors.saveAnchors();
-    });
-  }
-
-  @SubscribeEvent
-  public static void updateClientsWithAnchorData(ChunkWatchEvent.Sent event) {
-    var chunkAnchors = ChunkAnchors.of(event.getChunk());
-    chunkAnchors.scanIfNeeded();
-    AnchorUpdateHandler.updateClient(event.getPlayer(), event.getChunk().getPos(), chunkAnchors.getAnchors());
+    var tinCompensation = new MetalStateManager((Player) event.getCamera().getEntity()).isActive(AllomanticMetal.TIN)
+        ? 50
+        : 0;
+    var currentNearPlaneDistance = event.getNearPlaneDistance();
+    var currentFarPlaneDistance = event.getFarPlaneDistance();
+    var compensatedMinNearPlaneDistance = MIN_NEAR_PLANE_DISTANCE + tinCompensation;
+    var compensatedMinFarPlaneDistance = MIN_FAR_PLANE_DISTANCE + tinCompensation;
+    if (fogGettingDenser(currentTimeOfDay)) {
+      var ticksSinceFogStart = (float) currentTimeOfDay - FOG_GETTING_DENSER;
+      var newNearPlaneDistance = calculateFogDistance(ticksSinceFogStart, currentNearPlaneDistance, compensatedMinNearPlaneDistance);
+      var newFarPlaneDistance = calculateFogDistance(ticksSinceFogStart, currentFarPlaneDistance, compensatedMinFarPlaneDistance);
+      event.setNearPlaneDistance(newNearPlaneDistance);
+      event.setFarPlaneDistance(newFarPlaneDistance);
+    } else if (fogGettingThinner(currentTimeOfDay)) {
+      var ticksSinceFogThinning = (float) currentTimeOfDay - FOG_STARTS_THINNING;
+      var newNearPlaneDistance = calculateFogDistance(ticksSinceFogThinning, compensatedMinNearPlaneDistance, currentNearPlaneDistance);
+      var newFarPlaneDistance = calculateFogDistance(ticksSinceFogThinning, compensatedMinFarPlaneDistance, currentFarPlaneDistance);
+      event.setNearPlaneDistance(newNearPlaneDistance);
+      event.setFarPlaneDistance(newFarPlaneDistance);
+    } else {
+      event.setNearPlaneDistance(compensatedMinNearPlaneDistance);
+      event.setFarPlaneDistance(compensatedMinFarPlaneDistance);
+    }
+    event.setCanceled(true);
   }
 
   private static BlockPos getWellPosition(LocalPlayer localPlayer) {
@@ -279,23 +215,31 @@ public class AllomancyEventHandlers {
     return ticksSinceStart >= startTick && ticksSinceStart < endTick;
   }
 
+  private static boolean hadAncientMedal(Player player) {
+    return Streams.stream(player.getAllSlots())
+        .anyMatch(CosmereCraftItems.ANCIENT_MEDALLION.value().getDefaultInstance()::equals);
+  }
 
-  private static boolean isHoldingAncientMedallion(LocalPlayer localPlayer) {
+  private static boolean notHoldingAncientMedallion(LocalPlayer localPlayer) {
     return Stream.of(
             localPlayer.getMainHandItem(),
             localPlayer.getOffhandItem())
-        .anyMatch(itemStack -> itemStack.is(CosmereCraftItems.ANCIENT_MEDALLION));
+        .noneMatch(itemStack -> itemStack.is(CosmereCraftItems.ANCIENT_MEDALLION));
   }
 
   private static boolean isFogTime(long timeOfDay) {
-    return timeOfDay >= DAY_END || timeOfDay <= DAY_START;
+    return timeOfDay >= FOG_GETTING_DENSER || timeOfDay <= FOG_FINISHES_THINNING;
   }
 
-  private static boolean isBeforeMidnight(long timeOfDay) {
-    return timeOfDay < MIDNIGHT;
+  private static boolean fogGettingDenser(long timeOfDay) {
+    return timeOfDay > FOG_GETTING_DENSER && timeOfDay < FOG_STOPS_GETTING_DENSER;
+  }
+
+  private static boolean fogGettingThinner(long timeOfDay) {
+    return timeOfDay > FOG_STARTS_THINNING || timeOfDay < FOG_FINISHES_THINNING;
   }
 
   private static float calculateFogDistance(float elapsedTime, float start, float end) {
-    return Mth.lerp(elapsedTime / HALF_NIGHT_LENGTH, start, end);
+    return Mth.clamp(Mth.lerp(elapsedTime / FOG_TRANSITION_TIME, start, end), 0, Math.max(start, end));
   }
 }

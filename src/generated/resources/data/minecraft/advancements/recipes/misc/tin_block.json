@@ -11,9 +11,7 @@
       "conditions": {
         "items": [
           {
-            "items": [
-              "cosmerecraft:tin_ingot"
-            ]
+            "items": "cosmerecraft:tin_ingot"
           }
         ]
       },

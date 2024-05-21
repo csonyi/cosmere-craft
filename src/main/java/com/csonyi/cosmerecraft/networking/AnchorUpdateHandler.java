@@ -2,48 +2,44 @@ package com.csonyi.cosmerecraft.networking;
 
 import com.csonyi.cosmerecraft.capability.anchors.ChunkAnchors;
 import com.csonyi.cosmerecraft.util.ResourceUtils;
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.ChunkPos;
-import net.neoforged.neoforge.network.handling.PlayPayloadContext;
+import net.neoforged.neoforge.network.PacketDistributor;
+import net.neoforged.neoforge.network.codec.NeoForgeStreamCodecs;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jetbrains.annotations.NotNull;
 
-public class AnchorUpdateHandler extends NetworkHandler {
+public class AnchorUpdateHandler {
 
-  public static void updateClient(ServerPlayer player, ChunkPos chunkPos, HashSet<BlockPos> anchors) {
-    sendToPlayer(player, new Anchors(chunkPos, anchors));
+  public static void replaceClientAnchors(ServerPlayer player, ChunkPos chunkPos, List<BlockPos> anchors) {
+    PacketDistributor.sendToPlayer(player, new Anchors(chunkPos, anchors));
   }
 
-  public static void handleUpdate(Anchors packet, PlayPayloadContext context) {
-    context.level()
-        .ifPresent(level -> {
-          ChunkAnchors.of(level.getChunk(packet.chunkPos.x, packet.chunkPos.z)).setAnchors(packet.anchors);
-        });
+  public static void handleUpdate(Anchors packet, IPayloadContext context) {
+    var chunkAnchors = ChunkAnchors.ofExisting(context.player().level().getChunk(packet.chunkPos.x, packet.chunkPos.z));
+    chunkAnchors.setAnchors(packet.anchors);
+    chunkAnchors.saveAnchors();
   }
 
-  public record Anchors(ChunkPos chunkPos, HashSet<BlockPos> anchors) implements CustomPacketPayload {
+  public record Anchors(ChunkPos chunkPos, List<BlockPos> anchors) implements
+      CustomPacketPayload {
 
-    public static ResourceLocation ID = ResourceUtils.modLocation("anchor_update");
-
-    @Override
-    public @NotNull ResourceLocation id() {
-      return ID;
-    }
-
-    public static Anchors read(FriendlyByteBuf buffer) {
-      return new Anchors(
-          buffer.readChunkPos(),
-          buffer.readCollection(HashSet::new, FriendlyByteBuf::readBlockPos));
-    }
+    public static final Type<Anchors> TYPE = new Type<>(ResourceUtils.modLocation("anchor_update"));
+    public static final StreamCodec<FriendlyByteBuf, Anchors> CODEC = StreamCodec.composite(
+        NeoForgeStreamCodecs.CHUNK_POS, Anchors::chunkPos,
+        ByteBufCodecs.collection(ArrayList::new, BlockPos.STREAM_CODEC), Anchors::anchors,
+        Anchors::new);
 
     @Override
-    public void write(FriendlyByteBuf buffer) {
-      buffer.writeChunkPos(chunkPos);
-      buffer.writeCollection(anchors, FriendlyByteBuf::writeBlockPos);
+    public @NotNull Type<Anchors> type() {
+      return TYPE;
     }
   }
 }

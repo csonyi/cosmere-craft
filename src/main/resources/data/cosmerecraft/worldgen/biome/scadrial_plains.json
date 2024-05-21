@@ -9,15 +9,17 @@
   "downfall": 0.2,
   "effects": {
     "fog_color": 8355711,
+    "foliage_color": 5055525,
+    "grass_color": 5055525,
+    "sky_color": 12474950,
+    "water_color": 10520440,
+    "water_fog_color": 8551790,
     "mood_sound": {
       "block_search_extent": 8,
       "offset": 2.0,
       "sound": "minecraft:ambient.cave",
       "tick_delay": 6000
     },
-    "sky_color": 12474950,
-    "water_color": 10520440,
-    "water_fog_color": 8551790,
     "particle": {
       "options": {
         "type": "minecraft:white_ash"
@@ -68,7 +70,12 @@
       "minecraft:underwater_magma",
       "minecraft:disk_sand",
       "minecraft:disk_clay",
-      "minecraft:disk_gravel"
+      "minecraft:disk_gravel",
+      "cosmerecraft:ore_aluminum",
+      "cosmerecraft:ore_cadmium",
+      "cosmerecraft:ore_chromium",
+      "cosmerecraft:ore_tin",
+      "cosmerecraft:ore_zinc"
     ],
     [],
     [

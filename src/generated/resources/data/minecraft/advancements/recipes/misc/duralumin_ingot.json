@@ -5,9 +5,7 @@
       "conditions": {
         "items": [
           {
-            "items": [
-              "cosmerecraft:duralumin_block"
-            ]
+            "items": "cosmerecraft:duralumin_block"
           }
         ]
       },

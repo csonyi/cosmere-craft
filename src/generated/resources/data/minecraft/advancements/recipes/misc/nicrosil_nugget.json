@@ -5,9 +5,7 @@
       "conditions": {
         "items": [
           {
-            "items": [
-              "cosmerecraft:nicrosil_ingot"
-            ]
+            "items": "cosmerecraft:nicrosil_ingot"
           }
         ]
       },

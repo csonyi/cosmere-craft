@@ -2,6 +2,9 @@ package com.csonyi.cosmerecraft.registry;
 
 import static com.csonyi.cosmerecraft.CosmereCraft.MOD_ID;
 
+import com.csonyi.cosmerecraft.capability.allomancy.Allomancy;
+import com.csonyi.cosmerecraft.capability.allomancy.MetalStateManager;
+import com.csonyi.cosmerecraft.datagen.CosmereCraftArchaeologyLootModifierProvider;
 import com.csonyi.cosmerecraft.datagen.CosmereCraftBlockTagsProvider;
 import com.csonyi.cosmerecraft.datagen.CosmereCraftItemTagsProvider;
 import com.csonyi.cosmerecraft.datagen.CosmereCraftLootTableProvider;
@@ -16,57 +19,57 @@ import com.csonyi.cosmerecraft.entity.InquisitorRenderer;
 import com.csonyi.cosmerecraft.networking.AnchorUpdateHandler;
 import com.csonyi.cosmerecraft.networking.ClientMetalStateQueryHandler;
 import com.csonyi.cosmerecraft.networking.ServerBurnStateUpdateHandler;
+import com.csonyi.cosmerecraft.networking.SteelJumpHandler;
 import com.csonyi.cosmerecraft.networking.WellLocationQueryHandler;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.PackOutput;
-import net.minecraft.world.entity.SpawnPlacements;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.SpawnPlacementTypes;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
 import net.neoforged.neoforge.data.event.GatherDataEvent;
 import net.neoforged.neoforge.event.entity.EntityAttributeCreationEvent;
 import net.neoforged.neoforge.event.entity.SpawnPlacementRegisterEvent;
-import net.neoforged.neoforge.network.event.RegisterPayloadHandlerEvent;
-import net.neoforged.neoforge.network.registration.IPayloadRegistrar;
+import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 
-@Mod.EventBusSubscriber(modid = MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(modid = MOD_ID, bus = EventBusSubscriber.Bus.MOD)
 public class RegistryEventHandlers {
 
   @SubscribeEvent
-  public static void registerPayloads(final RegisterPayloadHandlerEvent event) {
-    final IPayloadRegistrar registrar = event.registrar(MOD_ID);
-    registrar.play(
-        ClientMetalStateQueryHandler.MetalStateQuery.ID,
-        ClientMetalStateQueryHandler.MetalStateQuery::read,
-        handler -> handler
-            .server(ClientMetalStateQueryHandler::handleQuery));
-    registrar.play(
-        ClientMetalStateQueryHandler.MetalStatePacket.ID,
-        ClientMetalStateQueryHandler.MetalStatePacket::read,
-        handler -> handler
-            .client(ClientMetalStateQueryHandler::handleResponse));
-    registrar.play(
-        ServerBurnStateUpdateHandler.BurnStateUpdate.ID,
-        ServerBurnStateUpdateHandler.BurnStateUpdate::read,
-        handler -> handler
-            .server(ServerBurnStateUpdateHandler::updateBurnStateOnServer));
-    registrar.play(
-        WellLocationQueryHandler.WellLocationQuery.ID,
-        WellLocationQueryHandler.WellLocationQuery::read,
-        handler -> handler
-            .server(WellLocationQueryHandler::handleQuery));
-    registrar.play(
-        WellLocationQueryHandler.WellLocationResponse.ID,
-        WellLocationQueryHandler.WellLocationResponse::read,
-        handler -> handler
-            .client(WellLocationQueryHandler::handleResponse));
-    registrar.play(
-        AnchorUpdateHandler.Anchors.ID,
-        AnchorUpdateHandler.Anchors::read,
-        handler -> handler
-            .client(AnchorUpdateHandler::handleUpdate));
+  public static void registerPayloads(final RegisterPayloadHandlersEvent event) {
+    var registrar = event.registrar(MOD_ID);
+    registrar.playToServer(
+        ClientMetalStateQueryHandler.MetalStateQuery.TYPE,
+        ClientMetalStateQueryHandler.MetalStateQuery.CODEC,
+        ClientMetalStateQueryHandler::handleQuery);
+    registrar.playToClient(
+        ClientMetalStateQueryHandler.MetalStatePacket.TYPE,
+        ClientMetalStateQueryHandler.MetalStatePacket.CODEC,
+        ClientMetalStateQueryHandler::handleResponse);
+    registrar.playToServer(
+        ServerBurnStateUpdateHandler.BurnStateUpdate.TYPE,
+        ServerBurnStateUpdateHandler.BurnStateUpdate.CODEC,
+        ServerBurnStateUpdateHandler::updateBurnStateOnServer);
+    registrar.playToServer(
+        WellLocationQueryHandler.WellLocationQuery.TYPE,
+        WellLocationQueryHandler.WellLocationQuery.CODEC,
+        WellLocationQueryHandler::handleQuery);
+    registrar.playToClient(
+        WellLocationQueryHandler.WellLocationResponse.TYPE,
+        WellLocationQueryHandler.WellLocationResponse.CODEC,
+        WellLocationQueryHandler::handleResponse);
+    registrar.playToClient(
+        AnchorUpdateHandler.Anchors.TYPE,
+        AnchorUpdateHandler.Anchors.CODEC,
+        AnchorUpdateHandler::handleUpdate);
+    registrar.playToClient(
+        SteelJumpHandler.SteelJump.TYPE,
+        SteelJumpHandler.SteelJump.CODEC,
+        SteelJumpHandler::handleOnClient);
   }
 
   @SubscribeEvent
@@ -103,12 +106,16 @@ public class RegistryEventHandlers {
             packOutput,
             lookupProvider,
             existingFileHelper));
+
     generator.addProvider(
         event.includeServer(),
-        new CosmereCraftRecipeProvider(packOutput));
+        new CosmereCraftRecipeProvider(packOutput, lookupProvider));
     generator.addProvider(
         event.includeServer(),
-        new CosmereCraftLootTableProvider(packOutput));
+        new CosmereCraftLootTableProvider(packOutput, lookupProvider));
+    generator.addProvider(
+        event.includeServer(),
+        new CosmereCraftArchaeologyLootModifierProvider(packOutput, lookupProvider));
   }
 
   private static void registerLanguageProviders(DataGenerator generator, boolean includeClient, PackOutput packOutput) {
@@ -145,9 +152,21 @@ public class RegistryEventHandlers {
   public static void registerSpawnPlacements(SpawnPlacementRegisterEvent event) {
     event.register(
         CosmereCraftEntities.INQUISITOR_ENTITY_TYPE.get(),
-        SpawnPlacements.Type.ON_GROUND,
+        SpawnPlacementTypes.ON_GROUND,
         Heightmap.Types.WORLD_SURFACE,
         Inquisitor::canSpawn,
         SpawnPlacementRegisterEvent.Operation.OR);
+  }
+
+  @SubscribeEvent
+  public static void registerCapabilities(RegisterCapabilitiesEvent event) {
+    event.registerEntity(
+        CosmereCraftCapabilities.ALLOMANCY,
+        EntityType.PLAYER,
+        Allomancy::register);
+    event.registerEntity(
+        CosmereCraftCapabilities.ALLOMANCY,
+        EntityType.PLAYER,
+        MetalStateManager::register);
   }
 }

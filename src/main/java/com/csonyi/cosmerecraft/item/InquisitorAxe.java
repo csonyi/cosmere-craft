@@ -16,7 +16,6 @@ import net.minecraft.world.item.Tier;
 import net.minecraft.world.item.TieredItem;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.common.TierSortingRegistry;
 import net.neoforged.neoforge.common.ToolAction;
 import net.neoforged.neoforge.common.ToolActions;
 import org.jetbrains.annotations.NotNull;
@@ -31,19 +30,19 @@ public class InquisitorAxe extends TieredItem {
     attackDamage = attackDamageModifier + tier.getAttackDamageBonus();
     var modifierMapBuilder = ImmutableMultimap.<Attribute, AttributeModifier>builder();
     modifierMapBuilder.put(
-        Attributes.ATTACK_DAMAGE,
+        Attributes.ATTACK_DAMAGE.value(),
         new AttributeModifier(
             BASE_ATTACK_DAMAGE_UUID,
             "Weapon modifier",
             attackDamage,
-            AttributeModifier.Operation.ADDITION));
+            AttributeModifier.Operation.ADD_VALUE));
     modifierMapBuilder.put(
-        Attributes.ATTACK_SPEED,
+        Attributes.ATTACK_SPEED.value(),
         new AttributeModifier(
             BASE_ATTACK_SPEED_UUID,
             "Weapon modifier",
             attackSpeedModifier,
-            AttributeModifier.Operation.ADDITION));
+            AttributeModifier.Operation.ADD_VALUE));
     this.defaultModifiers = modifierMapBuilder.build();
   }
 
@@ -59,8 +58,8 @@ public class InquisitorAxe extends TieredItem {
   }
 
   @Override
-  public boolean hurtEnemy(ItemStack inquisitorAxe, @NotNull LivingEntity target, @NotNull LivingEntity attacker) {
-    inquisitorAxe.hurtAndBreak(1, attacker, InquisitorAxe::broadCastMainHandBreakEvent);
+  public boolean hurtEnemy(@NotNull ItemStack inquisitorAxe, @NotNull LivingEntity target, @NotNull LivingEntity attacker) {
+    inquisitorAxe.hurtAndBreak(1, attacker, EquipmentSlot.MAINHAND);
     return true;
   }
 
@@ -68,7 +67,7 @@ public class InquisitorAxe extends TieredItem {
   public boolean mineBlock(@NotNull ItemStack inquisitorAxe, @NotNull Level level, BlockState targetBlockState,
       @NotNull BlockPos targetBlockPos, @NotNull LivingEntity miner) {
     if (targetBlockState.getDestroySpeed(level, targetBlockPos) != 0.0F) {
-      inquisitorAxe.hurtAndBreak(2, miner, InquisitorAxe::broadCastMainHandBreakEvent);
+      inquisitorAxe.hurtAndBreak(2, miner, EquipmentSlot.MAINHAND);
     }
 
     return true;
@@ -76,16 +75,7 @@ public class InquisitorAxe extends TieredItem {
 
   @Override
   public boolean isCorrectToolForDrops(@NotNull ItemStack inquisitorAxe, BlockState targetBlockState) {
-    return targetBlockState.is(BlockTags.MINEABLE_WITH_AXE) && TierSortingRegistry.isCorrectTierForDrops(getTier(), targetBlockState);
-  }
-
-  private static void broadCastMainHandBreakEvent(LivingEntity entity) {
-    entity.broadcastBreakEvent(EquipmentSlot.MAINHAND);
-  }
-
-  @Override
-  public Multimap<Attribute, AttributeModifier> getDefaultAttributeModifiers(@NotNull EquipmentSlot currentSlot) {
-    return currentSlot == EquipmentSlot.MAINHAND ? this.defaultModifiers : super.getDefaultAttributeModifiers(currentSlot);
+    return targetBlockState.is(BlockTags.MINEABLE_WITH_AXE);
   }
 
   @Override

@@ -1,10 +1,12 @@
 package com.csonyi.cosmerecraft.item;
 
-import com.csonyi.cosmerecraft.capability.allomancy.Allomancy;
 import com.csonyi.cosmerecraft.capability.allomancy.AllomanticMetal;
+import com.csonyi.cosmerecraft.capability.allomancy.IAllomancy;
+import com.csonyi.cosmerecraft.util.TickUtils;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -14,6 +16,8 @@ import org.jetbrains.annotations.NotNull;
 
 public class EdibleMetalNugget extends Item {
 
+  private static final int METAL_AMOUNT = TickUtils.minutesToTicks(16) / 9;
+
   private final AllomanticMetal metal;
 
   public EdibleMetalNugget(AllomanticMetal metal) {
@@ -22,7 +26,7 @@ public class EdibleMetalNugget extends Item {
             .rarity(Rarity.EPIC)
             .food(
                 new FoodProperties.Builder()
-                    .alwaysEat()
+                    .alwaysEdible()
                     .fast()
                     .build()));
     this.metal = metal;
@@ -30,13 +34,14 @@ public class EdibleMetalNugget extends Item {
 
   @Override
   public @NotNull ItemStack finishUsingItem(@NotNull ItemStack itemStack, Level level, @NotNull LivingEntity livingEntity) {
-    if (!level.isClientSide()) {
-      if (livingEntity instanceof ServerPlayer player) {
-        CriteriaTriggers.CONSUME_ITEM.trigger(player, itemStack);
-        Allomancy.of(player).ingestMetal(metal, AllomanticMetal.MetalAmount.NUGGET);
-      }
+    if (!(livingEntity instanceof Player player)) {
+      return super.finishUsingItem(itemStack, level, livingEntity);
+    }
+    if (player instanceof ServerPlayer serverPlayer) {
+      CriteriaTriggers.CONSUME_ITEM.trigger(serverPlayer, itemStack);
     }
 
+    IAllomancy.of(player).ingestMetal(metal, METAL_AMOUNT);
     return super.finishUsingItem(itemStack, level, livingEntity);
   }
 }

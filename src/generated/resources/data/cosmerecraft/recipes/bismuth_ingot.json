@@ -17,5 +17,8 @@
       "item": "cosmerecraft:deepslate_bismuth_ore"
     }
   ],
-  "result": "cosmerecraft:bismuth_ingot"
+  "result": {
+    "count": 1,
+    "id": "cosmerecraft:bismuth_ingot"
+  }
 }

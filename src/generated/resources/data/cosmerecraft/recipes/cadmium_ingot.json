@@ -17,5 +17,8 @@
       "item": "cosmerecraft:deepslate_cadmium_ore"
     }
   ],
-  "result": "cosmerecraft:cadmium_ingot"
+  "result": {
+    "count": 1,
+    "id": "cosmerecraft:cadmium_ingot"
+  }
 }

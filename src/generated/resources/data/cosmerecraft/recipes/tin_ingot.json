@@ -17,5 +17,8 @@
       "item": "cosmerecraft:deepslate_tin_ore"
     }
   ],
-  "result": "cosmerecraft:tin_ingot"
+  "result": {
+    "count": 1,
+    "id": "cosmerecraft:tin_ingot"
+  }
 }

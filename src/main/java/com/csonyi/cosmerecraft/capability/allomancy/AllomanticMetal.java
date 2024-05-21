@@ -9,21 +9,24 @@ import static com.csonyi.cosmerecraft.capability.allomancy.AllomanticMetal.Type.
 import static com.csonyi.cosmerecraft.capability.allomancy.AllomanticMetal.Type.PHYSICAL;
 import static com.csonyi.cosmerecraft.capability.allomancy.AllomanticMetal.Type.TEMPORAL;
 
-import com.csonyi.cosmerecraft.util.ColorUtils;
 import com.csonyi.cosmerecraft.util.ResourceUtils;
 import com.csonyi.cosmerecraft.util.StreamUtils;
-import com.csonyi.cosmerecraft.util.TickUtils;
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import net.minecraft.core.Holder;
+import net.minecraft.core.HolderSet;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffects;
+import net.neoforged.neoforge.network.codec.NeoForgeStreamCodecs;
 
 public enum AllomanticMetal {
 
@@ -57,29 +60,51 @@ public enum AllomanticMetal {
 
   ATIUM, LERASIUM;
 
+  public static final StreamCodec<FriendlyByteBuf, AllomanticMetal> CODEC = NeoForgeStreamCodecs.enumCodec(AllomanticMetal.class);
+
   public final Type type;
   public final Direction direction;
   public final Side side;
 
   public final boolean isVanilla;
   public final boolean isAlloy;
-  public final Set<MobEffect> effects;
+  public final int tickDrain;
+  public final HolderSet<MobEffect> effects;
 
-  AllomanticMetal(Type type, Direction direction, Side side, boolean isVanilla, boolean isAlloy, MobEffect... effects) {
+  @SafeVarargs
+  AllomanticMetal(
+      Type type, Direction direction, Side side,
+      boolean isVanilla, boolean isAlloy,
+      int tickDrain, Holder<MobEffect>... effects) {
     this.type = type;
     this.direction = direction;
     this.side = side;
     this.isVanilla = isVanilla;
     this.isAlloy = isAlloy;
-    this.effects = Set.of(effects);
+    this.tickDrain = tickDrain;
+    this.effects = HolderSet.direct(effects);
   }
 
-  AllomanticMetal(Type type, Direction direction, Side side, MobEffect... effects) {
-    this(type, direction, side, false, false, effects);
+  @SafeVarargs
+  AllomanticMetal(
+      Type type, Direction direction, Side side,
+      boolean isVanilla, boolean isAlloy,
+      Holder<MobEffect>... effects) {
+    this(type, direction, side, isVanilla, isAlloy, 1, effects);
+  }
+
+  @SafeVarargs
+  AllomanticMetal(Type type, Direction direction, Side side, int tickDrain, Holder<MobEffect>... effects) {
+    this(type, direction, side, false, false, tickDrain, effects);
+  }
+
+  @SafeVarargs
+  AllomanticMetal(Type type, Direction direction, Side side, Holder<MobEffect>... effects) {
+    this(type, direction, side, 1, effects);
   }
 
   AllomanticMetal() {
-    this(Type.GOD, Direction.GOD, Side.GOD, false, false);
+    this(Type.GOD, Direction.GOD, Side.GOD, false, false, 0);
   }
 
   public boolean isGodMetal() {
@@ -94,12 +119,14 @@ public enum AllomanticMetal {
     return isAlloy;
   }
 
-  public Stream<MobEffect> getEffects() {
+  public Stream<Holder<MobEffect>> getEffects() {
     return effects.stream();
   }
 
   public boolean hasEffect() {
-    return !effects.isEmpty();
+    return getEffects()
+        .findAny()
+        .isPresent();
   }
 
   public String lowerCaseName() {
@@ -122,10 +149,6 @@ public enum AllomanticMetal {
     return ordinal() / 4;
   }
 
-  public float[] getColor() {
-    return ColorUtils.getColor(ColorUtils.ALLOMANTIC_METALS[ordinal()]);
-  }
-
   @SafeVarargs
   public static Stream<AllomanticMetal> stream(Predicate<AllomanticMetal>... filters) {
     return Arrays.stream(values())
@@ -135,16 +158,6 @@ public enum AllomanticMetal {
   public static Set<String> names() {
     return stream()
         .map(AllomanticMetal::lowerCaseName)
-        .collect(Collectors.toSet());
-  }
-
-  public static AllomanticMetal read(FriendlyByteBuf buffer) {
-    return buffer.readEnum(AllomanticMetal.class);
-  }
-
-  public static Set<MobEffect> allMetalEffects() {
-    return stream(AllomanticMetal::hasEffect)
-        .flatMap(AllomanticMetal::getEffects)
         .collect(Collectors.toSet());
   }
 
@@ -170,40 +183,14 @@ public enum AllomanticMetal {
     INTERNAL, EXTERNAL, GOD
   }
 
-  public enum MetalAmount {
-    NUGGET(TickUtils.minutesToTicks(16) / 9), VIAL(TickUtils.minutesToTicks(16));
-
-    MetalAmount(int amount) {
-      this.amount = amount;
-    }
-
-    public final int amount;
-  }
-
   public record State(AllomanticMetal metal, Integer reserve, Boolean burnState, Boolean available) {
 
-    public void write(FriendlyByteBuf buffer) {
-      buffer.writeEnum(metal);
-      buffer.writeInt(reserve);
-      buffer.writeBoolean(burnState);
-      buffer.writeBoolean(available);
-    }
-
-    public static State read(FriendlyByteBuf buffer) {
-      return new State(
-          buffer.readEnum(AllomanticMetal.class),
-          buffer.readInt(),
-          buffer.readBoolean(),
-          buffer.readBoolean());
-    }
-
-    public static State defaultState(AllomanticMetal metal) {
-      return new State(metal, 0, false, false);
-    }
-
-    public static State burnStateUpdate(AllomanticMetal metal) {
-      return new State(metal, null, true, null);
-    }
+    public static final StreamCodec<FriendlyByteBuf, State> CODEC = StreamCodec.composite(
+        AllomanticMetal.CODEC, State::metal,
+        ByteBufCodecs.INT, State::reserve,
+        ByteBufCodecs.BOOL, State::burnState,
+        ByteBufCodecs.BOOL, State::available,
+        State::new);
 
     public Optional<Integer> getReserve() {
       return Optional.ofNullable(reserve);

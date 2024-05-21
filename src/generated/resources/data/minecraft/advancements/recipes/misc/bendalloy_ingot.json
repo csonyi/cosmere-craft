@@ -5,9 +5,7 @@
       "conditions": {
         "items": [
           {
-            "items": [
-              "cosmerecraft:bendalloy_block"
-            ]
+            "items": "cosmerecraft:bendalloy_block"
           }
         ]
       },

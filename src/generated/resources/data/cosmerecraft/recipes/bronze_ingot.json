@@ -6,5 +6,8 @@
   "ingredient": {
     "item": "cosmerecraft:bronze_powder"
   },
-  "result": "cosmerecraft:bronze_ingot"
+  "result": {
+    "count": 1,
+    "id": "cosmerecraft:bronze_ingot"
+  }
 }

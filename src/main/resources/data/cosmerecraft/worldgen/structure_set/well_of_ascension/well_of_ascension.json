@@ -10,7 +10,7 @@
     "preferred_biomes": [],
     "count": 128,
     "distance": 32,
-    "salt": 0,
+    "salt": 16,
     "spread": 3
   }
 }

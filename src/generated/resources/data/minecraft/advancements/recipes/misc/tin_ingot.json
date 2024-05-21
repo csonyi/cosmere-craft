@@ -11,9 +11,7 @@
       "conditions": {
         "items": [
           {
-            "items": [
-              "cosmerecraft:tin_block"
-            ]
+            "items": "cosmerecraft:tin_block"
           }
         ]
       },

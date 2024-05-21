@@ -73,7 +73,9 @@ import static net.minecraft.world.item.Items.DIORITE_WALL;
 import static net.minecraft.world.item.Items.POTION;
 import static net.minecraft.world.item.Items.SAND;
 
+import java.util.concurrent.CompletableFuture;
 import net.minecraft.core.Holder;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.RecipeOutput;
@@ -87,8 +89,8 @@ import org.jetbrains.annotations.NotNull;
 
 public class CosmereCraftRecipeProvider extends RecipeProvider {
 
-  public CosmereCraftRecipeProvider(PackOutput packOutput) {
-    super(packOutput);
+  public CosmereCraftRecipeProvider(PackOutput packOutput, CompletableFuture<HolderLookup.Provider> lookupProvider) {
+    super(packOutput, lookupProvider);
   }
 
   @Override
@@ -103,7 +105,8 @@ public class CosmereCraftRecipeProvider extends RecipeProvider {
         .pattern("# #")
         .pattern(" # ")
         .define('#', DIORITE_SLAB)
-        .define('|', DIORITE_WALL);
+        .define('|', DIORITE_WALL)
+        .save(recipeOutput);
     METAL_VIALS.forEach(
         (metal, vialItemHolder) -> shapeless(vialItemHolder)
             .requires(POTION)
@@ -113,14 +116,12 @@ public class CosmereCraftRecipeProvider extends RecipeProvider {
 
   private static void rawMetalBlockRecipes(@NotNull RecipeOutput recipeOutput) {
     RAW_METAL_BLOCKS.forEach(
-        (metal, blockItemHolder) -> {
-          nineBlockStorageRecipes(
-              recipeOutput,
-              RecipeCategory.MISC,
-              getRawMetalItemHolder(metal).value(),
-              RecipeCategory.MISC,
-              blockItemHolder.value());
-        });
+        (metal, blockItemHolder) -> nineBlockStorageRecipes(
+            recipeOutput,
+            RecipeCategory.MISC,
+            getRawMetalItemHolder(metal).value(),
+            RecipeCategory.MISC,
+            blockItemHolder.value()));
     nineBlockStorageRecipes(
         recipeOutput,
         RecipeCategory.MISC,
@@ -149,14 +150,12 @@ public class CosmereCraftRecipeProvider extends RecipeProvider {
 
   private static void metalBlockRecipes(@NotNull RecipeOutput recipeOutput) {
     METAL_BLOCKS.forEach(
-        (metal, blockItemHolder) -> {
-          nineBlockStorageRecipes(
-              recipeOutput,
-              RecipeCategory.MISC,
-              getIngotItemHolder(metal).value(),
-              RecipeCategory.MISC,
-              blockItemHolder.value());
-        });
+        (metal, blockItemHolder) -> nineBlockStorageRecipes(
+            recipeOutput,
+            RecipeCategory.MISC,
+            getIngotItemHolder(metal).value(),
+            RecipeCategory.MISC,
+            blockItemHolder.value()));
     nineBlockStorageRecipes(
         recipeOutput,
         RecipeCategory.MISC,
