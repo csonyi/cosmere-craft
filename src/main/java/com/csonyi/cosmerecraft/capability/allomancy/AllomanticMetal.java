@@ -12,6 +12,7 @@ import static com.csonyi.cosmerecraft.capability.allomancy.AllomanticMetal.Type.
 import com.csonyi.cosmerecraft.util.ResourceUtils;
 import com.csonyi.cosmerecraft.util.StreamUtils;
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
@@ -61,6 +62,7 @@ public enum AllomanticMetal {
   ATIUM, LERASIUM;
 
   public static final StreamCodec<FriendlyByteBuf, AllomanticMetal> CODEC = NeoForgeStreamCodecs.enumCodec(AllomanticMetal.class);
+  private static Set<Holder<MobEffect>> ALL_EFFECTS;
 
   public final Type type;
   public final Direction direction;
@@ -123,10 +125,23 @@ public enum AllomanticMetal {
     return effects.stream();
   }
 
+  public static Set<Holder<MobEffect>> allEffects() {
+    if (Objects.isNull(ALL_EFFECTS)) {
+      ALL_EFFECTS = stream()
+          .flatMap(AllomanticMetal::getEffects)
+          .collect(Collectors.toSet());
+    }
+    return ALL_EFFECTS;
+  }
+
   public boolean hasEffect() {
     return getEffects()
         .findAny()
         .isPresent();
+  }
+
+  public static boolean isMetalEffect(Holder<MobEffect> effect) {
+    return allEffects().contains(effect);
   }
 
   public String lowerCaseName() {

@@ -39,6 +39,8 @@ import org.jetbrains.annotations.NotNull;
 
 public class CosmereCraftLootTableProvider extends LootTableProvider {
 
+  // TODO: generate WOA loot table
+
   public CosmereCraftLootTableProvider(PackOutput pOutput, CompletableFuture<HolderLookup.Provider> lookupProvider) {
     super(
         pOutput, Collections.emptySet(),

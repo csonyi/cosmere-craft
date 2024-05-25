@@ -1,30 +1,26 @@
 package com.csonyi.cosmerecraft.capability.anchors;
 
 import com.csonyi.cosmerecraft.Config;
+import com.csonyi.cosmerecraft.util.LevelUtils;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.ChunkPos;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.chunk.LevelChunk;
 
 public class AnchorObserver {
 
   private final Player player;
-  private final Level level;
-  private final ChunkAnchors currentChunk;
   private final Set<ChunkAnchors> surroundingChunks;
 
   public AnchorObserver(Player player) {
     this.player = player;
-    this.level = player.level();
-    this.currentChunk = ChunkAnchors.ofExisting(level.getChunkAt(player.blockPosition()));
-    this.surroundingChunks = findSurroundingChunks()
-        .map(ChunkAnchors::ofExisting)
-        .collect(Collectors.toSet());
+    var chunk = player.level().getChunkAt(player.blockPosition());
+    this.surroundingChunks =
+        LevelUtils.surroundingChunksStreamGetter(chunk).get()
+            .map(ChunkAnchors::ofExisting)
+            .collect(Collectors.toSet());
   }
 
   public boolean hasAnchorInRange() {
@@ -46,15 +42,9 @@ public class AnchorObserver {
         .flatMap(List::stream);
   }
 
-  private Stream<LevelChunk> findSurroundingChunks() {
-    return ChunkPos.rangeClosed(currentChunk.getPos(), 1)
-        .map(ChunkPos::getWorldPosition)
-        .map(level::getChunkAt);
-  }
-
   private boolean isAnchorInRange(BlockPos anchorPos) {
     return player.getBoundingBox()
-        .inflate(Config.Server.maxSteelPushDistance)
+        .inflate((double) Config.Server.maxSteelPushDistance / 2)
         .contains(anchorPos.getCenter());
   }
 

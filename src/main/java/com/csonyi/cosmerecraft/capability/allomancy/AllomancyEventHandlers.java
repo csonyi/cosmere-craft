@@ -58,7 +58,7 @@ public class AllomancyEventHandlers {
     var originalPlayer = event.getOriginal();
     var newPlayer = event.getEntity();
     IAllomancy.of(newPlayer).copyFrom(originalPlayer, event.isWasDeath());
-    if (event.isWasDeath() && hadAncientMedal(originalPlayer)) {
+    if (event.isWasDeath() && !hadAncientMedal(originalPlayer)) {
       CosmereCraftAttachments.copyAttachments(originalPlayer, newPlayer, CosmereCraftAttachments.FOUND_MEDALLION);
     }
   }

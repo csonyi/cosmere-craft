@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class SteelJumpHandler {
 
-  public static void apply(ServerPlayer serverPlayer) {
+  public static void jump(ServerPlayer serverPlayer) {
     PacketDistributor.sendToPlayer(serverPlayer, SteelJump.get());
   }
 

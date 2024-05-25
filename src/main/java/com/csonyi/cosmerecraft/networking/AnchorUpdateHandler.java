@@ -28,8 +28,7 @@ public class AnchorUpdateHandler {
     chunkAnchors.saveAnchors();
   }
 
-  public record Anchors(ChunkPos chunkPos, List<BlockPos> anchors) implements
-      CustomPacketPayload {
+  public record Anchors(ChunkPos chunkPos, List<BlockPos> anchors) implements CustomPacketPayload {
 
     public static final Type<Anchors> TYPE = new Type<>(ResourceUtils.modLocation("anchor_update"));
     public static final StreamCodec<FriendlyByteBuf, Anchors> CODEC = StreamCodec.composite(

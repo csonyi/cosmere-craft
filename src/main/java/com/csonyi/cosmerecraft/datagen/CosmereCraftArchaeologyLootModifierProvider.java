@@ -80,7 +80,7 @@ public class CosmereCraftArchaeologyLootModifierProvider extends GlobalLootModif
       var thisEntity = context.getParamOrNull(LootContextParams.THIS_ENTITY);
       if (thisEntity instanceof Player player) {
         var now = Instant.now();
-        if (playerLastMedallionFindWasLongAgo(player, now) && oneInTenChance(context)) {
+        if (playerLastMedallionFindWasLongAgoOrNever(player, now) && oneInTenChance(context)) {
           player.setData(CosmereCraftAttachments.FOUND_MEDALLION.get(), now);
           return new ObjectArrayList<>(new ItemStack[]{CosmereCraftItems.ANCIENT_MEDALLION.value().getDefaultInstance()});
         }
@@ -93,10 +93,10 @@ public class CosmereCraftArchaeologyLootModifierProvider extends GlobalLootModif
       return CODEC.get();
     }
 
-    private static boolean playerLastMedallionFindWasLongAgo(Player player, Instant now) {
-      var lastFoundMedallion = player.getData(CosmereCraftAttachments.FOUND_MEDALLION.get());
-      // TODO: This should be configurable
-      return lastFoundMedallion.plus(1, ChronoUnit.HOURS).isBefore(now);
+    private static boolean playerLastMedallionFindWasLongAgoOrNever(Player player, Instant now) {
+      return player.getExistingData(CosmereCraftAttachments.FOUND_MEDALLION.get())
+          .map(lastFoundMedallion -> lastFoundMedallion.plus(1, ChronoUnit.HOURS).isBefore(now))
+          .orElse(true);
     }
 
     private static boolean oneInTenChance(LootContext context) {

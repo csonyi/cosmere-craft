@@ -1,7 +1,10 @@
 package com.csonyi.cosmerecraft.entity;
 
+import com.csonyi.cosmerecraft.capability.allomancy.AllomanticMetal;
 import com.csonyi.cosmerecraft.capability.allomancy.IAllomancy;
+import com.csonyi.cosmerecraft.registry.CosmereCraftEntities;
 import com.csonyi.cosmerecraft.registry.CosmereCraftItems;
+import com.csonyi.cosmerecraft.util.LevelUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
@@ -25,9 +28,13 @@ import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.chunk.ChunkAccess;
+import net.minecraft.world.phys.AABB;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -79,7 +86,7 @@ public class Inquisitor extends Monster {
 
   private static boolean isActiveAllomancer(LivingEntity entity) {
     if (entity instanceof Player serverPlayer) {
-      return IAllomancy.of(serverPlayer).isBurningAnyOf();
+      return IAllomancy.of(serverPlayer).isBurningAnyOf(AllomanticMetal.values());
     }
     return false;
   }
@@ -137,10 +144,10 @@ public class Inquisitor extends Monster {
       default -> 0.0F;
     };
     if (randomSource.nextFloat() < mainHandAxeChance) {
-      this.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(CosmereCraftItems.OBSIDIAN_AXE));
+      this.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(CosmereCraftItems.OBSIDIAN_INQUISITOR_AXE));
     }
     if (randomSource.nextFloat() < offHandAxeChance) {
-      this.setItemSlot(EquipmentSlot.OFFHAND, new ItemStack(CosmereCraftItems.OBSIDIAN_AXE));
+      this.setItemSlot(EquipmentSlot.OFFHAND, new ItemStack(CosmereCraftItems.OBSIDIAN_INQUISITOR_AXE));
     }
   }
 
@@ -192,6 +199,40 @@ public class Inquisitor extends Monster {
   public static boolean canSpawn(
       EntityType<Inquisitor> inquisitorEntityType, ServerLevelAccessor serverLevelAccessor,
       MobSpawnType inquisitorMobSpawnType, BlockPos spawnPos, RandomSource randomSource) {
+    if (isAlreadyPresentAround(spawnPos, serverLevelAccessor)) {
+      return false;
+    }
     return Monster.checkMonsterSpawnRules(inquisitorEntityType, serverLevelAccessor, inquisitorMobSpawnType, spawnPos, randomSource);
+  }
+
+  private static boolean isAlreadyPresentAround(BlockPos blockPos, ServerLevelAccessor serverLevelAccessor) {
+    var surroundingChunksGetter = LevelUtils.surroundingChunksStreamGetter(serverLevelAccessor.getChunk(blockPos));
+    var minX = surroundingChunksGetter.get()
+        .map(ChunkAccess::getPos)
+        .mapToInt(ChunkPos::getMinBlockX)
+        .min()
+        .orElseGet(blockPos::getX);
+    var minZ = surroundingChunksGetter.get()
+        .map(ChunkAccess::getPos)
+        .mapToInt(ChunkPos::getMinBlockZ)
+        .min()
+        .orElseGet(blockPos::getZ);
+    var maxX = surroundingChunksGetter.get()
+        .map(ChunkAccess::getPos)
+        .mapToInt(ChunkPos::getMaxBlockX)
+        .max()
+        .orElseGet(blockPos::getX);
+    var maxZ = surroundingChunksGetter.get()
+        .map(ChunkAccess::getPos)
+        .mapToInt(ChunkPos::getMaxBlockZ)
+        .max()
+        .orElseGet(blockPos::getZ);
+    var y = blockPos.getY();
+    var boundingBox = new AABB(minX, y - 8, minZ, maxX, y + 8, maxZ);
+    return serverLevelAccessor.getEntitiesOfClass(Inquisitor.class, boundingBox).size() > 3;
+  }
+
+  public static boolean isValidSpawn(BlockState blockState, BlockGetter level, BlockPos blockPos, EntityType<?> entityType) {
+    return entityType == CosmereCraftEntities.INQUISITOR_ENTITY_TYPE.get();
   }
 }

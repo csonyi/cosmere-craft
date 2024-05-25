@@ -15,6 +15,7 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.biome.Biome;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
@@ -52,6 +53,9 @@ public class CosmereCraft {
    */
   public static final ResourceKey<Level> SCADRIAL =
       ResourceKey.create(Registries.DIMENSION, ResourceUtils.modLocation("scadrial"));
+
+  public static final ResourceKey<Biome> SCADRIAL_PLAINS =
+      ResourceKey.create(Registries.BIOME, ResourceUtils.modLocation("scadrial_plains"));
 
   /**
    * The constructor of the mod, registers and initializes all the features of the mod.

@@ -24,11 +24,14 @@ import com.csonyi.cosmerecraft.CosmereCraft;
 import com.csonyi.cosmerecraft.registry.CosmereCraftItems;
 import java.util.Collection;
 import java.util.Map;
-import java.util.function.Function;
 import java.util.stream.Stream;
 import net.minecraft.core.Holder;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.PackOutput;
+import net.minecraft.world.item.Item;
+import net.neoforged.neoforge.client.model.generators.ItemModelBuilder;
 import net.neoforged.neoforge.client.model.generators.ItemModelProvider;
+import net.neoforged.neoforge.client.model.generators.ModelFile;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 
 public class CosmereCraftItemModelProvider extends ItemModelProvider {
@@ -39,7 +42,7 @@ public class CosmereCraftItemModelProvider extends ItemModelProvider {
 
   @Override
   protected void registerModels() {
-    Stream.of(
+    Stream.concat(
             // Holder collections
             Stream.of(
                     CosmereCraftItems.METAL_POWDERS,
@@ -69,8 +72,15 @@ public class CosmereCraftItemModelProvider extends ItemModelProvider {
                 RAW_SILVER,
                 RAW_BISMUTH,
                 ANCIENT_MEDALLION))
-        .flatMap(Function.identity())
         .map(Holder::value)
         .forEach(this::basicItem);
+    handheldItem(CosmereCraftItems.OBSIDIAN_INQUISITOR_AXE);
+  }
+
+  public ItemModelBuilder handheldItem(Holder<Item> item) {
+    var itemLocation = BuiltInRegistries.ITEM.getKey(item.value());
+    return getBuilder(itemLocation.toString())
+        .parent(new ModelFile.UncheckedModelFile("item/handheld"))
+        .texture("layer0", modLoc("item/%s".formatted(itemLocation.getPath())));
   }
 }

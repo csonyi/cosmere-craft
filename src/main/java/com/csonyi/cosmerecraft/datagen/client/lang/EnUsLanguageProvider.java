@@ -46,7 +46,7 @@ import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.MORTAR_AND_PEST
 import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.NICKEL_INGOT;
 import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.NICKEL_NUGGET;
 import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.NICKEL_POWDER;
-import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.OBSIDIAN_AXE;
+import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.OBSIDIAN_INQUISITOR_AXE;
 import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.RAW_BISMUTH;
 import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.RAW_LEAD;
 import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.RAW_METALS;
@@ -121,7 +121,7 @@ public class EnUsLanguageProvider extends BaseLanguageProvider {
     addItem(COAL_POWDER::value, "Coal Powder");
 
     addItem(LERASIUM_NUGGET::value, "Lerasium Nugget");
-    addItem(OBSIDIAN_AXE::value, "Obsidian Axe");
+    addItem(OBSIDIAN_INQUISITOR_AXE::value, "Obsidian Axe");
     addItem(INQUISITOR_SPAWN_EGG::value, "Inquisitor Spawn Egg");
     addItem(INVESTITURE_BUCKET::value, "Investiture Bucket");
     addItem(INVESTITURE_PORTAL_BUCKET::value, "Investiture Portal Bucket");

@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/handheld",
   "textures": {
-    "layer0": "cosmerecraft:item/obsidian_axe"
+    "layer0": "cosmerecraft:item/obsidian_inquisitor_axe"
   }
 }

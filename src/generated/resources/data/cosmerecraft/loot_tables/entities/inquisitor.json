@@ -6,11 +6,11 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "cosmerecraft:aluminum_vial"
+          "name": "cosmerecraft:zinc_vial"
         },
         {
           "type": "minecraft:item",
-          "name": "cosmerecraft:electrum_vial"
+          "name": "cosmerecraft:aluminum_vial"
         },
         {
           "type": "minecraft:item",
@@ -18,7 +18,19 @@
         },
         {
           "type": "minecraft:item",
-          "name": "cosmerecraft:duralumin_vial"
+          "name": "cosmerecraft:nicrosil_vial"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "cosmerecraft:electrum_vial"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "cosmerecraft:bendalloy_vial"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "cosmerecraft:steel_vial"
         },
         {
           "type": "minecraft:item",
@@ -26,11 +38,11 @@
         },
         {
           "type": "minecraft:item",
-          "name": "cosmerecraft:bronze_vial"
+          "name": "cosmerecraft:gold_vial"
         },
         {
           "type": "minecraft:item",
-          "name": "cosmerecraft:zinc_vial"
+          "name": "cosmerecraft:copper_vial"
         },
         {
           "type": "minecraft:item",
@@ -42,23 +54,11 @@
         },
         {
           "type": "minecraft:item",
-          "name": "cosmerecraft:steel_vial"
+          "name": "cosmerecraft:cadmium_vial"
         },
         {
           "type": "minecraft:item",
-          "name": "cosmerecraft:copper_vial"
-        },
-        {
-          "type": "minecraft:item",
-          "name": "cosmerecraft:gold_vial"
-        },
-        {
-          "type": "minecraft:item",
-          "name": "cosmerecraft:nicrosil_vial"
-        },
-        {
-          "type": "minecraft:item",
-          "name": "cosmerecraft:bendalloy_vial"
+          "name": "cosmerecraft:bronze_vial"
         },
         {
           "type": "minecraft:item",
@@ -66,7 +66,7 @@
         },
         {
           "type": "minecraft:item",
-          "name": "cosmerecraft:cadmium_vial"
+          "name": "cosmerecraft:duralumin_vial"
         }
       ],
       "rolls": {

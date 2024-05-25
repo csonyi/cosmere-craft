@@ -8,7 +8,6 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.BlockPos;
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
-import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
 public class AllomanticLineRenderer {
@@ -20,7 +19,6 @@ public class AllomanticLineRenderer {
   public static final int BLUE = 245;
   public static final int ALPHA = 128;
   private final PoseStack poseStack;
-  private final Matrix4f modelView;
   private final Camera camera;
   private final Vector3f entityPosition;
   private final MultiBufferSource.BufferSource bufferSource;
@@ -30,7 +28,6 @@ public class AllomanticLineRenderer {
     float partialTicks = event.getPartialTick();
     this.poseStack = event.getPoseStack();
     this.camera = event.getCamera();
-    this.modelView = event.getModelViewMatrix();
     this.entityPosition = camera.getEntity()
         .getPosition(partialTicks)
         .toVector3f()
@@ -41,7 +38,6 @@ public class AllomanticLineRenderer {
 
   public void renderLines() {
     anchors.forEach(this::renderLine);
-    // renderLine(new BlockPos(7687, 115, 864));
   }
 
   private void renderLine(BlockPos anchorPos) {
@@ -58,15 +54,16 @@ public class AllomanticLineRenderer {
 
   private void renderStraightLine(VertexConsumer buffer, Vector3f anchorCenter) {
     var matrix = poseStack.last().pose();
+    var normal = new Vector3f(anchorCenter).sub(entityPosition).normalize();
     buffer
         .vertex(matrix, entityPosition.x, entityPosition.y, entityPosition.z)
         .color(RED, GREEN, BLUE, 50)
-        .normal(poseStack.last(), 1, 1, 1)
+        .normal(poseStack.last(), normal.x, normal.y, normal.z)
         .endVertex();
     buffer
         .vertex(matrix, anchorCenter.x, anchorCenter.y, anchorCenter.z)
         .color(RED, GREEN, BLUE, 50)
-        .normal(poseStack.last(), 1, 1, 1)
+        .normal(poseStack.last(), normal.x, normal.y, normal.z)
         .endVertex();
   }
 

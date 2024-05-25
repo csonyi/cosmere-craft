@@ -46,7 +46,7 @@ import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.MORTAR_AND_PEST
 import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.NICKEL_INGOT;
 import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.NICKEL_NUGGET;
 import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.NICKEL_POWDER;
-import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.OBSIDIAN_AXE;
+import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.OBSIDIAN_INQUISITOR_AXE;
 import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.RAW_BISMUTH;
 import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.RAW_LEAD;
 import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.RAW_METALS;
@@ -121,11 +121,11 @@ public class HuHuLanguageProvider extends BaseLanguageProvider {
     addItem(COAL_POWDER::value, "Szénpor");
 
     addItem(LERASIUM_NUGGET::value, "Lerasiumrög");
-    addItem(OBSIDIAN_AXE::value, "Obszidián Balta");
+    addItem(OBSIDIAN_INQUISITOR_AXE::value, "Obszidián Balta");
     addItem(INQUISITOR_SPAWN_EGG::value, "Inkvizítoridéző Tojás");
     addItem(INVESTITURE_BUCKET::value, "Invesztitúra Vödör");
     addItem(INVESTITURE_PORTAL_BUCKET::value, "Invesztitúra Portál Vödör");
-    addItem(ANCIENT_MEDALLION::value, "Ősi Medallion");
+    addItem(ANCIENT_MEDALLION::value, "Ősi Medál");
   }
 
   /**

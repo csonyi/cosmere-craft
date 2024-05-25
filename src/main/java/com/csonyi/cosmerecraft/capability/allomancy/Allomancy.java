@@ -1,10 +1,13 @@
 package com.csonyi.cosmerecraft.capability.allomancy;
 
+import static com.csonyi.cosmerecraft.capability.allomancy.AllomanticMetal.ALUMINUM;
 import static com.csonyi.cosmerecraft.capability.allomancy.AllomanticMetal.STEEL;
 
 import com.csonyi.cosmerecraft.capability.anchors.AnchorObserver;
+import com.csonyi.cosmerecraft.networking.ClientMetalStateQueryHandler;
 import com.csonyi.cosmerecraft.networking.SteelJumpHandler;
 import com.csonyi.cosmerecraft.util.TickUtils;
+import java.util.Collection;
 import java.util.Set;
 import java.util.stream.Collectors;
 import net.minecraft.client.Minecraft;
@@ -23,19 +26,13 @@ public class Allomancy implements IAllomancy {
   public static final float MOB_SLOW_FACTOR = 0.25f;
 
   private final ServerPlayer player;
-  private final Lazy<ExternalPhysicalMovement> lazyExternalPhysicalMovement;
   private final Lazy<MetalStateManager> lazyMetalStateManager;
   private final Lazy<AnchorObserver> lazyAnchorObserver;
 
   private Allomancy(Player player) {
     this.player = (ServerPlayer) player;
     this.lazyMetalStateManager = Lazy.of(() -> new MetalStateManager(this.player));
-    this.lazyExternalPhysicalMovement = Lazy.of(() -> new ExternalPhysicalMovement(this.player));
     this.lazyAnchorObserver = Lazy.of(() -> new AnchorObserver(this.player));
-  }
-
-  private ExternalPhysicalMovement externalPhysicalMovement() {
-    return lazyExternalPhysicalMovement.get();
   }
 
   private MetalStateManager metalStateManager() {
@@ -66,24 +63,6 @@ public class Allomancy implements IAllomancy {
     metalStateManager().copyFrom(oldPlayer, isDeath);
   }
 
-  private void applyActiveMetalEffects() {
-    var currentEffects = player.getActiveEffects().stream()
-        .map(MobEffectInstance::getEffect)
-        .collect(Collectors.toSet());
-    var activeEffects = AllomanticMetal.stream(
-            AllomanticMetal::hasEffect,
-            metalStateManager()::isActive)
-        .flatMap(AllomanticMetal::getEffects)
-        .collect(Collectors.toSet());
-    currentEffects.stream()
-        .filter(effect -> !activeEffects.contains(effect))
-        .forEach(player::removeEffect);
-    activeEffects.stream()
-        .filter(effect -> !currentEffects.contains(effect))
-        .map(this::effectInstance)
-        .forEach(player::addEffect);
-  }
-
   private MobEffectInstance effectInstance(Holder<MobEffect> effect) {
     return new MobEffectInstance(
         effect,
@@ -106,13 +85,18 @@ public class Allomancy implements IAllomancy {
 
   public void tick() {
     if (!isBurningMetal()) {
+      removeEffects(AllomanticMetal.allEffects());
       return;
+    }
+    if (metalStateManager().isActive(ALUMINUM)) {
+      metalStateManager().emptyReserves();
+      ClientMetalStateQueryHandler.wipeReservesOnClient(player);
     }
     if (metalStateManager().isActive(STEEL)) {
       if (Minecraft.getInstance().options.keyJump.isDown()) {
         player.resetFallDistance();
         if (anchorObserver().hasAnchorInRange()) {
-          SteelJumpHandler.apply(player);
+          SteelJumpHandler.jump(player);
         }
       }
     }
@@ -140,10 +124,36 @@ public class Allomancy implements IAllomancy {
             playerAABB.inflate(2));
       }
     }
-    applyActiveMetalEffects();
+    applyNewMetalEffects();
     metalStateManager().drainActive();
     metalStateManager().emptyBurningMetals()
-        .forEach(metal -> metalStateManager().setBurnState(metal, false));
+        .forEach(metal -> {
+          metalStateManager().setBurnState(metal, false);
+          ClientMetalStateQueryHandler.turnOffMetalOnClient(player, metal);
+        });
+  }
+
+  private void removeEffects(Collection<Holder<MobEffect>> effects) {
+    effects.forEach(player::removeEffect);
+  }
+
+  private void applyNewMetalEffects() {
+    var currentMetalEffects = player.getActiveEffects().stream()
+        .map(MobEffectInstance::getEffect)
+        .filter(AllomanticMetal::isMetalEffect)
+        .collect(Collectors.toSet());
+    var activeMetalEffects = metalStateManager().activeMetals()
+        .flatMap(AllomanticMetal::getEffects)
+        .collect(Collectors.toSet());
+
+    removeEffects(
+        currentMetalEffects.stream()
+            .filter(effect -> !activeMetalEffects.contains(effect))
+            .collect(Collectors.toSet()));
+    activeMetalEffects.stream()
+        .filter(effect -> !currentMetalEffects.contains(effect))
+        .map(this::effectInstance)
+        .forEach(player::addEffect);
   }
 
 

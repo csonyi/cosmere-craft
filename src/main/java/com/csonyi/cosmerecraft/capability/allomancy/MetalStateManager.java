@@ -196,4 +196,8 @@ public class MetalStateManager implements IAllomancy {
         ? new MetalStateManager(serverPlayer)
         : null;
   }
+
+  public void emptyReserves() {
+    metals().forEach(metal -> setReserve(metal, 0));
+  }
 }

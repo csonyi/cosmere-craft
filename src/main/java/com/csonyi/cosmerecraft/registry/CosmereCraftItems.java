@@ -1,6 +1,5 @@
 package com.csonyi.cosmerecraft.registry;
 
-import static com.csonyi.cosmerecraft.util.ResourceUtils.modLocation;
 import static java.util.function.Predicate.not;
 
 import com.csonyi.cosmerecraft.CosmereCraft;
@@ -18,8 +17,6 @@ import java.util.stream.Stream;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.tags.BlockTags;
-import net.minecraft.tags.ItemTags;
-import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.BucketItem;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
@@ -30,18 +27,13 @@ import net.minecraft.world.level.material.Fluid;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.common.DeferredSpawnEggItem;
 import net.neoforged.neoforge.common.SimpleTier;
+import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
 public class CosmereCraftItems {
 
   public static final DeferredRegister.Items ITEMS =
       DeferredRegister.createItems(CosmereCraft.MOD_ID);
-
-  // === Item Tag keys ===
-  public static final TagKey<Item> METAL_POWDERS_TAG = ItemTags.create(modLocation("metal_powders"));
-  public static final TagKey<Item> METAL_INGOTS_TAG = ItemTags.create(modLocation("metal_ingots"));
-  public static final TagKey<Item> OBSIDIAN_ITEMS_TAG = ItemTags.create(modLocation("obsidian_items"));
-  public static final TagKey<Item> GLASS_ITEMS_TAG = ItemTags.create(modLocation("glass_items"));
 
   // === Item Holders ===
   // Metal powders
@@ -160,9 +152,9 @@ public class CosmereCraftItems {
       FeruchemicalMedallion::ancient);
 
   // Tools
-  public static final Holder<Item> OBSIDIAN_AXE = ITEMS.register(
-      "obsidian_axe",
-      () -> new InquisitorAxe(Tiers.OBSIDIAN_ITEM_TIER, 5.0F, -3.3F));
+  public static final Holder<Item> OBSIDIAN_INQUISITOR_AXE = ITEMS.register(
+      "obsidian_inquisitor_axe",
+      InquisitorAxe::obsidian);
 
   // Spawn eggs
   public static final Holder<Item> INQUISITOR_SPAWN_EGG = ITEMS.register(
@@ -235,7 +227,7 @@ public class CosmereCraftItems {
                 RAW_NICKEL_BLOCK_ITEM,
                 RAW_SILVER_BLOCK_ITEM,
                 RAW_BISMUTH_BLOCK_ITEM,
-                OBSIDIAN_AXE,
+                OBSIDIAN_INQUISITOR_AXE,
                 INQUISITOR_SPAWN_EGG,
                 ANCIENT_MEDALLION))
         .flatMap(Function.identity())
@@ -317,14 +309,14 @@ public class CosmereCraftItems {
 
   public static final class Tiers {
 
-    public static final Tier GLASS_ITEM_TIER = new SimpleTier(
+    public static final Tier GLASS = new SimpleTier(
         BlockTags.INCORRECT_FOR_WOODEN_TOOL, 32, 2.5F,
         0, 10,
-        () -> Ingredient.of(GLASS_ITEMS_TAG));
-    public static final Tier OBSIDIAN_ITEM_TIER = new SimpleTier(
+        () -> Ingredient.of(Tags.Items.GLASS_BLOCKS));
+    public static final Tier OBSIDIAN = new SimpleTier(
         BlockTags.INCORRECT_FOR_DIAMOND_TOOL, 1024, 2.5F,
         3, 7,
-        () -> Ingredient.of(OBSIDIAN_ITEMS_TAG));
+        () -> Ingredient.of(Tags.Items.OBSIDIANS));
   }
 
 }

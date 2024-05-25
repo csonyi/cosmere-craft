@@ -13,11 +13,17 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jetbrains.annotations.NotNull;
 
 public class ClientMetalStateQueryHandler {
+
+  private static final MetalStatePacket AFTER_ALUMINUM_STATE_PACKET = new MetalStatePacket(
+      AllomanticMetal.stream(not(AllomanticMetal::isGodMetal))
+          .map(metal -> new AllomanticMetal.State(metal, 0, false, null))
+          .collect(Collectors.toSet()));
 
   public static void initializeLocalMetalStates() {
     PacketDistributor.sendToServer(MetalStateQuery.all());
@@ -27,6 +33,14 @@ public class ClientMetalStateQueryHandler {
     if (!metals.isEmpty()) {
       PacketDistributor.sendToServer(new MetalStateQuery(metals));
     }
+  }
+
+  public static void turnOffMetalOnClient(ServerPlayer player, AllomanticMetal metal) {
+    PacketDistributor.sendToPlayer(player, turnOffMetalPacket(metal));
+  }
+
+  public static void wipeReservesOnClient(ServerPlayer player) {
+    PacketDistributor.sendToPlayer(player, AFTER_ALUMINUM_STATE_PACKET);
   }
 
   public static void handleResponse(MetalStatePacket packet, IPayloadContext context) {
@@ -40,6 +54,10 @@ public class ClientMetalStateQueryHandler {
         .map(metalStateManager::getState)
         .collect(Collectors.toSet());
     context.reply(new MetalStatePacket(states));
+  }
+
+  private static MetalStatePacket turnOffMetalPacket(AllomanticMetal metal) {
+    return new MetalStatePacket(Set.of(new AllomanticMetal.State(metal, null, false, null)));
   }
 
   public record MetalStateQuery(Collection<AllomanticMetal> metals) implements CustomPacketPayload {

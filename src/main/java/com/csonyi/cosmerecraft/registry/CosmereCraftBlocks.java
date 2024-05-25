@@ -5,9 +5,9 @@ import static java.util.function.Predicate.not;
 
 import com.csonyi.cosmerecraft.CosmereCraft;
 import com.csonyi.cosmerecraft.block.AshLayerBlock;
-import com.csonyi.cosmerecraft.block.AshyDirtBlock;
 import com.csonyi.cosmerecraft.block.InvestiturePortalBlock;
 import com.csonyi.cosmerecraft.capability.allomancy.AllomanticMetal;
+import com.csonyi.cosmerecraft.entity.Inquisitor;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -42,7 +42,8 @@ public class CosmereCraftBlocks {
               Function.identity(),
               metal -> BLOCKS.registerSimpleBlock(
                   "%s_ore".formatted(metal.lowerCaseName()),
-                  BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_ORE))));
+                  BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_ORE)
+                      .destroyTime(3.0F))));
   public static final Holder<Block> LEAD_ORE = BLOCKS.registerSimpleBlock(
       "lead_ore",
       BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_ORE));
@@ -133,11 +134,12 @@ public class CosmereCraftBlocks {
   public static final Holder<Block> ASH_BLOCK = BLOCKS.registerSimpleBlock(
       "ash_block",
       BlockBehaviour.Properties.ofFullCopy(Blocks.SNOW_BLOCK)
+          .isValidSpawn(Inquisitor::isValidSpawn)
           .mapColor(DyeColor.LIGHT_GRAY));
-  public static final Holder<Block> ASHY_DIRT = BLOCKS.registerBlock(
+  public static final Holder<Block> ASHY_DIRT = BLOCKS.registerSimpleBlock(
       "ashy_dirt",
-      AshyDirtBlock::new,
-      BlockBehaviour.Properties.ofFullCopy(Blocks.GRASS_BLOCK));
+      BlockBehaviour.Properties.ofFullCopy(Blocks.GRASS_BLOCK)
+          .isValidSpawn(Inquisitor::isValidSpawn));
 
   public static final DeferredBlock<LiquidBlock> INVESTITURE_LIQUID = BLOCKS.register(
       "investiture_liquid",
