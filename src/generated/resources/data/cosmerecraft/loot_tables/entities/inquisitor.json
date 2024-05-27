@@ -6,23 +6,7 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "cosmerecraft:zinc_vial"
-        },
-        {
-          "type": "minecraft:item",
-          "name": "cosmerecraft:aluminum_vial"
-        },
-        {
-          "type": "minecraft:item",
-          "name": "cosmerecraft:pewter_vial"
-        },
-        {
-          "type": "minecraft:item",
-          "name": "cosmerecraft:nicrosil_vial"
-        },
-        {
-          "type": "minecraft:item",
-          "name": "cosmerecraft:electrum_vial"
+          "name": "cosmerecraft:chromium_vial"
         },
         {
           "type": "minecraft:item",
@@ -30,11 +14,15 @@
         },
         {
           "type": "minecraft:item",
-          "name": "cosmerecraft:steel_vial"
+          "name": "cosmerecraft:iron_vial"
         },
         {
           "type": "minecraft:item",
-          "name": "cosmerecraft:iron_vial"
+          "name": "cosmerecraft:tin_vial"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "cosmerecraft:nicrosil_vial"
         },
         {
           "type": "minecraft:item",
@@ -46,15 +34,7 @@
         },
         {
           "type": "minecraft:item",
-          "name": "cosmerecraft:brass_vial"
-        },
-        {
-          "type": "minecraft:item",
-          "name": "cosmerecraft:tin_vial"
-        },
-        {
-          "type": "minecraft:item",
-          "name": "cosmerecraft:cadmium_vial"
+          "name": "cosmerecraft:pewter_vial"
         },
         {
           "type": "minecraft:item",
@@ -62,7 +42,27 @@
         },
         {
           "type": "minecraft:item",
-          "name": "cosmerecraft:chromium_vial"
+          "name": "cosmerecraft:aluminum_vial"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "cosmerecraft:zinc_vial"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "cosmerecraft:electrum_vial"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "cosmerecraft:steel_vial"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "cosmerecraft:brass_vial"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "cosmerecraft:cadmium_vial"
         },
         {
           "type": "minecraft:item",

@@ -73,7 +73,7 @@ public class HuHuLanguageProvider extends BaseLanguageProvider {
   protected void addTranslations() {
     super.addTranslations();
     add("fml.menu.mods.info.description.%s".formatted(CosmereCraft.MOD_ID), "Egy Brandon Sanderson Ködszerzet cimű regénye ihlette mod.");
-    addCustomTooltips();
+    addGuiText();
     addItems();
     addBlocks();
     addEntityTypes();
@@ -214,10 +214,13 @@ public class HuHuLanguageProvider extends BaseLanguageProvider {
     add("cosmerecraft.metals.unavailable", "Nem elérhető");
   }
 
-  private void addCustomTooltips() {
+
+  private void addGuiText() {
     add("cosmerecraft.gui.allomancy", "Allomancia");
     add("item.cosmerecraft.feruchemical_medallion.ancient.tooltip",
         "Mikor kezemben tartom, mintha egy távoli lüktetést halanék...");
+    add("key.categories.cosmerecraft", "CosmereCraft");
+    add("key.cosmerecraft.open_allomancy_gui", "Allomancia kezelőfelület megnyitása");
   }
 
   @Override

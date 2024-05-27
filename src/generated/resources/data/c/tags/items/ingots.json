@@ -1,17 +1,17 @@
 {
   "values": [
-    "cosmerecraft:zinc_ingot",
-    "cosmerecraft:aluminum_ingot",
-    "cosmerecraft:pewter_ingot",
-    "cosmerecraft:nicrosil_ingot",
-    "cosmerecraft:electrum_ingot",
+    "cosmerecraft:chromium_ingot",
     "cosmerecraft:bendalloy_ingot",
+    "cosmerecraft:tin_ingot",
+    "cosmerecraft:nicrosil_ingot",
+    "cosmerecraft:pewter_ingot",
+    "cosmerecraft:bronze_ingot",
+    "cosmerecraft:aluminum_ingot",
+    "cosmerecraft:zinc_ingot",
+    "cosmerecraft:electrum_ingot",
     "cosmerecraft:steel_ingot",
     "cosmerecraft:brass_ingot",
-    "cosmerecraft:tin_ingot",
     "cosmerecraft:cadmium_ingot",
-    "cosmerecraft:bronze_ingot",
-    "cosmerecraft:chromium_ingot",
     "cosmerecraft:duralumin_ingot"
   ]
 }

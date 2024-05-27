@@ -6,7 +6,6 @@ import static com.csonyi.cosmerecraft.registry.CosmereCraftAttachments.metalRese
 import static java.util.function.Predicate.not;
 
 import com.csonyi.cosmerecraft.Config;
-import com.csonyi.cosmerecraft.networking.ClientMetalStateQueryHandler;
 import com.csonyi.cosmerecraft.registry.CosmereCraftAttachments;
 import com.csonyi.cosmerecraft.util.StreamUtils;
 import java.util.Set;
@@ -18,7 +17,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 import org.apache.commons.lang3.ArrayUtils;
 
-public class MetalStateManager implements IAllomancy {
+public class MetalStateManager {
 
   private final Player player;
   private final boolean isLocal;
@@ -119,6 +118,11 @@ public class MetalStateManager implements IAllomancy {
         this::isAvailable);
   }
 
+  public Stream<AllomanticMetal> availableMetals() {
+    return metals()
+        .filter(this::isAvailable);
+  }
+
   public Stream<AllomanticMetal> activeMetals() {
     return metals()
         .filter(this::isActive);
@@ -170,31 +174,9 @@ public class MetalStateManager implements IAllomancy {
         });
   }
 
-  @Override
-  public void tick() {
-    if (isLocal) {
-      var metals = metals(
-          this::isAvailable,
-          not(AllomanticMetal::isGodMetal))
-          .collect(Collectors.toSet());
-      ClientMetalStateQueryHandler.queryMetalStatesFromServer(metals);
-    }
-  }
-
   public boolean isBurningAnyOf(AllomanticMetal... metals) {
     return activeMetals()
         .anyMatch(metal -> ArrayUtils.contains(metals, metal));
-  }
-
-  @Override
-  public void ingestMetal(AllomanticMetal metal, int amount) {
-    ingest(metal, amount);
-  }
-
-  public static IAllomancy register(Player player, Void context) {
-    return player instanceof LocalPlayer serverPlayer
-        ? new MetalStateManager(serverPlayer)
-        : null;
   }
 
   public void emptyReserves() {

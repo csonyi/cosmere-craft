@@ -16,7 +16,6 @@ import java.util.stream.Stream;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
@@ -65,9 +64,7 @@ public class AllomancyEventHandlers {
 
   @SubscribeEvent
   public static void handleAllomancyUpdates(final PlayerTickEvent.Pre event) {
-    if (event.getEntity() instanceof ServerPlayer serverPlayer) {
-      IAllomancy.of(serverPlayer).tick();
-    }
+    IAllomancy.of(event.getEntity()).tick();
   }
 
   @SubscribeEvent

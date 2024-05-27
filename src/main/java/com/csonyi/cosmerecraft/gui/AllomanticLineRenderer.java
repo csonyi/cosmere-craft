@@ -76,23 +76,19 @@ public class AllomanticLineRenderer {
         .endVertex();
 
     for (int segmentIndex = 0; segmentIndex <= SEGMENTS; ++segmentIndex) {
-      // Calculate the offset value for this segment
       var offset = ((float) segmentIndex / SEGMENTS);
-
-      // Calculate the x, y, and z coordinates for this segment
       var x = entityPosition.x + offset * (anchorCenter.x - entityPosition.x) + AMPLITUDE * (float) Math.sin(offset * 40 * Math.PI);
       var y = entityPosition.y + offset * (anchorCenter.y - entityPosition.y);
       var z = entityPosition.z + offset * (anchorCenter.z - entityPosition.z) + AMPLITUDE * (float) Math.cos(offset * 40 * Math.PI);
 
-      // Add the vertex to the buffer
       buffer
           .vertex(matrix, x, y, z)
-          .color(RED, GREEN, BLUE, ALPHA)  // Set the color and transparency
+          .color(RED, GREEN, BLUE, ALPHA)
           .normal(poseStack.last(), 0, 0, 0)
           .endVertex();
       buffer
           .vertex(matrix, x, y, z)
-          .color(RED, GREEN, BLUE, ALPHA)  // Set the color and transparency
+          .color(RED, GREEN, BLUE, ALPHA)
           .normal(poseStack.last(), 0, 0, 0)
           .endVertex();
     }

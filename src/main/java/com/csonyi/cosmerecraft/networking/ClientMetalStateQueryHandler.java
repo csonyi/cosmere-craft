@@ -3,7 +3,7 @@ package com.csonyi.cosmerecraft.networking;
 import static java.util.function.Predicate.not;
 
 import com.csonyi.cosmerecraft.capability.allomancy.AllomanticMetal;
-import com.csonyi.cosmerecraft.capability.allomancy.MetalStateManager;
+import com.csonyi.cosmerecraft.capability.allomancy.IAllomancy;
 import com.csonyi.cosmerecraft.util.ResourceUtils;
 import java.util.Collection;
 import java.util.HashSet;
@@ -44,22 +44,18 @@ public class ClientMetalStateQueryHandler {
   }
 
   public static void handleResponse(MetalStatePacket packet, IPayloadContext context) {
-    var metalStateManager = new MetalStateManager(context.player());
-    metalStateManager.setStates(packet.metalStates);
+    IAllomancy.of(context.player()).setStates(packet.metalStates);
   }
 
   public static void handleQuery(MetalStateQuery packet, IPayloadContext context) {
-    var metalStateManager = new MetalStateManager(context.player());
-    var states = packet.metals.stream()
-        .map(metalStateManager::getState)
-        .collect(Collectors.toSet());
-    context.reply(new MetalStatePacket(states));
+    context.reply(new MetalStatePacket(IAllomancy.of(context.player()).getStates()));
   }
 
   private static MetalStatePacket turnOffMetalPacket(AllomanticMetal metal) {
     return new MetalStatePacket(Set.of(new AllomanticMetal.State(metal, null, false, null)));
   }
 
+  // TODO: rework if needed
   public record MetalStateQuery(Collection<AllomanticMetal> metals) implements CustomPacketPayload {
 
     public static final Type<MetalStateQuery> TYPE = new Type<>(ResourceUtils.modLocation("metal_state_query"));

@@ -1,15 +1,16 @@
 package com.csonyi.cosmerecraft.gui;
 
 import static java.util.function.Function.identity;
-import static java.util.function.Predicate.not;
 import static java.util.stream.Collectors.toMap;
 
 import com.csonyi.cosmerecraft.capability.allomancy.AllomanticMetal;
-import com.csonyi.cosmerecraft.capability.allomancy.MetalStateManager;
+import com.csonyi.cosmerecraft.capability.allomancy.IAllomancy;
 import com.csonyi.cosmerecraft.networking.ServerBurnStateUpdateHandler;
+import com.csonyi.cosmerecraft.util.ColorUtils;
 import com.csonyi.cosmerecraft.util.ResourceUtils;
 import com.csonyi.cosmerecraft.util.TickUtils;
 import java.util.Map;
+import java.util.Set;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.StringWidget;
 import net.minecraft.client.gui.screens.Screen;
@@ -26,7 +27,6 @@ public class AllomancyGui extends Screen {
   private static final ResourceLocation BACKGROUND = ResourceUtils.modLocation("textures/gui/allomancy_gui_bg.png");
   private static final ResourceLocation TYPE_BOX = ResourceUtils.modLocation("textures/gui/allomancy_gui_box.png");
   private static final ResourceLocation BUTTON_BACKGROUND = ResourceUtils.modLocation("textures/gui/allomancy_gui_button.png");
-  private static final int WHITE = 0xffffff;
 
   private int backgroundXMargin;
   private int backgroundYMargin;
@@ -50,7 +50,8 @@ public class AllomancyGui extends Screen {
   private Map<AllomanticMetal, TextureToggleButton> metalButtons;
   private Map<AllomanticMetal, StringWidget> metalNames;
 
-  private MetalStateManager metalStateManager;
+  private IAllomancy allomancy;
+  private Set<AllomanticMetal> metals;
 
   public AllomancyGui() {
     super(Component.translatable("cosmerecraft.gui.allomancy"));
@@ -66,7 +67,8 @@ public class AllomancyGui extends Screen {
     if (minecraft == null || minecraft.player == null) {
       return;
     }
-    metalStateManager = new MetalStateManager(minecraft.player);
+    allomancy = IAllomancy.of(minecraft.player);
+    metals = allomancy.getAvailableMetals();
 
     int scaledWidth = minecraft.getWindow().getGuiScaledWidth();
     int scaledHeight = minecraft.getWindow().getGuiScaledHeight();
@@ -90,9 +92,9 @@ public class AllomancyGui extends Screen {
     editorComponentXPadding = scaledWidth / 50;
     editorComponentYPadding = scaledHeight / 40;
 
-    metalButtons = metalStateManager.metals(not(AllomanticMetal::isGodMetal))
+    metalButtons = metals.stream()
         .collect(toMap(identity(), this::createMetalToggleButton));
-    metalNames = metalStateManager.metals(not(AllomanticMetal::isGodMetal))
+    metalNames = metals.stream()
         .collect(toMap(identity(), this::createMetalName));
   }
 
@@ -132,7 +134,7 @@ public class AllomancyGui extends Screen {
             AllomanticMetal.Type.values()[yIndex * 2 + xIndex].getNameAsComponent(),
             typeBoxX(xIndex) + typeBoxWidth / 25,
             typeBoxY(yIndex) + typeBoxHeight / 18,
-            WHITE);
+            ColorUtils.WHITE);
       }
     }
   }
@@ -147,13 +149,13 @@ public class AllomancyGui extends Screen {
         typeBoxY(typeBoxYIndex) + editorYMargin + typeBoxHeaderHeight + (yIndex % 2) * (editorHeight + editorYPadding),
         32, 32,
         button -> {
-          metalStateManager.setBurnState(metal, button.state);
+          allomancy.setBurnState(metal, button.state);
           ServerBurnStateUpdateHandler.sendBurnStateUpdatesToServer(metal, button.state);
         },
         BUTTON_BACKGROUND,
         metal.texture("metal"),
         metal.texture("white"));
-    metalButton.setState(metalStateManager.getBurnState(metal));
+    metalButton.setState(allomancy.getBurnState(metal));
     return addWidget(metalButton);
   }
 
@@ -169,17 +171,16 @@ public class AllomancyGui extends Screen {
   }
 
   private void renderReserves(GuiGraphics guiGraphics) {
-    metalStateManager.metals(not(AllomanticMetal::isGodMetal))
-        .forEach(metal -> {
-          var metalButton = metalButtons.get(metal);
-          var metalName = metalNames.get(metal);
-          var metalReserve = metalStateManager.getReserve(metal);
-          guiGraphics.drawString(
-              font, TickUtils.toTimeFormat(metalReserve),
-              metalButton.getRight() + editorComponentXPadding,
-              metalName.getBottom() + editorComponentYPadding,
-              WHITE);
-        });
+    metals.forEach(metal -> {
+      var metalButton = metalButtons.get(metal);
+      var metalName = metalNames.get(metal);
+      var metalReserve = allomancy.getReserve(metal);
+      guiGraphics.drawString(
+          font, TickUtils.toTimeFormat(metalReserve),
+          metalButton.getRight() + editorComponentXPadding,
+          metalName.getBottom() + editorComponentYPadding,
+          ColorUtils.WHITE);
+    });
   }
 
   private int typeBoxY(int yIndex) {
@@ -197,14 +198,6 @@ public class AllomancyGui extends Screen {
       return true;
     }
     return super.keyPressed(pKeyCode, pScanCode, pModifiers);
-  }
-
-  @Override
-  public void tick() {
-    if (minecraft == null) {
-      return;
-    }
-    metalStateManager.tick();
   }
 
   @Override

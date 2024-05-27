@@ -180,5 +180,7 @@
   "item.cosmerecraft.zinc_nugget": "Cinkrög",
   "item.cosmerecraft.zinc_powder": "Cinkpor",
   "item.cosmerecraft.zinc_vial": "Cink Fiola",
-  "itemGroup.cosmerecraft": "CosmereCraft"
+  "itemGroup.cosmerecraft": "CosmereCraft",
+  "key.categories.cosmerecraft": "CosmereCraft",
+  "key.cosmerecraft.open_allomancy_gui": "Allomancia kezelőfelület megnyitása"
 }

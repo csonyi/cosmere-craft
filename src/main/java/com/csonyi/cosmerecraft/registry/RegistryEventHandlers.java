@@ -2,8 +2,8 @@ package com.csonyi.cosmerecraft.registry;
 
 import static com.csonyi.cosmerecraft.CosmereCraft.MOD_ID;
 
-import com.csonyi.cosmerecraft.capability.allomancy.Allomancy;
-import com.csonyi.cosmerecraft.capability.allomancy.MetalStateManager;
+import com.csonyi.cosmerecraft.capability.allomancy.LocalAllomancy;
+import com.csonyi.cosmerecraft.capability.allomancy.ServerAllomancy;
 import com.csonyi.cosmerecraft.datagen.CosmereCraftArchaeologyLootModifierProvider;
 import com.csonyi.cosmerecraft.datagen.CosmereCraftBlockTagsProvider;
 import com.csonyi.cosmerecraft.datagen.CosmereCraftItemTagsProvider;
@@ -163,10 +163,10 @@ public class RegistryEventHandlers {
     event.registerEntity(
         CosmereCraftCapabilities.ALLOMANCY,
         EntityType.PLAYER,
-        Allomancy::register);
+        ServerAllomancy::register);
     event.registerEntity(
         CosmereCraftCapabilities.ALLOMANCY,
         EntityType.PLAYER,
-        MetalStateManager::register);
+        LocalAllomancy::register);
   }
 }

@@ -60,6 +60,7 @@ import com.csonyi.cosmerecraft.CosmereCraft;
 import com.csonyi.cosmerecraft.capability.allomancy.AllomanticMetal;
 import com.csonyi.cosmerecraft.registry.CosmereCraftEntities;
 import net.minecraft.data.PackOutput;
+import org.apache.commons.lang3.StringUtils;
 
 public class EnUsLanguageProvider extends BaseLanguageProvider {
 
@@ -218,10 +219,12 @@ public class EnUsLanguageProvider extends BaseLanguageProvider {
     add("cosmerecraft.gui.allomancy", "Allomancy");
     add("item.cosmerecraft.feruchemical_medallion.ancient.tooltip",
         "When I hold it in my hand, I can hear a faint pulsing in the distance...");
+    add("key.categories.cosmerecraft", "CosmereCraft");
+    add("key.cosmerecraft.open_allomancy_gui", "Open Allomancy GUI");
   }
 
   @Override
   protected String getTranslatedMetalName(AllomanticMetal metal) {
-    return metal.lowerCaseName();
+    return StringUtils.capitalize(metal.lowerCaseName());
   }
 }
