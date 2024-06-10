@@ -1,5 +1,6 @@
-package com.csonyi.cosmerecraft.gui;
+package com.csonyi.cosmerecraft.client.gui;
 
+import com.csonyi.cosmerecraft.client.ClientConfig;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import java.util.Set;
@@ -7,6 +8,7 @@ import net.minecraft.client.Camera;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.BlockPos;
+import net.minecraft.util.Mth;
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
 import org.joml.Vector3f;
 
@@ -17,7 +19,6 @@ public class AllomanticLineRenderer {
   public static final int RED = 66;
   public static final int GREEN = 215;
   public static final int BLUE = 245;
-  public static final int ALPHA = 128;
   private final PoseStack poseStack;
   private final Camera camera;
   private final Vector3f entityPosition;
@@ -41,37 +42,38 @@ public class AllomanticLineRenderer {
   }
 
   private void renderLine(BlockPos anchorPos) {
-    var cameraPosition = camera.getPosition();
+    var cameraPosition = camera.getPosition().toVector3f();
     var anchorCenter = anchorPos.getCenter().toVector3f();
     var buffer = bufferSource.getBuffer(RenderType.lines());
+    var lineTransparency = calculateLineTransparency(anchorCenter, cameraPosition);
     poseStack.pushPose();
     poseStack.translate(-cameraPosition.x, -cameraPosition.y, -cameraPosition.z);
-    renderStraightLine(buffer, anchorCenter);
-    renderSquigglyLine(buffer, anchorCenter);
+    renderStraightLine(buffer, anchorCenter, lineTransparency);
+    renderSquigglyLine(buffer, anchorCenter, lineTransparency);
     bufferSource.endBatch();
     poseStack.popPose();
   }
 
-  private void renderStraightLine(VertexConsumer buffer, Vector3f anchorCenter) {
+  private void renderStraightLine(VertexConsumer buffer, Vector3f anchorCenter, int lineTransparency) {
     var matrix = poseStack.last().pose();
     var normal = new Vector3f(anchorCenter).sub(entityPosition).normalize();
     buffer
         .vertex(matrix, entityPosition.x, entityPosition.y, entityPosition.z)
-        .color(RED, GREEN, BLUE, 50)
+        .color(RED, GREEN, BLUE, lineTransparency)
         .normal(poseStack.last(), normal.x, normal.y, normal.z)
         .endVertex();
     buffer
         .vertex(matrix, anchorCenter.x, anchorCenter.y, anchorCenter.z)
-        .color(RED, GREEN, BLUE, 50)
+        .color(RED, GREEN, BLUE, lineTransparency)
         .normal(poseStack.last(), normal.x, normal.y, normal.z)
         .endVertex();
   }
 
-  private void renderSquigglyLine(VertexConsumer buffer, Vector3f anchorCenter) {
+  private void renderSquigglyLine(VertexConsumer buffer, Vector3f anchorCenter, int lineTransparency) {
     var matrix = poseStack.last().pose();
     buffer
         .vertex(matrix, entityPosition.x, entityPosition.y, entityPosition.z)
-        .color(RED, GREEN, BLUE, ALPHA)
+        .color(RED, GREEN, BLUE, lineTransparency)
         .normal(poseStack.last(), 0, 0, 0)
         .endVertex();
 
@@ -83,14 +85,22 @@ public class AllomanticLineRenderer {
 
       buffer
           .vertex(matrix, x, y, z)
-          .color(RED, GREEN, BLUE, ALPHA)
+          .color(RED, GREEN, BLUE, lineTransparency)
           .normal(poseStack.last(), 0, 0, 0)
           .endVertex();
       buffer
           .vertex(matrix, x, y, z)
-          .color(RED, GREEN, BLUE, ALPHA)
+          .color(RED, GREEN, BLUE, lineTransparency)
           .normal(poseStack.last(), 0, 0, 0)
           .endVertex();
     }
+  }
+
+  private int calculateLineTransparency(Vector3f anchorCenter, Vector3f cameraPosition) {
+    var distance = cameraPosition.distance(anchorCenter);
+    if (distance > ClientConfig.allomanticLineRenderDistance) {
+      return 0;
+    }
+    return Mth.lerpInt(distance / ClientConfig.allomanticLineRenderDistance, 0, 240);
   }
 }

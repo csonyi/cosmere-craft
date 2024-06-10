@@ -1,4 +1,4 @@
-package com.csonyi.cosmerecraft.gui;
+package com.csonyi.cosmerecraft.client.gui;
 
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toMap;

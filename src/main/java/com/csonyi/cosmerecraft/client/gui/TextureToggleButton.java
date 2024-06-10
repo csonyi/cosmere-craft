@@ -1,4 +1,4 @@
-package com.csonyi.cosmerecraft.gui;
+package com.csonyi.cosmerecraft.client.gui;
 
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;

@@ -1,5 +1,6 @@
 package com.csonyi.cosmerecraft;
 
+import com.csonyi.cosmerecraft.client.ClientConfig;
 import com.csonyi.cosmerecraft.datagen.CosmereCraftArchaeologyLootModifierProvider;
 import com.csonyi.cosmerecraft.registry.CosmereCraftAttachments;
 import com.csonyi.cosmerecraft.registry.CosmereCraftBlocks;
@@ -82,7 +83,8 @@ public class CosmereCraft {
     CosmereCraftStructures.register(modEventBus);
     CosmereCraftArchaeologyLootModifierProvider.register(modEventBus);
 
-    modContainer.registerConfig(ModConfig.Type.SERVER, Config.Server.SPEC);
+    modContainer.registerConfig(ModConfig.Type.SERVER, ServerConfig.SPEC);
+    modContainer.registerConfig(ModConfig.Type.CLIENT, ClientConfig.SPEC);
   }
 
 }

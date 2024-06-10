@@ -1,10 +1,10 @@
 {
   "values": [
-    "cosmerecraft:deepslate_chromium_ore",
-    "cosmerecraft:deepslate_aluminum_ore",
-    "cosmerecraft:deepslate_zinc_ore",
     "cosmerecraft:deepslate_tin_ore",
     "cosmerecraft:deepslate_cadmium_ore",
+    "cosmerecraft:deepslate_chromium_ore",
+    "cosmerecraft:deepslate_zinc_ore",
+    "cosmerecraft:deepslate_aluminum_ore",
     "cosmerecraft:deepslate_lead_ore",
     "cosmerecraft:deepslate_nickel_ore",
     "cosmerecraft:deepslate_silver_ore",

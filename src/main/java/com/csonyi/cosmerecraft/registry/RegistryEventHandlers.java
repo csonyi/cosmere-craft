@@ -2,20 +2,19 @@ package com.csonyi.cosmerecraft.registry;
 
 import static com.csonyi.cosmerecraft.CosmereCraft.MOD_ID;
 
-import com.csonyi.cosmerecraft.capability.allomancy.LocalAllomancy;
 import com.csonyi.cosmerecraft.capability.allomancy.ServerAllomancy;
+import com.csonyi.cosmerecraft.client.datagen.CosmereCraftBlockStateProvider;
+import com.csonyi.cosmerecraft.client.datagen.CosmereCraftItemModelProvider;
+import com.csonyi.cosmerecraft.client.datagen.lang.EnUsLanguageProvider;
+import com.csonyi.cosmerecraft.client.datagen.lang.HuHuLanguageProvider;
+import com.csonyi.cosmerecraft.client.entity.InquisitorModel;
+import com.csonyi.cosmerecraft.client.entity.InquisitorRenderer;
 import com.csonyi.cosmerecraft.datagen.CosmereCraftArchaeologyLootModifierProvider;
 import com.csonyi.cosmerecraft.datagen.CosmereCraftBlockTagsProvider;
 import com.csonyi.cosmerecraft.datagen.CosmereCraftItemTagsProvider;
 import com.csonyi.cosmerecraft.datagen.CosmereCraftLootTableProvider;
 import com.csonyi.cosmerecraft.datagen.CosmereCraftRecipeProvider;
-import com.csonyi.cosmerecraft.datagen.client.CosmereCraftBlockStateProvider;
-import com.csonyi.cosmerecraft.datagen.client.CosmereCraftItemModelProvider;
-import com.csonyi.cosmerecraft.datagen.client.lang.EnUsLanguageProvider;
-import com.csonyi.cosmerecraft.datagen.client.lang.HuHuLanguageProvider;
 import com.csonyi.cosmerecraft.entity.Inquisitor;
-import com.csonyi.cosmerecraft.entity.InquisitorModel;
-import com.csonyi.cosmerecraft.entity.InquisitorRenderer;
 import com.csonyi.cosmerecraft.networking.AnchorUpdateHandler;
 import com.csonyi.cosmerecraft.networking.ClientMetalStateQueryHandler;
 import com.csonyi.cosmerecraft.networking.ServerBurnStateUpdateHandler;
@@ -164,9 +163,5 @@ public class RegistryEventHandlers {
         CosmereCraftCapabilities.ALLOMANCY,
         EntityType.PLAYER,
         ServerAllomancy::register);
-    event.registerEntity(
-        CosmereCraftCapabilities.ALLOMANCY,
-        EntityType.PLAYER,
-        LocalAllomancy::register);
   }
 }

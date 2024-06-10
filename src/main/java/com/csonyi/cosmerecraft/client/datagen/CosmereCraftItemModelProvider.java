@@ -1,4 +1,4 @@
-package com.csonyi.cosmerecraft.datagen.client;
+package com.csonyi.cosmerecraft.client.datagen;
 
 import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.ANCIENT_MEDALLION;
 import static com.csonyi.cosmerecraft.registry.CosmereCraftItems.ASH_PILE;

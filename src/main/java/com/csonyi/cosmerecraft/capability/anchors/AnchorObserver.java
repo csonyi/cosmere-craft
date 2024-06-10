@@ -1,6 +1,6 @@
 package com.csonyi.cosmerecraft.capability.anchors;
 
-import com.csonyi.cosmerecraft.Config;
+import com.csonyi.cosmerecraft.ServerConfig;
 import com.csonyi.cosmerecraft.util.LevelUtils;
 import java.util.List;
 import java.util.Set;
@@ -24,7 +24,7 @@ public class AnchorObserver {
   }
 
   public boolean hasAnchorInRange() {
-    if (!Config.Server.allomancyNeedsMetalNearby) {
+    if (!ServerConfig.allomancyNeedsMetalNearby) {
       return true;
     }
     return !getAnchorsInRange().isEmpty();
@@ -44,7 +44,7 @@ public class AnchorObserver {
 
   private boolean isAnchorInRange(BlockPos anchorPos) {
     return player.getBoundingBox()
-        .inflate((double) Config.Server.maxSteelPushDistance / 2)
+        .inflate(ServerConfig.maxSteelPushDistance)
         .contains(anchorPos.getCenter());
   }
 

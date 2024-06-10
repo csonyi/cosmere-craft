@@ -1,4 +1,4 @@
-package com.csonyi.cosmerecraft.entity;// Made with Blockbench 4.9.4
+package com.csonyi.cosmerecraft.client.entity;// Made with Blockbench 4.9.4
 // Exported for Minecraft version 1.17 or later with Mojang mappings
 // Paste this class into your mod and generate all required imports
 

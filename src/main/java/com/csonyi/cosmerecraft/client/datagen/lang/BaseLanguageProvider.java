@@ -1,4 +1,4 @@
-package com.csonyi.cosmerecraft.datagen.client.lang;
+package com.csonyi.cosmerecraft.client.datagen.lang;
 
 import com.csonyi.cosmerecraft.CosmereCraft;
 import com.csonyi.cosmerecraft.capability.allomancy.AllomanticMetal;

@@ -1,6 +1,6 @@
 package com.csonyi.cosmerecraft.capability.allomancy;
 
-import com.csonyi.cosmerecraft.Config;
+import com.csonyi.cosmerecraft.ServerConfig;
 import com.csonyi.cosmerecraft.capability.anchors.AnchorObserver;
 import java.util.Optional;
 import net.minecraft.core.BlockPos;
@@ -28,7 +28,7 @@ public class ExternalPhysicalMovement {
 
   private static float calculateImpulseStrength(BlockPos playerPos, BlockPos anchorPos) {
     var distanceSquared = playerPos.distSqr(anchorPos);
-    var maxDistanceSquared = Math.pow(Config.Server.maxSteelPushDistance, 2);
+    var maxDistanceSquared = Math.pow(ServerConfig.maxSteelPushDistance, 2);
     var distance = Math.min(distanceSquared, maxDistanceSquared);
     return (float) (0.3 * (1 - distance / maxDistanceSquared));
   }

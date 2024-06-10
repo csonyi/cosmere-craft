@@ -5,14 +5,13 @@ import static com.csonyi.cosmerecraft.registry.CosmereCraftAttachments.metalBurn
 import static com.csonyi.cosmerecraft.registry.CosmereCraftAttachments.metalReserve;
 import static java.util.function.Predicate.not;
 
-import com.csonyi.cosmerecraft.Config;
+import com.csonyi.cosmerecraft.ServerConfig;
 import com.csonyi.cosmerecraft.registry.CosmereCraftAttachments;
 import com.csonyi.cosmerecraft.util.StreamUtils;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 import org.apache.commons.lang3.ArrayUtils;
@@ -20,10 +19,8 @@ import org.apache.commons.lang3.ArrayUtils;
 public class MetalStateManager {
 
   private final Player player;
-  private final boolean isLocal;
 
   public MetalStateManager(Player player) {
-    this.isLocal = player instanceof LocalPlayer;
     this.player = player;
   }
 
@@ -108,7 +105,7 @@ public class MetalStateManager {
 
 
   public boolean canIngestMetalAmount(int amount) {
-    return Config.Server.collectiveAllomanticCapacity > getCollectiveMetalAmount() + amount;
+    return ServerConfig.collectiveAllomanticCapacity > getCollectiveMetalAmount() + amount;
   }
 
   @SafeVarargs
@@ -149,7 +146,7 @@ public class MetalStateManager {
       return;
     }
     var newCollectiveReserve = getCollectiveMetalAmount() + amount;
-    if (newCollectiveReserve > Config.Server.collectiveAllomanticCapacity) {
+    if (newCollectiveReserve > ServerConfig.collectiveAllomanticCapacity) {
       return;
     }
     setReserve(metal, getReserve(metal) + amount);

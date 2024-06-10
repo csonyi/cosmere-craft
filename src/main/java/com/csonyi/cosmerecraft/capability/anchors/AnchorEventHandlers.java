@@ -1,17 +1,12 @@
 package com.csonyi.cosmerecraft.capability.anchors;
 
 import com.csonyi.cosmerecraft.CosmereCraft;
-import com.csonyi.cosmerecraft.capability.allomancy.AllomanticMetal;
-import com.csonyi.cosmerecraft.capability.allomancy.IAllomancy;
-import com.csonyi.cosmerecraft.gui.AllomanticLineRenderer;
 import com.csonyi.cosmerecraft.networking.AnchorUpdateHandler;
 import com.csonyi.cosmerecraft.registry.CosmereCraftBlocks;
 import java.util.stream.Collectors;
-import net.minecraft.client.Minecraft;
 import net.minecraft.world.level.ChunkPos;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
 import net.neoforged.neoforge.event.level.BlockEvent;
 import net.neoforged.neoforge.event.level.ChunkEvent;
 import net.neoforged.neoforge.event.level.ChunkWatchEvent;
@@ -19,25 +14,6 @@ import net.neoforged.neoforge.event.level.ExplosionEvent;
 
 @EventBusSubscriber(modid = CosmereCraft.MOD_ID, bus = EventBusSubscriber.Bus.GAME)
 public class AnchorEventHandlers {
-
-  /**
-   * Hooks into the world rendering process to draw the allomantic lines.
-   *
-   * @param event The NeoForge event used to hook into the renderer.
-   */
-  @SubscribeEvent
-  public static void renderAllomanticLines(RenderLevelStageEvent event) {
-    if (RenderLevelStageEvent.Stage.AFTER_PARTICLES.equals(event.getStage())) {
-      var localPlayer = Minecraft.getInstance().player;
-      if (localPlayer == null) {
-        return;
-      }
-      if (IAllomancy.of(localPlayer).isBurningAnyOf(AllomanticMetal.STEEL, AllomanticMetal.IRON)) {
-        var anchors = new AnchorObserver(localPlayer).getAnchorsInRange();
-        new AllomanticLineRenderer(event, anchors).renderLines();
-      }
-    }
-  }
 
   @SubscribeEvent
   public static void collectAnchorsInChunk(ChunkEvent.Load event) {

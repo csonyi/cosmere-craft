@@ -1,5 +1,9 @@
-package com.csonyi.cosmerecraft.capability.allomancy;
+package com.csonyi.cosmerecraft.client.capability.allomancy;
 
+import com.csonyi.cosmerecraft.capability.allomancy.AllomanticMetal;
+import com.csonyi.cosmerecraft.capability.allomancy.ExternalPhysicalMovement;
+import com.csonyi.cosmerecraft.capability.allomancy.IAllomancy;
+import com.csonyi.cosmerecraft.capability.allomancy.MetalStateManager;
 import com.csonyi.cosmerecraft.capability.anchors.AnchorObserver;
 import java.util.Set;
 import java.util.stream.Collectors;
